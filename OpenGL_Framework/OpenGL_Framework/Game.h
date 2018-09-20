@@ -1,8 +1,10 @@
 #pragma once
 #include <windows.h>
+#include <vector>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
+#include "MiniMath/Vector.h"
 
 #include "Timer.h"
 

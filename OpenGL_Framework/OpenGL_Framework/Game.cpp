@@ -29,24 +29,22 @@ void Game::update()
 	//...
 }
 
-float x2 = -1.0f;
-float x3 = -1.0f;
-float x4 = 1.0f;
-float x5 = 1.0f;
-float y2 = -1.0f;
-float y3 = 1.0f;
-float y4 = 1.0f;
-float y5 = -1.0f;
+std::vector<vec2> sqaure1 = { {-5.0f, -1.0f}, {-5.0f, 1.0f}, {-3.0f, 1.0f}, {-3.0f, -1.0f} };
+std::vector<vec2> sqaure2 = { {3.0f, -1.0f}, {3.0f, 1.0f}, {5.0f, 1.0f}, {5.0f, -1.0f} };
 
-
-void renderPrimitive(void) {
+void renderSquare(int s) {
 	glBegin(GL_QUADS); // Start drawing a quad primitive  
 
+	for (int i = 0; i < 4; i++) {
+		if (s == 1) {
+			glVertex3f(sqaure1[i].x, sqaure1[i].y, 0.0f); // The bottom left corner
+		}
+		else {
+			glVertex3f(sqaure2[i].x, sqaure2[i].y, 0.0f); // The bottom left corner
+		}
 
-	glVertex3f(x2, y2, 0.0f); // The bottom left corner  
-	glVertex3f(x3, y3, 0.0f); // The top left corner  
-	glVertex3f(x4, y4, 0.0f); // The top right corner  
-	glVertex3f(x5, y5, 0.0f); // The bottom right corner 
+		
+	}
 
 	glEnd();
 }
@@ -60,7 +58,8 @@ void Game::draw()
 
 	glTranslatef(0.0f, 0.0f, -5.0f); // Push eveything 5 units back into the scene, otherwise we won't see the primitive  
 
-	renderPrimitive(); // Render the primitive  
+	renderSquare(1); // Render the primitive  
+	renderSquare(2); // Render the primitive
 
 	glFlush(); // Flush the OpenGL buffers to the window  
 	//...
@@ -74,28 +73,25 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	{
 	case 27: // the escape key
 	case 'a':
-		x2-=.1;
-		x3-=.1;
-		x4-=.1;
-		x5-=.1;
+
+		for (int i = 0; i < sqaure1.size(); i++) {
+			sqaure1[i].x -= .1;
+		}
 			break;
 	case 's':
-		y2 -= .1;
-		y3 -= .1;
-		y4 -= .1;
-		y5 -= .1;
+		for (int i = 0; i < sqaure1.size(); i++) {
+			sqaure1[i].y -= .1;
+		}
 		break;
 	case 'w':
-		y2 += .1;
-		y3 += .1;
-		y4 += .1;
-		y5 += .1;
+		for (int i = 0; i < sqaure1.size(); i++) {
+			sqaure1[i].y += .1;
+		}
 		break;
 	case 'd':
-		x2 += .1;
-		x3 += .1;
-		x4 += .1;
-		x5 += .1;
+		for (int i = 0; i < sqaure1.size(); i++) {
+			sqaure1[i].x += .1;
+		}
 		break;
 	default:
 		break;
