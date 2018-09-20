@@ -29,11 +29,40 @@ void Game::update()
 	//...
 }
 
+float x2 = -1.0f;
+float x3 = -1.0f;
+float x4 = 1.0f;
+float x5 = 1.0f;
+float y2 = -1.0f;
+float y3 = 1.0f;
+float y4 = 1.0f;
+float y5 = -1.0f;
+
+
+void renderPrimitive(void) {
+	glBegin(GL_QUADS); // Start drawing a quad primitive  
+
+
+	glVertex3f(x2, y2, 0.0f); // The bottom left corner  
+	glVertex3f(x3, y3, 0.0f); // The top left corner  
+	glVertex3f(x4, y4, 0.0f); // The top right corner  
+	glVertex3f(x5, y5, 0.0f); // The bottom right corner 
+
+	glEnd();
+}
+
 void Game::draw()
 {
-	glClearColor(0, 0, 0, 0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glClearColor(1.0f, 0.0f, 0.0f, 1.0f); // Clear the background of our window to red  
+	glClear(GL_COLOR_BUFFER_BIT); //Clear the colour buffer (more buffers later on)  
+	glLoadIdentity(); // Load the Identity Matrix to reset our drawing locations  
+
+	glTranslatef(0.0f, 0.0f, -5.0f); // Push eveything 5 units back into the scene, otherwise we won't see the primitive  
+
+	renderPrimitive(); // Render the primitive  
+
+	glFlush(); // Flush the OpenGL buffers to the window  
 	//...
 
 	glutSwapBuffers();
@@ -44,8 +73,31 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	switch(key)
 	{
 	case 27: // the escape key
-	case 'q': // the 'q' key
-		exit(1);
+	case 'a':
+		x2-=.1;
+		x3-=.1;
+		x4-=.1;
+		x5-=.1;
+			break;
+	case 's':
+		y2 -= .1;
+		y3 -= .1;
+		y4 -= .1;
+		y5 -= .1;
+		break;
+	case 'w':
+		y2 += .1;
+		y3 += .1;
+		y4 += .1;
+		y5 += .1;
+		break;
+	case 'd':
+		x2 += .1;
+		x3 += .1;
+		x4 += .1;
+		x5 += .1;
+		break;
+	default:
 		break;
 	}
 }
