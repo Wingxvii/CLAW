@@ -15,7 +15,7 @@ Game::Game()
 
 	NetworkServices::sendMessage(network->ConnectSocket, packet_data, packet_size);
 
-	//sendMessage();
+	sendMessage();
 }
 
 Game::~Game()
