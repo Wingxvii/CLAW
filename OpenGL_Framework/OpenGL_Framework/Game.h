@@ -1,18 +1,28 @@
 #pragma once
+
+#include <winsock2.h>
 #include <windows.h>
 #include <vector>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
-#include "MiniMath/Vector.h"
 
+#include "MiniMath/Vector.h"
 #include "Timer.h"
+#include "ClientNetwork.h"
+#include "Packet.h"
 
 class Game
 {
 public:
 	Game();
 	~Game();
+
+	ClientNetwork* network;
+
+	void sendMessage();
+
+	char network_data[MAX_PACKET_SIZE];
 
 	void initializeGame();
 	void update();
