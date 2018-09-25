@@ -1,6 +1,6 @@
 #include "NetworkServices.h"
 
-int NetworkServices::sendMessage(SOCKET curSocket, char * message, int messageSize)
+int NetworkServices::sendMessage(SOCKET curSocket, const char * message, int messageSize)
 {
 	//make sure to error check this in a real application 
 	//send a socket object and its message to the server 

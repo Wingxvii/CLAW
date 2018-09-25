@@ -28,13 +28,16 @@ Game::~Game()
 void Game::sendMessage()
 {
 	Packet packet;
-	packet.message = "Hello";
+
+	std::string message = "Hello";
+
+
+	strcpy_s(packet.data, message.c_str());
+
+	packet.packet_type = MESSAGE;
 
 	const unsigned int packet_size = sizeof(packet);
 	char packet_data[packet_size];
-
-	
-	packet.packet_type = MESSAGE;
 
 	packet.serialize(packet_data);
 
@@ -73,7 +76,7 @@ void Game::update()
 
 			case MESSAGE:
 
-				//printf(packet.message.c_str(), "\n");
+				//printf(packet.message, "\n");
 
 				break;
 

@@ -11,6 +11,7 @@
 #include "Timer.h"
 #include "ClientNetwork.h"
 #include "Packet.h"
+#include "FormatString.h"
 
 class Game
 {
