@@ -3,6 +3,7 @@
 #include <winsock2.h>
 #include <windows.h>
 #include <vector>
+#include <string>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
@@ -21,7 +22,7 @@ public:
 
 	ClientNetwork* network;
 
-	void sendMessage();
+	void sendMessage(int, std::string);
 
 	char network_data[MAX_PACKET_SIZE];
 

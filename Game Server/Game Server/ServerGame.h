@@ -30,5 +30,5 @@ private:
 	void sendActionPackets();
 
 	void pairClients(int);
-	void sendMessage(std::string message, int id);
+	void sendMessage(int clientid, int message_type, std::string message);
 };

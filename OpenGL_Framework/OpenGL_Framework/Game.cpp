@@ -15,7 +15,7 @@ Game::Game()
 
 	NetworkServices::sendMessage(network->ConnectSocket, packet_data, packet_size);
 
-	sendMessage();
+	sendMessage(MESSAGE, "Hello");
 }
 
 Game::~Game()
@@ -25,16 +25,14 @@ Game::~Game()
 	//...
 }
 
-void Game::sendMessage()
+void Game::sendMessage(int packet_type, std::string message)
 {
 	Packet packet;
 
-	std::string message = "Hello";
-
-
+	
 	strcpy_s(packet.data, message.c_str());
 
-	packet.packet_type = MESSAGE;
+	packet.packet_type = packet_type;
 
 	const unsigned int packet_size = sizeof(packet);
 	char packet_data[packet_size];
