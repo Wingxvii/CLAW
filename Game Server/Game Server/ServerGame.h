@@ -1,7 +1,8 @@
 #pragma once
 #include "ServerNetwork.h"
 #include "Packet.h"
-
+#include <vector>
+#include "ClientPair.h"
 class ServerGame
 {
 
@@ -12,6 +13,8 @@ public:
 
 	void update();
 	void receiveFromClients();
+
+	std::vector<ClientPair*> pairs;
 
 private:
 
@@ -25,4 +28,7 @@ private:
 	char network_data[MAX_PACKET_SIZE];
 
 	void sendActionPackets();
+
+	void pairClients(int);
+	void sendMessage(std::string message, int id);
 };

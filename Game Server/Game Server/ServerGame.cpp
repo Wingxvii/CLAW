@@ -27,10 +27,13 @@ void ServerGame::update()
 		printf("client %d has been connected to the server\n", client_id);
 
 		client_id++;
-		//pairClients(client_id);
+
+		pairClients(client_id);
 	}
 
 	receiveFromClients();
+
+
 }
 
 void ServerGame::receiveFromClients()
@@ -65,10 +68,11 @@ void ServerGame::receiveFromClients()
 
 				case MESSAGE:
 
-					//printf(packet.message.c_str(), "\n");
+						printf(packet.data, "\n");
+					
 
 				    //sendActionPackets();
-
+			
 					break;
 
 				default:
@@ -81,36 +85,44 @@ void ServerGame::receiveFromClients()
 			}
 		}
 	}
-	
 }
 
-//void ServerGame::pairClients(int id)
-//{
-//	if (pair[0] == -1) {
-//		pair[0] = id;
-//		//sendMessage("You are player 1", pair[0]);
-//	}
-//	else {
-//		pair[1] = id;
-//		//sendMessage("You are player 2", pair[1]);
-//	}
-//
-//}
+void ServerGame::pairClients(int id)
+{
+	if ((pairs.size() == 0)) {
+		ClientPair* c = new ClientPair();
+		pairs.push_back(c);
+	}
+	else if ((pairs.size() > 0) && (pairs.back()->checkIfClient2Assigned())) {
+		ClientPair* c = new ClientPair();
+		pairs.push_back(c);
+	}
 
-//void ServerGame::sendMessage(std::string message, int id)
-//{
-//	Packet packet;
-//	packet.message = "sdfsddsffdsfsdf";
-//
-//	const unsigned int packet_size = sizeof(packet);
-//	char packet_data[packet_size];
-//
-//
-//	packet.packet_type = MESSAGE;
-//
-//	packet.serialize(packet_data);
-//
-//
-//	network->sendTo(packet_data, packet_size, id);
-//}
+	if (pairs.back()->getClient1() == -1) {
+		pairs.back()->setClient1(id);
+		sendMessage("You are player 1", pairs.back()->getClient1());
+	}
+	else {
+		pairs.back()->setClient2(id);
+		sendMessage("You are player 2", pairs.back()->getClient2());
+	}
+
+}
+
+void ServerGame::sendMessage(std::string message, int id)
+{
+	//Packet packet;
+	//packet.message = (char*)message.c_str();
+
+	//const unsigned int packet_size = sizeof(packet);
+	//char packet_data[packet_size];
+
+
+	//packet.packet_type = MESSAGE;
+
+	//packet.serialize(packet_data);
+
+
+	//network->sendTo(packet_data, packet_size, id);
+}
 

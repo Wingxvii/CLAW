@@ -78,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientNetwork.h" />
+    <ClInclude Include="FormatString.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="NetworkServices.h" />
     <ClInclude Include="Packet.h" />
