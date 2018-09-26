@@ -13,6 +13,7 @@
 #include "ClientNetwork.h"
 #include "Packet.h"
 #include "FormatString.h"
+#include "Tokenizer.h"
 
 class Game
 {

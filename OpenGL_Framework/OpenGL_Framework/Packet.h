@@ -14,6 +14,8 @@ enum PacketTypes {
 
 	INPUT_DATA = 3,
 
+	PLAYER_NUM = 4,
+
 };
 
 struct Packet {

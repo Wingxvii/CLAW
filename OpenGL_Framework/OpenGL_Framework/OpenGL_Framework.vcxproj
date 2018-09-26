@@ -75,6 +75,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NetworkServices.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="Tokenizer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientNetwork.h" />
@@ -83,6 +84,7 @@
     <ClInclude Include="NetworkServices.h" />
     <ClInclude Include="Packet.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="Tokenizer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

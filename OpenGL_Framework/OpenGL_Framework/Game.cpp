@@ -16,6 +16,8 @@ Game::Game()
 	NetworkServices::sendMessage(network->ConnectSocket, packet_data, packet_size);
 
 	sendMessage(MESSAGE, "Hello");
+
+	Tokenizer::tokenize(' ', "This is a test string ");
 }
 
 Game::~Game()
