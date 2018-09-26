@@ -150,7 +150,7 @@ void ServerNetwork::sendTo(char * packets, int totalSize, int clientID)
 {
 
 	if (clientID != -1) {
-		SOCKET currentSocket = sessions.find(--clientID)->second;
+		SOCKET currentSocket = sessions.find(clientID)->second;
 		int iSendResult;
 
 		iSendResult = NetworkServices::sendMessage(currentSocket, packets, totalSize);

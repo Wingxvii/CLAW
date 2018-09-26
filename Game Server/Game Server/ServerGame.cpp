@@ -70,7 +70,7 @@ void ServerGame::receiveFromClients()
 
 						printf(packet.data, "\n");
 					
-
+						sendMessage(iter->first, MESSAGE, "Hello Back");
 				    //sendActionPackets();
 			
 					break;
@@ -100,29 +100,29 @@ void ServerGame::pairClients(int id)
 
 	if (pairs.back()->getClient1() == -1) {
 		pairs.back()->setClient1(id);
-		sendMessage("You are player 1", pairs.back()->getClient1());
+		sendMessage(pairs.back()->getClient1()-1, MESSAGE, "You are player 1");
 	}
 	else {
 		pairs.back()->setClient2(id);
-		sendMessage("You are player 2", pairs.back()->getClient2());
+		sendMessage(pairs.back()->getClient2()-1, MESSAGE, "You are player 2");
 	}
 
 }
 
-void ServerGame::sendMessage(std::string message, int id)
+void ServerGame::sendMessage(int clientID, int packetType, std::string message)
 {
-	//Packet packet;
-	//packet.message = (char*)message.c_str();
 
-	//const unsigned int packet_size = sizeof(packet);
-	//char packet_data[packet_size];
+	Packet packet;
 
+	strcpy_s(packet.data, message.c_str());
 
-	//packet.packet_type = MESSAGE;
+	packet.packet_type = packetType;
 
-	//packet.serialize(packet_data);
+	const unsigned int packet_size = sizeof(packet);
+	char packet_data[packet_size];
 
+	packet.serialize(packet_data);
 
-	//network->sendTo(packet_data, packet_size, id);
+	network->sendTo(packet_data, packet_size, clientID);
 }
 

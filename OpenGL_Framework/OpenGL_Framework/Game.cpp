@@ -29,7 +29,6 @@ void Game::sendMessage(int packet_type, std::string message)
 {
 	Packet packet;
 
-	
 	strcpy_s(packet.data, message.c_str());
 
 	packet.packet_type = packet_type;
@@ -74,7 +73,7 @@ void Game::update()
 
 			case MESSAGE:
 
-				//printf(packet.message, "\n");
+				printf(packet.data, "\n");
 
 				break;
 
