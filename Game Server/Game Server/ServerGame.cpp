@@ -39,6 +39,7 @@ void ServerGame::update()
 void ServerGame::receiveFromClients()
 {
 	Packet packet;
+	std::vector<std::string> parsedData;
 
 	// go through all clients
 	std::map<unsigned int, SOCKET>::iterator iter;
@@ -46,6 +47,8 @@ void ServerGame::receiveFromClients()
 	for (iter = network->sessions.begin(); iter != network->sessions.end(); iter++)
 	{
 		int data_length = network->receiveData(iter->first, network_data);
+		
+		
 
 		if (data_length > 0)
 		{
@@ -62,7 +65,6 @@ void ServerGame::receiveFromClients()
 
 					printf("server received init packet from client\n");
 
-					//sendActionPackets();
 
 					break;
 
@@ -70,11 +72,15 @@ void ServerGame::receiveFromClients()
 
 						printf(packet.data, "\n");
 					
-						sendMessage(iter->first, MESSAGE, "Hello Back");
-				    //sendActionPackets();
+						//sendMessage(iter->first, MESSAGE, "Hello Back");
 			
 					break;
 
+				case INPUT_DATA:
+					parsedData = Tokenizer::tokenize(',', packet.data);
+
+					handleInputData(parsedData);
+					break;
 				default:
 					printf(network_data, "\n");
 
@@ -100,11 +106,11 @@ void ServerGame::pairClients(int id)
 
 	if (pairs.back()->getClient1() == -1) {
 		pairs.back()->setClient1(id);
-		sendMessage(pairs.back()->getClient1()-1, MESSAGE, "You are player 1");
+		sendMessage(pairs.back()->getClient1()-1, PLAYER_NUM, "1,");
 	}
 	else {
 		pairs.back()->setClient2(id);
-		sendMessage(pairs.back()->getClient2()-1, MESSAGE, "You are player 2");
+		sendMessage(pairs.back()->getClient2()-1, PLAYER_NUM, "2,");
 	}
 
 }
@@ -124,5 +130,42 @@ void ServerGame::sendMessage(int clientID, int packetType, std::string message)
 	packet.serialize(packet_data);
 
 	network->sendTo(packet_data, packet_size, clientID);
+}
+//Index 0 is the player num 
+//Index 1 is the key pushed
+void ServerGame::handleInputData(const std::vector<std::string>& data)
+{
+	float x = 0;
+	float y = 0;
+
+	int playerNum = std::stoi(data[0]);
+
+	switch ((data[1])[0])
+	{
+	case 'a':
+		x = -0.1f;
+		
+		break;
+	case 's':
+		y = -0.1f;
+		
+		break;
+	case 'w':
+		y = 0.1f;
+		
+		break;
+	case 'd':
+		x = 0.1f;
+	
+		break;
+	default:
+		break;
+	}
+
+	sendMessage(0, POSITION_DATA, std::to_string(playerNum) + "," + to_string(x) + "," + to_string(y) + ","); //send vecoter to add;
+		if (network->sessions.size() > 1) {
+			sendMessage(1, POSITION_DATA, std::to_string(playerNum) + "," + to_string(x) + "," + to_string(y) + ","); //send vecoter to add;
+		}
+
 }
 

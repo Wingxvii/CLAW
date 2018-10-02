@@ -17,7 +17,7 @@ Game::Game()
 
 	sendMessage(MESSAGE, "Hello");
 
-	Tokenizer::tokenize(' ', "This is a test string ");
+	//Tokenizer::tokenize(' ', "This is a test string ");
 }
 
 Game::~Game()
@@ -58,35 +58,8 @@ void Game::update()
 	float deltaTime = updateTimer->getElapsedTimeSeconds();
 	TotalGameTime += deltaTime;
 
-	Packet packet;
-	int data_length = network->receivePackets(network_data);
-
-	if (data_length <= 0)// if data length is zero or less no data recieve 
-	{
-		return;
-	}
-		int i = 0;
-		while (i < (unsigned int)data_length)
-		{
-			packet.deserialize(&(network_data[i]));
-			i += sizeof(Packet);
-
-			switch (packet.packet_type) {
-
-			case MESSAGE:
-
-				printf(packet.data, "\n");
-
-				break;
-
-			default:
-
-				printf("error in packet types\n");
-
-				break;
-			}
-		}
 	
+	handlePackets();
 		
 	//...
 }
@@ -131,28 +104,41 @@ void Game::draw()
 
 void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 {
+	std::string newMessage;
+
 	switch(key)
 	{
-	case 27: // the escape key
 	case 'a':
 
 		for (int i = 0; i < sqaure1.size(); i++) {
-			sqaure1[i].x -= .1;
+			newMessage = std::to_string(playerNum) + ",a,";
+
+			sendMessage(INPUT_DATA, newMessage);
+			
 		}
 			break;
 	case 's':
 		for (int i = 0; i < sqaure1.size(); i++) {
-			sqaure1[i].y -= .1;
+			newMessage = std::to_string(playerNum) + ",s,";
+
+			sendMessage(INPUT_DATA, newMessage);
+			
 		}
 		break;
 	case 'w':
 		for (int i = 0; i < sqaure1.size(); i++) {
-			sqaure1[i].y += .1;
+			newMessage = std::to_string(playerNum) + ",w,";
+
+			sendMessage(INPUT_DATA, newMessage);
+			
 		}
 		break;
 	case 'd':
 		for (int i = 0; i < sqaure1.size(); i++) {
-			sqaure1[i].x += .1;
+			newMessage = std::to_string(playerNum) + ",d,";
+
+			sendMessage(INPUT_DATA, newMessage);
+			
 		}
 		break;
 	default:
@@ -206,4 +192,73 @@ void Game::mouseClicked(int button, int state, int x, int y)
  */
 void Game::mouseMoved(int x, int y)
 {
+}
+
+void Game::handlePackets()
+{
+	Packet packet;
+	std::vector<std::string> parsedData;
+
+	int data_length = network->receivePackets(network_data);
+
+	if (data_length <= 0)// if data length is zero or less no data recieve 
+	{
+		return;
+	}
+	int i = 0;
+	while (i < (unsigned int)data_length)
+	{
+		packet.deserialize(&(network_data[i]));
+		i += sizeof(Packet);
+
+		switch (packet.packet_type) {
+
+		case MESSAGE:
+
+			printf(packet.data, "\n");
+
+			break;
+
+		case PLAYER_NUM:
+
+			parsedData = Tokenizer::tokenize(',', packet.data);
+
+			playerNum = std::stoi(parsedData[0]);
+
+			break;
+
+		case POSITION_DATA:
+			parsedData = Tokenizer::tokenize(',', packet.data);
+
+			updatePlayers(parsedData);
+
+			break;
+
+		default:
+
+			printf("error in packet types\n");
+
+			break;
+		}
+	}
+
+}
+
+void Game::updatePlayers(const std::vector<std::string>& data)
+{
+	int playerToMove = std::stoi(data[0]);
+	vec2 translate = {std::stof(data[1]), std::stof(data[2])};
+	
+	if (playerToMove == 1) {
+		for (int i = 0; i < sqaure1.size(); i++) {
+			sqaure1[i].x += translate.x;
+			sqaure1[i].y += translate.y;
+		}
+	}
+	else {
+		for (int i = 0; i < sqaure2.size(); i++) {
+			sqaure2[i].x += translate.x;
+			sqaure2[i].y += translate.y;
+		}
+	}
 }

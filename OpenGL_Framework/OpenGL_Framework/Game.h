@@ -42,5 +42,9 @@ public:
 	float TotalGameTime = 0.0f;
 
 private:
+	void handlePackets();
 
+	void updatePlayers(const std::vector<std::string>&);
+
+	int playerNum = 0;
 };

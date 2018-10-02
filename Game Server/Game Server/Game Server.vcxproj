@@ -120,6 +120,7 @@
     <ClInclude Include="Packet.h" />
     <ClInclude Include="ServerGame.h" />
     <ClInclude Include="ServerNetwork.h" />
+    <ClInclude Include="Tokenizer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClientPair.cpp" />
@@ -127,6 +128,7 @@
     <ClCompile Include="NetworkServices.cpp" />
     <ClCompile Include="ServerGame.cpp" />
     <ClCompile Include="ServerNetwork.cpp" />
+    <ClCompile Include="Tokenizer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
