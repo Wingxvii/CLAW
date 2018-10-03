@@ -1,4 +1,6 @@
 #include "ClientNetwork.h"
+#include <iostream>
+#include <string>
 
 ClientNetwork::ClientNetwork(void)
 {
@@ -26,9 +28,13 @@ ClientNetwork::ClientNetwork(void)
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = IPPROTO_TCP;  //TCP connection!!!
+	
+	std::string ip;
 
+	printf("Please Enter Server's IP Address \n");
+	std::cin >> ip;
 	//resolve server address and port
-	iResult = getaddrinfo("127.0.0.1", DEFAULT_PORT, &hints, &result);
+	iResult = getaddrinfo(ip.c_str(), DEFAULT_PORT, &hints, &result);
 
 	if (iResult != 0)
 	{
