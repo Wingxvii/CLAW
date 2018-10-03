@@ -8,12 +8,16 @@
 #include <GL/glu.h>
 #include <GL/glut.h>
 
-#include "MiniMath/Vector.h"
+#include "glm/glm.hpp"
+
+
 #include "Timer.h"
 #include "ClientNetwork.h"
 #include "Packet.h"
 #include "FormatString.h"
 #include "Tokenizer.h"
+
+using glm::vec2;
 
 class Game
 {
