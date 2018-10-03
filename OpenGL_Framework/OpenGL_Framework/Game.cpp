@@ -31,7 +31,7 @@ void Game::sendMessage(int packet_type, std::string message)
 {
 	Packet packet;
 
-	strcpy_s(packet.data, message.c_str());
+	strcpy_s(packet.data, message.c_str() + '\0');
 
 	packet.packet_type = packet_type;
 

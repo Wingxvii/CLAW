@@ -120,7 +120,7 @@ void ServerGame::sendMessage(int clientID, int packetType, std::string message)
 
 	Packet packet;
 
-	strcpy_s(packet.data, message.c_str());
+	strcpy_s(packet.data, message.c_str() + '\0');
 
 	packet.packet_type = packetType;
 
