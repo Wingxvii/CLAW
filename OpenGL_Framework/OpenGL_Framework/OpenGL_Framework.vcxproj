@@ -73,7 +73,9 @@
     <ClCompile Include="ClientNetwork.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="NetworkServices.cpp" />
+    <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Tokenizer.cpp" />
   </ItemGroup>
@@ -81,8 +83,10 @@
     <ClInclude Include="ClientNetwork.h" />
     <ClInclude Include="FormatString.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="NetworkServices.h" />
     <ClInclude Include="Packet.h" />
+    <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Tokenizer.h" />
   </ItemGroup>
