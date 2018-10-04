@@ -4,13 +4,17 @@
 #include <windows.h>
 #include <vector>
 #include <string>
+
+#include "GL\glew.h"
+
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
 
 #include "glm/glm.hpp"
 
-
+#include "ShaderProgram.h"
+#include "Mesh.h"
 #include "Timer.h"
 #include "ClientNetwork.h"
 #include "Packet.h"
