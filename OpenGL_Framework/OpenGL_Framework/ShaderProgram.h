@@ -25,6 +25,10 @@ public:
 
 	//requires a relink before opengl registers new attribute
 	void AddAttribute(unsigned int index, const std::string &attribName);
+	//version that auto-relinks(use for single add)
+	void AddAttrib(unsigned int index, const std::string &attribName);
+
+
 
 	//returns -1 if attribute does not exist in shader
 	int GetAttribLocation(const std::string &attribName);
