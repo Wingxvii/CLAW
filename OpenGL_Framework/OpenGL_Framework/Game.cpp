@@ -24,7 +24,8 @@ Game::~Game()
 {
 	delete updateTimer;
 
-	//...
+	PassThrough.UnLoad();
+	Crate.Unload();
 }
 
 void Game::sendMessage(int packet_type, std::string message)
@@ -64,6 +65,10 @@ void Game::initializeGame()
 	}
 
 	//create camera
+	float aspectRatio = WINDOW_WIDTH / WINDOW_HEIGHT;
+	camera.perspective(60.0f, aspectRatio, 1.0f, 1000.0f);
+	camera.m_pLocalPosition = glm::vec3(0.0f, 0.0f, 5.0f);
+
 
 }
 
@@ -91,12 +96,20 @@ void Game::draw()
 
 	glClearColor(1.0f, 0.0f, 0.0f, 1.0f); // Clear the background of our window to red  
 	glClear(GL_COLOR_BUFFER_BIT); //Clear the colour buffer (more buffers later on)  
-	glLoadIdentity(); // Load the Identity Matrix to reset our drawing locations  
 
-	glTranslatef(0.0f, 0.0f, -5.0f); // Push eveything 5 units back into the scene, otherwise we won't see the primitive  
+	PassThrough.Bind();
 
-	glFlush(); // Flush the OpenGL buffers to the window  
-	//...
+	//data in column major
+	float crateData[16] = { CrateTransform[0][0] , CrateTransform[1][0], CrateTransform[2][0], CrateTransform[3][0], 
+	CrateTransform[0][1] , CrateTransform[1][1], CrateTransform[2][1], CrateTransform[3][1],
+	CrateTransform[0][2] , CrateTransform[1][2], CrateTransform[2][2], CrateTransform[3][2],
+	CrateTransform[0][3] , CrateTransform[1][3], CrateTransform[2][3], CrateTransform[3][3]
+	};
+
+
+
+	PassThrough.SendUniformMat4("uModel", crateData, true);
+	PassThrough.SendUniformMat4("uView", crateData, true);
 
 	glutSwapBuffers();
 }

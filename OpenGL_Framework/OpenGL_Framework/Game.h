@@ -71,4 +71,6 @@ private:
 	void updatePlayers(const std::vector<std::string>&);
 
 	int playerNum = 0;
+
+	float getData(glm::mat4);
 };
