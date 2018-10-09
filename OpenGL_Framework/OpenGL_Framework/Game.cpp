@@ -2,6 +2,7 @@
 
 Game::Game()
 {
+	/*
 	network = new ClientNetwork();
 
 	// send init packet
@@ -16,7 +17,7 @@ Game::Game()
 	NetworkServices::sendMessage(network->ConnectSocket, packet_data, packet_size);
 
 	sendMessage(MESSAGE, "Hello");
-
+	*/
 	//Tokenizer::tokenize(' ', "This is a test string ");
 }
 
@@ -97,19 +98,22 @@ void Game::draw()
 	glClearColor(1.0f, 0.0f, 0.0f, 1.0f); // Clear the background of our window to red  
 	glClear(GL_COLOR_BUFFER_BIT); //Clear the colour buffer (more buffers later on)  
 
+	//bind shader
 	PassThrough.Bind();
 
-	//data in column major
-	float crateData[16] = { CrateTransform[0][0] , CrateTransform[1][0], CrateTransform[2][0], CrateTransform[3][0], 
-	CrateTransform[0][1] , CrateTransform[1][1], CrateTransform[2][1], CrateTransform[3][1],
-	CrateTransform[0][2] , CrateTransform[1][2], CrateTransform[2][2], CrateTransform[3][2],
-	CrateTransform[0][3] , CrateTransform[1][3], CrateTransform[2][3], CrateTransform[3][3]
-	};
+	//send data to shader
+	PassThrough.SendUniformMat4("uModel", getData(CrateTransform), true);
+	PassThrough.SendUniformMat4("uView", getData(glm::inverse(camera.getLocalToWorldMatrix())), true);
+	PassThrough.SendUniformMat4("uProj", getData(camera.getProjection()), true);
 
-
-
-	PassThrough.SendUniformMat4("uModel", crateData, true);
-	PassThrough.SendUniformMat4("uView", crateData, true);
+	//bind object
+	glBindVertexArray(Crate.VAO);
+	//draw object
+	glDrawArrays(GL_TRIANGLES, 0, Crate.GetNumVertices());
+	//unbind object
+	glBindVertexArray(0);
+	//unbind shader
+	PassThrough.UnBind();
 
 	glutSwapBuffers();
 }
@@ -240,4 +244,15 @@ void Game::updatePlayers(const std::vector<std::string>& data)
 	}
 	else {
 	}
+}
+
+float* Game::getData(glm::mat4 obj)
+{
+	//data in column major
+	float data[16] = { obj[0][0] , obj[1][0], obj[2][0], obj[3][0],
+	obj[0][1] , obj[1][1], obj[2][1], obj[3][1],
+	obj[0][2] , obj[1][2], obj[2][2], obj[3][2],
+	obj[0][3] , obj[1][3], obj[2][3], obj[3][3]
+	};
+	return data;
 }

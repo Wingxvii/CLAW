@@ -72,5 +72,5 @@ private:
 
 	int playerNum = 0;
 
-	float getData(glm::mat4);
+	float* getData(glm::mat4);
 };
