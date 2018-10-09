@@ -41,7 +41,6 @@ struct MeshFace {
 		normals[2] = n3;
 
 	}
-
 	unsigned vertices[3];
 	unsigned textureUVs[3];
 	unsigned normals[3];
@@ -89,6 +88,26 @@ bool Mesh::LoadfromFile(const std::string & file)
 			//a comment
 			continue;
 		}
+		else if (strstr(inputString, "o") != nullptr || strstr(inputString, "s") != nullptr || strstr(inputString, "mtllib") != nullptr || strstr(inputString, "usemtl") != nullptr) {
+			//ignores unused data
+			continue;
+		}
+		else if (strstr(inputString, "vt") != nullptr) {
+			//UV data
+
+			glm::vec2 temp;
+			sscanf_s(inputString, "vt %f %f", &temp.x, &temp.y);
+			textureData.push_back(temp);
+
+		}
+		else if (strstr(inputString, "vn") != nullptr) {
+			//vertex data
+
+			glm::vec3 temp;
+
+			sscanf_s(inputString, "vn %f %f %f", &temp.x, &temp.y, &temp.z);
+			normalData.push_back(temp);
+		}
 		else if (strstr(inputString, "v") != nullptr) {
 			//vertex data
 
@@ -97,32 +116,14 @@ bool Mesh::LoadfromFile(const std::string & file)
 			sscanf_s(inputString, "v %f %f %f", &temp.x, &temp.y, &temp.z);
 			vertexData.push_back(temp);
 		}
-		else if (strstr(inputString, "vt") != nullptr) {
-			//UV sata
-
-			glm::vec2 temp;
-
-			sscanf_s(inputString, "vt %f %f", &temp.x, &temp.y);
-			textureData.push_back(temp);
-		}
-		else if (strstr(inputString, "vn") != nullptr) {
-			//vertex sata
-
-			glm::vec3 temp;
-
-			sscanf_s(inputString, "vn %f %f %f", &temp.x, &temp.y, &temp.z);
-			normalData.push_back(temp);
-		}
 		else if (strstr(inputString, "f") != nullptr) {
-			//vertex sata
+			//vertex data
 
 			MeshFace temp;
-
-			sscanf_s(inputString, "f %u/%u/%u %u/%u/%u %u/%u/%u",
-				&temp.vertices[0], &temp.textureUVs[0], &temp.normals[0],
-				&temp.vertices[1], &temp.textureUVs[1], &temp.normals[1],
-				&temp.vertices[2], &temp.textureUVs[2], &temp.normals[2]);
-
+				sscanf_s(inputString, "f %u/%u/%u %u/%u/%u %u/%u/%u",
+					&temp.vertices[0], &temp.textureUVs[0], &temp.normals[0],
+					&temp.vertices[1], &temp.textureUVs[1], &temp.normals[1],
+					&temp.vertices[2], &temp.textureUVs[2], &temp.normals[2]);
 			faceData.push_back(temp);
 		}
 
@@ -137,6 +138,7 @@ bool Mesh::LoadfromFile(const std::string & file)
 
 			unPackedTextureData.push_back(textureData[faceData[i].textureUVs[j] - 1].x);
 			unPackedTextureData.push_back(textureData[faceData[i].textureUVs[j] - 1].y);
+			
 
 			unPackedNormalData.push_back(normalData[faceData[i].normals[j] - 1].x);
 			unPackedNormalData.push_back(normalData[faceData[i].normals[j] - 1].y);
@@ -155,7 +157,9 @@ bool Mesh::LoadfromFile(const std::string & file)
 
 	//Vertex buffer objects
 	glGenBuffers(1, &VBO_Verticies);
+
 	glGenBuffers(1, &VBO_UVs);
+
 	glGenBuffers(1, &VBO_Normals);
 
 	//stream 0 - verts

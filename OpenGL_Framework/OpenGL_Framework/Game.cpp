@@ -2,7 +2,7 @@
 
 Game::Game()
 {
-	/*
+	
 	network = new ClientNetwork();
 
 	// send init packet
@@ -17,7 +17,7 @@ Game::Game()
 	NetworkServices::sendMessage(network->ConnectSocket, packet_data, packet_size);
 
 	sendMessage(MESSAGE, "Hello");
-	*/
+	
 	//Tokenizer::tokenize(' ', "This is a test string ");
 }
 
@@ -95,8 +95,9 @@ void Game::update()
 void Game::draw()
 {
 
-	glClearColor(1.0f, 0.0f, 0.0f, 1.0f); // Clear the background of our window to red  
-	glClear(GL_COLOR_BUFFER_BIT); //Clear the colour buffer (more buffers later on)  
+	glEnable(GL_DEPTH_TEST);
+	glClearColor(0, 0, 0, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//bind shader
 	PassThrough.Bind();
