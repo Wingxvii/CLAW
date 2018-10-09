@@ -7,14 +7,15 @@
 
 #include "GL\glew.h"
 
+#include "ShaderProgram.h"
+#include "Mesh.h"
+
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
 
-#include "glm/glm.hpp"
 
-#include "ShaderProgram.h"
-#include "Mesh.h"
+#include "Camera.h"
 #include "Timer.h"
 #include "ClientNetwork.h"
 #include "Packet.h"
@@ -22,6 +23,10 @@
 #include "Tokenizer.h"
 
 using glm::vec2;
+
+#define WINDOW_WIDTH			800
+#define WINDOW_HEIGHT			600
+#define FRAMES_PER_SECOND		60
 
 class Game
 {
@@ -48,6 +53,17 @@ public:
 	/* Data Members */
 	Timer *updateTimer	= nullptr;
 	float TotalGameTime = 0.0f;
+
+	//object
+	Mesh Crate;
+	glm::mat4 CrateTransform;
+
+	//shader
+	ShaderProgram PassThrough;
+
+	//camera
+	Camera camera;
+
 
 private:
 	void handlePackets();

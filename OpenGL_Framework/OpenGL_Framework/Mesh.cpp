@@ -55,6 +55,11 @@ Mesh::~Mesh()
 {
 }
 
+Mesh::Mesh(const std::string & file)
+{
+	LoadfromFile(file);
+}
+
 bool Mesh::LoadfromFile(const std::string & file)
 {
 	ifstream input;

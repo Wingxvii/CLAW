@@ -10,6 +10,8 @@ public:
 	Mesh();
 	~Mesh();
 
+	Mesh(const std::string &file);
+
 	//load a mesh and send to opengl
 	bool LoadfromFile(const std::string &file);
 

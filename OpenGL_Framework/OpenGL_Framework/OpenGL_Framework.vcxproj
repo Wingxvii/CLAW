@@ -72,6 +72,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ClientNetwork.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
@@ -80,8 +81,10 @@
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Tokenizer.cpp" />
+    <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="ClientNetwork.h" />
     <ClInclude Include="FormatString.h" />
     <ClInclude Include="Game.h" />
@@ -91,6 +94,7 @@
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Tokenizer.h" />
+    <ClInclude Include="Transform.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

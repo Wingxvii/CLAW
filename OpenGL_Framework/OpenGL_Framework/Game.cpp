@@ -46,8 +46,25 @@ void Game::sendMessage(int packet_type, std::string message)
 void Game::initializeGame()
 {
 	updateTimer = new Timer();
+		
+	glEnable(GL_DEPTH_TEST);
 
-	//...
+	//load crate shaders
+	if (!PassThrough.Load("./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag")) {
+		std::cout << "Shaders failed to init.\n";
+		system("pause");
+		exit(0);
+	}
+
+	//load crate mesh
+	if (!Crate.LoadfromFile("./Assets/Models/Crate.obj")) {
+		std::cout << "Model failed to load.\n";
+		system("pause");
+		exit(0);
+	}
+
+	//create camera
+
 }
 
 void Game::update()
@@ -58,31 +75,16 @@ void Game::update()
 	float deltaTime = updateTimer->getElapsedTimeSeconds();
 	TotalGameTime += deltaTime;
 
-	
+	camera.update(deltaTime);
+
+
 	handlePackets();
 		
 	//...
 }
 
-std::vector<vec2> sqaure1 = { {-5.0f, -1.0f}, {-5.0f, 1.0f}, {-3.0f, 1.0f}, {-3.0f, -1.0f} };
-std::vector<vec2> sqaure2 = { {3.0f, -1.0f}, {3.0f, 1.0f}, {5.0f, 1.0f}, {5.0f, -1.0f} };
-
-void renderSquare(int s) {
-	glBegin(GL_QUADS); // Start drawing a quad primitive  
-
-	for (int i = 0; i < 4; i++) {
-		if (s == 1) {
-			glVertex3f(sqaure1[i].x, sqaure1[i].y, 0.0f); // The bottom left corner
-		}
-		else {
-			glVertex3f(sqaure2[i].x, sqaure2[i].y, 0.0f); // The bottom left corner
-		}
-
-		
-	}
-
-	glEnd();
-}
+//std::vector<vec2> sqaure1 = { {-5.0f, -1.0f}, {-5.0f, 1.0f}, {-3.0f, 1.0f}, {-3.0f, -1.0f} };
+//std::vector<vec2> sqaure2 = { {3.0f, -1.0f}, {3.0f, 1.0f}, {5.0f, 1.0f}, {5.0f, -1.0f} };
 
 void Game::draw()
 {
@@ -92,9 +94,6 @@ void Game::draw()
 	glLoadIdentity(); // Load the Identity Matrix to reset our drawing locations  
 
 	glTranslatef(0.0f, 0.0f, -5.0f); // Push eveything 5 units back into the scene, otherwise we won't see the primitive  
-
-	renderSquare(1); // Render the primitive  
-	renderSquare(2); // Render the primitive
 
 	glFlush(); // Flush the OpenGL buffers to the window  
 	//...
@@ -109,37 +108,12 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	switch(key)
 	{
 	case 'a':
-
-		for (int i = 0; i < sqaure1.size(); i++) {
-			newMessage = std::to_string(playerNum) + ",a,";
-
-			sendMessage(INPUT_DATA, newMessage);
-			
-		}
-			break;
+		break;
 	case 's':
-		for (int i = 0; i < sqaure1.size(); i++) {
-			newMessage = std::to_string(playerNum) + ",s,";
-
-			sendMessage(INPUT_DATA, newMessage);
-			
-		}
 		break;
 	case 'w':
-		for (int i = 0; i < sqaure1.size(); i++) {
-			newMessage = std::to_string(playerNum) + ",w,";
-
-			sendMessage(INPUT_DATA, newMessage);
-			
-		}
 		break;
 	case 'd':
-		for (int i = 0; i < sqaure1.size(); i++) {
-			newMessage = std::to_string(playerNum) + ",d,";
-
-			sendMessage(INPUT_DATA, newMessage);
-			
-		}
 		break;
 	default:
 		break;
@@ -250,15 +224,7 @@ void Game::updatePlayers(const std::vector<std::string>& data)
 	vec2 translate = {std::stof(data[1]), std::stof(data[2])};
 	
 	if (playerToMove == 1) {
-		for (int i = 0; i < sqaure1.size(); i++) {
-			sqaure1[i].x += translate.x;
-			sqaure1[i].y += translate.y;
-		}
 	}
 	else {
-		for (int i = 0; i < sqaure2.size(); i++) {
-			sqaure2[i].x += translate.x;
-			sqaure2[i].y += translate.y;
-		}
 	}
 }
