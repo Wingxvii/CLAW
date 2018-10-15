@@ -14,7 +14,6 @@
 #include <GL/glu.h>
 #include <GL/glut.h>
 
-
 #include "Camera.h"
 #include "Timer.h"
 #include "ClientNetwork.h"

@@ -1,9 +1,11 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <winsock2.h>
 #include <windows.h>
 #include <iostream>
 #include "Game.h"
 #include <GL\freeglut.h>
-
+#include "main.h"
 
 const int FRAME_DELAY_SPRITE = 1000 / FRAMES_PER_SECOND;
 
@@ -78,6 +80,100 @@ void reshape(int width, int height) {
 	glMatrixMode(GL_MODELVIEW); // Switch back to the model view matrix, so that we can start drawing shapes correctly  
 }
 
+
+void CALLBACK OpenGLDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *msg, const void *data) 
+{
+	std::cout << "CALLBACK\n";
+	char buffer[9] = { '\0' };
+	sprintf(buffer, "%.8x", id);
+
+	std::string message("OpenGL(0x");
+	message += buffer;
+	message += "): ";
+
+	//define error
+	switch (type) {
+	case GL_DEBUG_TYPE_ERROR:
+		message += "Error";
+		break;
+	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+		message += "Deprecated Behaviour";
+		break;
+	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+		message += "Undefined Behaviour";
+		break;
+	case GL_DEBUG_TYPE_PORTABILITY:
+		message += "Portability Issue";
+		break;
+	case GL_DEBUG_TYPE_MARKER:
+		message += "Stream annotation";
+		break;
+	case GL_DEBUG_TYPE_OTHER:
+	default:
+		message += "Other Type";
+		break;
+	}
+
+	message += "\nSource: ";
+
+	switch (source) {
+	case GL_DEBUG_SOURCE_API:
+		message += "API";
+		break;
+	case GL_DEBUG_SOURCE_SHADER_COMPILER:
+		message += "Shader complier";
+		break;
+	case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+		message += "Window System";
+		break;
+	case GL_DEBUG_SOURCE_THIRD_PARTY:
+		message += "Third Party";
+		break;
+	case GL_DEBUG_SOURCE_APPLICATION:
+		message += "Application";
+		break;
+	case GL_DEBUG_SOURCE_OTHER:
+	default:
+		message += "Other Source";
+		break;
+	}
+	message += "\nSeverity: ";
+	switch (severity) {
+	case GL_DEBUG_SEVERITY_HIGH:
+		message += "HIGH";
+		break;
+	case GL_DEBUG_SEVERITY_MEDIUM:
+		message += "Medium";
+		break;
+	case GL_DEBUG_SEVERITY_LOW:
+		message += "low";
+		break;
+	case GL_DEBUG_SEVERITY_NOTIFICATION:
+		message += "Notification";
+		break;
+	default:
+		message += "Unknown Severity";
+		break;
+	}
+	message += "\n";
+	message += msg;
+	message += "\n";
+
+	if (type == GL_DEBUG_TYPE_ERROR) {
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+	}
+	std::cout << message << std::endl;
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+
+}
+
+void InitOpenGLDebugCallback() {
+	glutInitContextFlags(GLUT_FORWARD_COMPATIBLE | GLUT_DEBUG);
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback(OpenGLDebugCallback, NULL);
+
+}
+
 int main(int argc, char **argv)
 {
 	/* initialize the window and OpenGL properly */
@@ -107,6 +203,10 @@ int main(int argc, char **argv)
 	glutTimerFunc(1, TimerCallbackFunction, 0);
 	glutReshapeFunc(reshape); // Tell GLUT to use the method "reshape" for reshaping 
 	
+#ifdef _DEBUG
+	InitOpenGLDebugCallback();
+#endif
+
 	/* init the game */
 	theGame = new Game();
 	theGame->initializeGame();
