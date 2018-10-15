@@ -21,6 +21,7 @@
 #include "Packet.h"
 #include "FormatString.h"
 #include "Tokenizer.h"
+#include "glm/ext.hpp"
 
 using glm::vec2;
 
@@ -54,15 +55,12 @@ public:
 	Timer *updateTimer	= nullptr;
 	float TotalGameTime = 0.0f;
 
-	//object
-	Mesh Crate;
-	glm::mat4 CrateTransform;
-
-	//shader
+	Mesh box;
 	ShaderProgram PassThrough;
 
-	//camera
-	Camera camera;
+	glm::mat4x4 cameraTransform = glm::mat4x4(1.0);
+	glm::mat4x4 cameraProjection = glm::mat4x4(1.0);
+	glm::mat4x4 boxTransform = glm::mat4x4(1.0);
 
 
 private:

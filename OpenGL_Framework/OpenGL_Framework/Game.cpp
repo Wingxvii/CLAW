@@ -26,7 +26,7 @@ Game::~Game()
 	delete updateTimer;
 
 	PassThrough.UnLoad();
-	Crate.Unload();
+	box.Unload();
 }
 
 void Game::sendMessage(int packet_type, std::string message)
@@ -59,16 +59,14 @@ void Game::initializeGame()
 	}
 
 	//load crate mesh
-	if (!Crate.LoadfromFile("./Assets/Models/Crate.obj")) {
+	if (!box.LoadfromFile("./Assets/Models/crate.obj")) {
 		std::cout << "Model failed to load.\n";
 		system("pause");
 		exit(0);
 	}
 
-	//create camera
-	float aspectRatio = WINDOW_WIDTH / WINDOW_HEIGHT;
-	camera.perspective(60.0f, aspectRatio, 1.0f, 1000.0f);
-	camera.m_pLocalPosition = glm::vec3(0.0f, 0.0f, 5.0f);
+	cameraTransform = glm::translate(cameraTransform, glm::vec3(0.0f, 0.0f, 0.0f));
+	cameraProjection = glm::perspective(60.0f, (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 10000.0f);
 
 
 }
@@ -81,7 +79,7 @@ void Game::update()
 	float deltaTime = updateTimer->getElapsedTimeSeconds();
 	TotalGameTime += deltaTime;
 
-	camera.update(deltaTime);
+	//camera.update(deltaTime);
 
 
 	handlePackets();
@@ -89,8 +87,16 @@ void Game::update()
 	//...
 }
 
-//std::vector<vec2> sqaure1 = { {-5.0f, -1.0f}, {-5.0f, 1.0f}, {-3.0f, 1.0f}, {-3.0f, -1.0f} };
-//std::vector<vec2> sqaure2 = { {3.0f, -1.0f}, {3.0f, 1.0f}, {5.0f, 1.0f}, {5.0f, -1.0f} };
+float* convertToFloats(glm::mat4 matrix) {
+
+	float* fArray = new float[16];
+
+	const float *pSource = (const float*)glm::value_ptr(matrix);
+	for (int i = 0; i < 16; ++i)
+		fArray[i] = pSource[i];
+
+	return fArray;
+}
 
 void Game::draw()
 {
@@ -99,21 +105,16 @@ void Game::draw()
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//bind shader
 	PassThrough.Bind();
 
-	//send data to shader
-	PassThrough.SendUniformMat4("uModel", getData(CrateTransform), true);
-	PassThrough.SendUniformMat4("uView", getData(glm::inverse(camera.getLocalToWorldMatrix())), true);
-	PassThrough.SendUniformMat4("uProj", getData(camera.getProjection()), true);
+	PassThrough.SendUniformMat4("uModel", convertToFloats(boxTransform), false);
+	PassThrough.SendUniformMat4("uView", convertToFloats(glm::inverse(cameraTransform)), false);
+	PassThrough.SendUniformMat4("uProj", convertToFloats(cameraProjection), false);
 
-	//bind object
-	glBindVertexArray(Crate.VAO);
-	//draw object
-	glDrawArrays(GL_TRIANGLES, 0, Crate.GetNumVertices());
-	//unbind object
+	glBindVertexArray(box.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, box.GetNumVertices());
 	glBindVertexArray(0);
-	//unbind shader
+
 	PassThrough.UnBind();
 
 	glutSwapBuffers();

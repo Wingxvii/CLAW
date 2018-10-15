@@ -186,6 +186,12 @@ void ShaderProgram::SendUniformMat3(const std::string & name, float * matrix, bo
 
 void ShaderProgram::SendUniformMat4(const std::string & name, float * matrix, bool transpose)
 {
+	float fArray[16] = { 0.0 };
+
+	for (int i = 0; i < 16; ++i) {
+		fArray[i] = *(matrix + i);
+	}
+
 	GLint location = GetUniformLocation(name);
 	glUniformMatrix4fv(location, 1, transpose, matrix);
 }
