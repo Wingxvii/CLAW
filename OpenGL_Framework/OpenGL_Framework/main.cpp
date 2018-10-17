@@ -71,9 +71,6 @@ void MouseMotionCallbackFunction(int x, int y)
 	glutPostRedisplay();
 }
 
-<<<<<<< HEAD
-=======
-
 void CALLBACK OpenGLDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *msg, const void *data) 
 {
 	std::cout << "CALLBACK\n";
@@ -167,7 +164,7 @@ void InitOpenGLDebugCallback() {
 
 }
 
->>>>>>> 28aca36025693d2c6b1103577a1bb5e3695d6d64
+
 int main(int argc, char **argv)
 {
 	/* initialize the window and OpenGL properly */
@@ -195,10 +192,7 @@ int main(int argc, char **argv)
 	glutMouseFunc(MouseClickCallbackFunction);
 	glutMotionFunc(MouseMotionCallbackFunction);
 	glutTimerFunc(1, TimerCallbackFunction, 0);
-<<<<<<< HEAD
-	
-=======
->>>>>>> 28aca36025693d2c6b1103577a1bb5e3695d6d64
+
 	
 #ifdef _DEBUG
 	InitOpenGLDebugCallback();
