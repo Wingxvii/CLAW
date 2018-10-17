@@ -6,6 +6,7 @@ Camera::Camera()
 {
 	int number = rand() % 2;
 	Camera((ProjectionType)number);
+	m_entityType = (int)EntityTypes::CAMERA;
 }
 
 Camera::Camera(ProjectionType projType)
@@ -14,6 +15,7 @@ Camera::Camera(ProjectionType projType)
 		perspective(60.0f, 1.0f, 0.1f, 100.0f);
 	else
 		orthographic(-10, 10, -10, 10, -100, 100);
+	m_entityType = (int)EntityTypes::CAMERA;
 }
 
 void Camera::perspective(float fovy, float aspect, float zNear, float zFar)
@@ -35,7 +37,7 @@ void Camera::orthographic(float left, float right, float bottom, float top, floa
 
 glm::mat4 Camera::getView() const
 {
-	return m_pLocalToWorldMatrix;
+	return getTransform()->getLocalToWorldMatrix();
 }
 
 glm::mat4 Camera::getProjection() const

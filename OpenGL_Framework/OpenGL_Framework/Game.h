@@ -15,6 +15,7 @@
 #include <GL/glut.h>
 
 #include "Camera.h"
+#include "Player.h"
 #include "Timer.h"
 #include "ClientNetwork.h"
 #include "Packet.h"
@@ -72,6 +73,6 @@ private:
 	Mesh box;
 	ShaderProgram PassThrough;
 
-	Transform player1;
-	Transform player2;
+	Player player1;
+	Player player2;
 };

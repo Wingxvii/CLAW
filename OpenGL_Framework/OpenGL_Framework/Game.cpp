@@ -65,12 +65,15 @@ void Game::initializeGame()
 		exit(0);
 	}
 
-	camera.perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 1000.0f);
-	camera.m_pLocalPosition = glm::vec3(0.0f, 1.5f, 6.0f);
-	camera.setRotationAngleX(-25.0f);
+	player1.setMesh(&box);
+	player2.setMesh(&box);
 
-	player1.setPosition(glm::vec3(3.5f, -1.0f, 0.0f));
-	player2.setPosition(glm::vec3(-3.5f, -1.0f, 0.0f));
+	camera.perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 1000.0f);
+	camera.getTransform()->m_pLocalPosition = glm::vec3(0.0f, 1.5f, 6.0f);
+	camera.getTransform()->setRotationAngleX(-25.0f);
+
+	player1.getTransform()->setPosition(glm::vec3(3.5f, -1.0f, 0.0f));
+	player2.getTransform()->setPosition(glm::vec3(-3.5f, -1.0f, 0.0f));
 
 
 }
@@ -83,11 +86,11 @@ void Game::update()
 	float deltaTime = updateTimer->getElapsedTimeSeconds();
 	TotalGameTime += deltaTime;
 
-	camera.update(deltaTime);
+	camera.getTransform()->update(deltaTime);
 
-	player1.update(deltaTime);
+	player1.getTransform()->update(deltaTime);
 	
-	player2.update(deltaTime);
+	player2.getTransform()->update(deltaTime);
 
 	handlePackets();
 		
@@ -113,16 +116,16 @@ void Game::draw()
 
 	PassThrough.Bind();
 
-	PassThrough.SendUniformMat4("uView", convertToFloats(glm::inverse(camera.getLocalToWorldMatrix())), false);
+	PassThrough.SendUniformMat4("uView", convertToFloats(glm::inverse(camera.getTransform()->getLocalToWorldMatrix())), false);
 	PassThrough.SendUniformMat4("uProj", convertToFloats(camera.getProjection()), false);
 
 	//cube 1
-	PassThrough.SendUniformMat4("uModel", convertToFloats(player1.getLocalToWorldMatrix()), false);
+	PassThrough.SendUniformMat4("uModel", convertToFloats(player1.getTransform()->getLocalToWorldMatrix()), false);
 	glBindVertexArray(box.VAO);
 	glDrawArrays(GL_TRIANGLES, 0, box.GetNumVertices());
 
 	//cube 2
-	PassThrough.SendUniformMat4("uModel", convertToFloats(player2.getLocalToWorldMatrix()), false);
+	PassThrough.SendUniformMat4("uModel", convertToFloats(player2.getTransform()->getLocalToWorldMatrix()), false);
 	glDrawArrays(GL_TRIANGLES, 0, box.GetNumVertices());
 	glBindVertexArray(0);
 

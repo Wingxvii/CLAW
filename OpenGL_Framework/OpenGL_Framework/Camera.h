@@ -1,5 +1,5 @@
 #pragma once
-#include "Transform.h"
+#include "Entity.h"
 
 enum ProjectionType
 {
@@ -7,7 +7,7 @@ enum ProjectionType
 	Orthographic
 };
 
-class Camera : public Transform
+class Camera : public Entity
 {
 public:
 	Camera();
@@ -24,7 +24,7 @@ public:
 
 	glm::mat4 getView() const;
 	glm::mat4 getProjection() const;
-
+ 
 private:
 	ProjectionType projectionType = ProjectionType::Perspective;
 	glm::mat4 projection = glm::mat4(1.0);

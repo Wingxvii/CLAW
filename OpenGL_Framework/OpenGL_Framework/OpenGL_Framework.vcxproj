@@ -42,7 +42,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -74,10 +74,13 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ClientNetwork.cpp" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="NetworkServices.cpp" />
+    <ClCompile Include="PhysicalEntity.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Tokenizer.cpp" />
@@ -86,12 +89,15 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ClientNetwork.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="FormatString.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="NetworkServices.h" />
     <ClInclude Include="Packet.h" />
+    <ClInclude Include="PhysicalEntity.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Tokenizer.h" />
