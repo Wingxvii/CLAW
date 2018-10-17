@@ -75,7 +75,6 @@ void Game::initializeGame()
 	player1.getTransform()->setPosition(glm::vec3(3.5f, -1.0f, 0.0f));
 	player2.getTransform()->setPosition(glm::vec3(-3.5f, -1.0f, 0.0f));
 
-
 }
 
 void Game::update()
@@ -262,13 +261,3 @@ void Game::updatePlayers(const std::vector<std::string>& data)
 	}
 }
 
-float* Game::getData(glm::mat4 obj)
-{
-	//data in column major
-	float data[16] = { obj[0][0] , obj[1][0], obj[2][0], obj[3][0],
-	obj[0][1] , obj[1][1], obj[2][1], obj[3][1],
-	obj[0][2] , obj[1][2], obj[2][2], obj[3][2],
-	obj[0][3] , obj[1][3], obj[2][3], obj[3][3]
-	};
-	return data;
-}
