@@ -76,6 +76,7 @@
     <ClInclude Include="Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="ClientNetwork.h">
       <Filter>Header Files\Networking</Filter>
     </ClInclude>
@@ -90,6 +91,10 @@
     </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Header Files\Utility</Filter>
+=======
+    <ClInclude Include="main.h">
+      <Filter>Header Files</Filter>
+>>>>>>> 28aca36025693d2c6b1103577a1bb5e3695d6d64
     </ClInclude>
   </ItemGroup>
 </Project>
