@@ -65,8 +65,12 @@ void Game::initializeGame()
 		exit(0);
 	}
 
-	cameraTransform = glm::translate(cameraTransform, glm::vec3(0.0f, 0.0f, 0.0f));
-	cameraProjection = glm::perspective(60.0f, (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 10000.0f);
+	camera.perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 1000.0f);
+	camera.m_pLocalPosition = glm::vec3(0.0f, 1.5f, 6.0f);
+	camera.setRotationAngleX(-25.0f);
+
+	player1.setPosition(glm::vec3(3.5f, -1.0f, 0.0f));
+	player2.setPosition(glm::vec3(-3.5f, -1.0f, 0.0f));
 
 
 }
@@ -79,8 +83,11 @@ void Game::update()
 	float deltaTime = updateTimer->getElapsedTimeSeconds();
 	TotalGameTime += deltaTime;
 
-	//camera.update(deltaTime);
+	camera.update(deltaTime);
 
+	player1.update(deltaTime);
+	
+	player2.update(deltaTime);
 
 	handlePackets();
 		
@@ -101,17 +108,21 @@ float* convertToFloats(glm::mat4 matrix) {
 void Game::draw()
 {
 
-	glEnable(GL_DEPTH_TEST);
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	PassThrough.Bind();
 
-	PassThrough.SendUniformMat4("uModel", convertToFloats(boxTransform), false);
-	PassThrough.SendUniformMat4("uView", convertToFloats(glm::inverse(cameraTransform)), false);
-	PassThrough.SendUniformMat4("uProj", convertToFloats(cameraProjection), false);
+	PassThrough.SendUniformMat4("uView", convertToFloats(glm::inverse(camera.getLocalToWorldMatrix())), false);
+	PassThrough.SendUniformMat4("uProj", convertToFloats(camera.getProjection()), false);
 
+	//cube 1
+	PassThrough.SendUniformMat4("uModel", convertToFloats(player1.getLocalToWorldMatrix()), false);
 	glBindVertexArray(box.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, box.GetNumVertices());
+
+	//cube 2
+	PassThrough.SendUniformMat4("uModel", convertToFloats(player2.getLocalToWorldMatrix()), false);
 	glDrawArrays(GL_TRIANGLES, 0, box.GetNumVertices());
 	glBindVertexArray(0);
 

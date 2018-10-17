@@ -11,7 +11,7 @@ Camera::Camera()
 Camera::Camera(ProjectionType projType)
 {
 	if (projType == ProjectionType::Perspective)
-		perspective(60.0f, 1.0f, 0.1f, 100.0f); 
+		perspective(60.0f, 1.0f, 0.1f, 100.0f);
 	else
 		orthographic(-10, 10, -10, 10, -100, 100);
 }
@@ -19,14 +19,16 @@ Camera::Camera(ProjectionType projType)
 void Camera::perspective(float fovy, float aspect, float zNear, float zFar)
 {
 	projectionType = ProjectionType::Perspective;
-	projection = glm::perspective(fovy, aspect, zNear, zFar);
+	projection = glm::perspective(
+		fovy, aspect,
+		zNear, zFar);
 }
 
 void Camera::orthographic(float left, float right, float bottom, float top, float zNear, float zFar)
 {
 	projectionType = ProjectionType::Orthographic;
 	projection = glm::ortho(
-		left, right, 
+		left, right,
 		bottom, top,
 		zNear, zFar);
 }

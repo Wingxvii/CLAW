@@ -1,6 +1,5 @@
 #pragma once
 #include "Transform.h"
-#include <glm/ext/matrix_projection.hpp>
 
 enum ProjectionType
 {
@@ -10,12 +9,12 @@ enum ProjectionType
 
 class Camera : public Transform
 {
-public:	
+public:
 	Camera();
 	Camera(ProjectionType projType);
 
 	void perspective(
-		float fovy, float aspect, 
+		float fovy, float aspect,
 		float zNear, float zFar);
 
 	void orthographic(
@@ -28,5 +27,5 @@ public:
 
 private:
 	ProjectionType projectionType = ProjectionType::Perspective;
-	glm::mat4 projection;
+	glm::mat4 projection = glm::mat4(1.0);
 };

@@ -54,24 +54,28 @@ void Transform::update(float dt)
 
 	// Create rotation matrix
 
-	glm::mat4 rx;
-	glm::mat4 ry;
-	glm::mat4 rz;
+	glm::mat4 rx = glm::mat4(1.0);
+	glm::mat4 ry = glm::mat4(1.0);
+	glm::mat4 rz = glm::mat4(1.0);
 
-	rx = glm::rotate(rx, m_pRotX, glm::vec3(1, 0, 0));
-	ry = glm::rotate(ry, m_pRotY, glm::vec3(0, 1, 0));
-	rz = glm::rotate(rz, m_pRotZ, glm::vec3(0, 0, 1));
-
+	//rx.RotateX(m_pRotX);
+	rx = glm::rotate(rx, glm::radians(m_pRotX), glm::vec3{ 1.0f,0.0f,0.0f });
+	//ry.RotateY(m_pRotY);
+	ry = glm::rotate(ry, glm::radians(m_pRotY), glm::vec3{ 0.0f,1.0f,0.0f });
+	//rz.RotateZ(m_pRotZ);
+	rz = glm::rotate(rz, glm::radians(m_pRotZ), glm::vec3{ 0.0f,0.0f,1.0f });
 	// Note: pay attention to rotation order, ZYX is not the same as XYZ
 	m_pLocalRotation = rz * ry * rx;
 
 	// Create translation matrix
-	glm::mat4 tran; 
-	tran = glm::translate(tran,m_pLocalPosition);
+	glm::mat4 tran = glm::mat4(1.0);
+	//tran.Translate(m_pLocalPosition);
+	tran = glm::translate(tran, m_pLocalPosition);
 
 	// Create scale matrix
-	glm::mat4 scale; 
-	scale = glm::scale(scale,glm::vec3(m_pScale));
+	glm::mat4 scale = glm::mat4(1.0);
+	//scale.Scale(m_pScale);
+	scale = scale * m_pScale;
 
 	// Combine all above transforms into a single matrix
 	// This is the local transformation matrix, ie. where is this game object relative to it's parent

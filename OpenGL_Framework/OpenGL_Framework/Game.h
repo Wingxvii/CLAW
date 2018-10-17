@@ -25,8 +25,8 @@
 
 using glm::vec2;
 
-#define WINDOW_WIDTH			800
-#define WINDOW_HEIGHT			600
+#define WINDOW_WIDTH		    1280
+#define WINDOW_HEIGHT			720
 #define FRAMES_PER_SECOND		60
 
 class Game
@@ -55,12 +55,7 @@ public:
 	Timer *updateTimer	= nullptr;
 	float TotalGameTime = 0.0f;
 
-	Mesh box;
-	ShaderProgram PassThrough;
 
-	glm::mat4x4 cameraTransform = glm::mat4x4(1.0);
-	glm::mat4x4 cameraProjection = glm::mat4x4(1.0);
-	glm::mat4x4 boxTransform = glm::mat4x4(1.0);
 
 
 private:
@@ -71,4 +66,13 @@ private:
 	int playerNum = 0;
 
 	float* getData(glm::mat4);
+
+
+	Camera camera;
+
+	Mesh box;
+	ShaderProgram PassThrough;
+
+	Transform player1;
+	Transform player2;
 };
