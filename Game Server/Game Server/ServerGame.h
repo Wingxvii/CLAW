@@ -4,6 +4,10 @@
 #include <vector>
 #include "ClientPair.h"
 #include "Tokenizer.h"
+
+#include "include/glm/glm.hpp"
+#include "include/glm/ext.hpp"
+
 class ServerGame
 {
 
@@ -31,7 +35,7 @@ private:
 	void pairClients(int);
 	void sendMessage(int clientid, int message_type, std::string message);
 
-	void handleInputData(const std::vector<std::string>&);
+	void handleIncomingPositionData(const std::vector<std::string>&);
 
 	unsigned int currentClient;
 

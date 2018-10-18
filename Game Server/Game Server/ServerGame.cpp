@@ -76,10 +76,10 @@ void ServerGame::receiveFromClients()
 			
 					break;
 
-				case INPUT_DATA:
+				case POSITION_DATA:
 					parsedData = Tokenizer::tokenize(',', packet.data);
 
-					handleInputData(parsedData);
+					handleIncomingPositionData(parsedData);
 					break;
 				default:
 					printf(network_data, "\n");
@@ -133,38 +133,41 @@ void ServerGame::sendMessage(int clientID, int packetType, std::string message)
 }
 //Index 0 is the player num 
 //Index 1 is the key pushed
-void ServerGame::handleInputData(const std::vector<std::string>& data)
+//Index 2-4 player position data
+void ServerGame::handleIncomingPositionData(const std::vector<std::string>& data)
 {
-	float x = 0;
-	float y = 0;
-
 	int playerNum = std::stoi(data[0]);
+	int keycode = std::stoi(data[1]);
+	glm::vec3 position = {std::stof(data[2]), std::stof(data[3]), std::stof(data[4])};
 
-	switch ((data[1])[0])
+	switch (keycode)
 	{
 	case 'a':
-		x = -0.1f;
+		position.x += -0.1f;
 		
 		break;
 	case 's':
-		y = -0.1f;
+		position.z += 0.1f;
 		
 		break;
 	case 'w':
-		y = 0.1f;
+		position.z += -0.1f;
 		
 		break;
 	case 'd':
-		x = 0.1f;
+		position.x += 0.1f;
 	
 		break;
 	default:
 		break;
 	}
 
-	sendMessage(0, POSITION_DATA, std::to_string(playerNum) + "," + to_string(x) + "," + to_string(y) + ","); //send vecoter to add;
+	sendMessage(0, POSITION_DATA, std::to_string(playerNum) + "," + to_string(position.x) + "," + to_string(position.y) 
+		+ "," + to_string(position.z) + ","); //send vecter to add;
+
 		if (network->sessions.size() > 1) {
-			sendMessage(1, POSITION_DATA, std::to_string(playerNum) + "," + to_string(x) + "," + to_string(y) + ","); //send vecoter to add;
+			sendMessage(1, POSITION_DATA, std::to_string(playerNum) + "," + to_string(position.x) + "," + to_string(position.y)
+				+ "," + to_string(position.z) + ","); //send vecter to add;
 		}
 
 }

@@ -20,6 +20,7 @@
 #include "ClientNetwork.h"
 #include "Packet.h"
 #include "FormatString.h"
+#include "MessageHandler.h"
 #include "Tokenizer.h"
 #include "glm/ext.hpp"
 
@@ -55,7 +56,7 @@ public:
 	Timer *updateTimer	= nullptr;
 	float TotalGameTime = 0.0f;
 
-
+	void cameraFollow();
 
 
 private:
@@ -75,4 +76,9 @@ private:
 
 	Player player1;
 	Player player2;
+
+	Player currentPlayer;
+
+	glm::vec3 cameraVelocity = {0,0,0};
+	glm::vec3 cameraSteering = { 0,0,0 };
 };
