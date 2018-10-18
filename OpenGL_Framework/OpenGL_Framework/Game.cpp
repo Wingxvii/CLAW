@@ -16,6 +16,7 @@ Game::~Game()
 
 	PassThrough.UnLoad();
 	box.Unload();
+	GrassTexture.Unload();
 }
 
 void Game::initializeGame()
@@ -23,6 +24,7 @@ void Game::initializeGame()
 	updateTimer = new Timer();
 		
 	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_TEXTURE_2D);
 
 	//load crate shaders
 	if (!PassThrough.Load("./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag")) {
@@ -35,6 +37,13 @@ void Game::initializeGame()
 	if (!box.LoadfromFile("./Assets/Models/crate.obj")) {
 		std::cout << "Model failed to load.\n";
 		system("pause");
+		exit(0);
+	}
+
+	//load texture
+	if (!GrassTexture.Load("./Assets/Textures/Grass.png"))
+	{
+		system("Pause");
 		exit(0);
 	}
 
@@ -99,10 +108,12 @@ void Game::draw()
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	//binds
 	PassThrough.Bind();
-
 	PassThrough.SendUniformMat4("uView", convertToFloats(glm::inverse(camera.getTransform()->getLocalToWorldMatrix())), false);
 	PassThrough.SendUniformMat4("uProj", convertToFloats(camera.getProjection()), false);
+
+	GrassTexture.Bind();
 
 	//cube 1
 	PassThrough.SendUniformMat4("uModel", convertToFloats(player1.getTransform()->getLocalToWorldMatrix()), false);
@@ -114,6 +125,8 @@ void Game::draw()
 	glDrawArrays(GL_TRIANGLES, 0, box.GetNumVertices());
 	glBindVertexArray(0);
 
+	//unbinds
+	GrassTexture.UnBind();
 	PassThrough.UnBind();
 
 	glutSwapBuffers();

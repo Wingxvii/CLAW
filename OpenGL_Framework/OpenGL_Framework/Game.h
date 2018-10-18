@@ -9,6 +9,7 @@
 
 #include "ShaderProgram.h"
 #include "Mesh.h"
+#include "Texture.h"
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -72,6 +73,7 @@ private:
 	Camera camera;
 
 	Mesh box;
+	Texture GrassTexture;
 	ShaderProgram PassThrough;
 
 	Player player1;
