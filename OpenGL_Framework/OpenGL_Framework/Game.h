@@ -81,4 +81,6 @@ private:
 
 	glm::vec3 cameraVelocity = {0,0,0};
 	glm::vec3 cameraSteering = { 0,0,0 };
+
+	float t = 0;
 };

@@ -63,10 +63,11 @@ void Game::update()
 	TotalGameTime += deltaTime;
 
 	
-
+	t = pow(0.1, 60.0f * deltaTime);
 	//camera.getTransform()->setRotationAngleY(45);
-	camera.getTransform()->update(deltaTime);
 	cameraFollow();
+	camera.getTransform()->update(deltaTime);
+
 
 	player1.getTransform()->update(deltaTime);
 	
@@ -187,27 +188,40 @@ void Game::mouseMoved(int x, int y)
 
 void Game::cameraFollow()
 {
-	float bufferDistance = 2.0f;
-	glm::vec3 desired_velocity;
-	glm::vec3 distance = (currentPlayer.getTransform()->getPosition() - (camera.getTransform()->getPosition()));
-	float magintude = glm::sqrt(glm::pow(distance.x, 2) + glm::pow(distance.y, 2) + pow(distance.z ,2));
+	glm::vec3 playerPositionWithOffset;
 
-	if (magintude > 4.0f) {
-		desired_velocity = glm::normalize(currentPlayer.getTransform()->getPosition() - camera.getTransform()->getPosition()) * .07f;
-		desired_velocity.y = 0;
-	
+	if (playerNum == 1) {
+		playerPositionWithOffset = currentPlayer.getTransform()->getPosition() - glm::vec3(0.0f, 0.0f, -3.0f);
 	}
-	else if (magintude > 3.0f) {
-		desired_velocity = { 0 ,0 ,0};
+	else {
+		playerPositionWithOffset = currentPlayer.getTransform()->getPosition() - glm::vec3(0.0f, 0.0f, 3.0f);
+	}
 
-	} else {
-		desired_velocity = glm::normalize(currentPlayer.getTransform()->getPosition() - camera.getTransform()->getPosition()) * -.07f;
-		desired_velocity.y = 0;
-		desired_velocity.x = desired_velocity.x  * -1;
-	}
-	//camera.getTransform()->m_pLocalToWorldMatrix = glm::lookAt(glm::vec3(0.0f, 1.0f, 3.0f), currentPlayer.getTransform()->getPosition(), glm::vec3(0., -1., 0.));
-	camera.getTransform()->setPosition(camera.getTransform()->getPosition() + desired_velocity);
-	
+
+	camera.getTransform()->setPosition(camera.getTransform()->getPosition() * (1.0f - t) + (playerPositionWithOffset) * t);
+
+
+
+	//float bufferDistance = 2.0f;
+	//glm::vec3 desired_velocity;
+	//glm::vec3 distance = (currentPlayer.getTransform()->getPosition() - (camera.getTransform()->getPosition()));
+	//float magintude = glm::sqrt(glm::pow(distance.x, 2) + glm::pow(distance.y, 2) + pow(distance.z ,2));
+
+	//if (magintude > 4.0f) {
+	//	desired_velocity = glm::normalize(currentPlayer.getTransform()->getPosition() - camera.getTransform()->getPosition()) * .07f;s
+	//	desired_velocity.y = 0;
+	//
+	//}
+	//else if (magintude > 3.0f) {
+	//	desired_velocity = { 0 ,0 ,0};
+
+	//} else {
+	//	desired_velocity = glm::normalize(currentPlayer.getTransform()->getPosition() - camera.getTransform()->getPosition()) * -.07f;
+	//	desired_velocity.y = 0;
+	//	desired_velocity.x = desired_velocity.x  * -1;
+	//}
+	////camera.getTransform()->m_pLocalToWorldMatrix = glm::lookAt(glm::vec3(0.0f, 1.0f, 3.0f), currentPlayer.getTransform()->getPosition(), glm::vec3(0., -1., 0.));
+	//camera.getTransform()->setPosition(camera.getTransform()->getPosition() + desired_velocity);
 	
 }
 
@@ -247,6 +261,7 @@ void Game::handlePackets()
 			}
 			else {
 				currentPlayer = player2;
+				camera.getTransform()->setRotationAngleY(-180);
 			}
 
 			break;
