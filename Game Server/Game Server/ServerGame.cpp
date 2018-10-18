@@ -136,6 +136,11 @@ void ServerGame::sendMessage(int clientID, int packetType, std::string message)
 //Index 2-4 player position data
 void ServerGame::handleIncomingPositionData(const std::vector<std::string>& data)
 {
+
+	glm::mat4 ry = glm::mat4(1.0);
+	
+	
+
 	int playerNum = std::stoi(data[0]);
 	int keycode = std::stoi(data[1]);
 	glm::vec3 position = {std::stof(data[2]), std::stof(data[3]), std::stof(data[4])};
@@ -147,6 +152,7 @@ void ServerGame::handleIncomingPositionData(const std::vector<std::string>& data
 		
 		break;
 	case 's':
+
 		position.z += 0.1f;
 		
 		break;
@@ -156,7 +162,15 @@ void ServerGame::handleIncomingPositionData(const std::vector<std::string>& data
 		break;
 	case 'd':
 		position.x += 0.1f;
-	
+
+	case 'q':
+		ry = glm::rotate(ry, glm::radians(1.0f), glm::vec3{ 0.0f,1.0f,0.0f });
+		position = glm::vec4(position, 1) * ry;
+		break;
+
+	case 'e':
+		ry = glm::rotate(ry, glm::radians(-1.0f), glm::vec3{ 0.0f,1.0f,0.0f });
+		position = glm::vec4(position, 1) * ry;
 		break;
 	default:
 		break;

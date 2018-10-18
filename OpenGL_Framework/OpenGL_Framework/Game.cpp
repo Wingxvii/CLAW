@@ -46,7 +46,11 @@ void Game::initializeGame()
 	
 
 	player1.getTransform()->setPosition(glm::vec3(-1.0f, 0.0f, 0.0f));
-	player2.getTransform()->setPosition(glm::vec3(-1.0f, 0.0f, -10.0f));
+	player1.directionFacing = glm::vec3(0.0f, 0.0f, 1.0f);
+
+	player2.getTransform()->setPosition(glm::vec3(1.0f, 0.0f, -10.0f));
+	player2.getTransform()->setRotationAngleY(180);
+	player2.directionFacing = glm::vec3(0.0f, 0.0f, -1.0f);
 
 	player1.directionFacing = { 0.0f, 0.0f, -1.0f };
 	player2.directionFacing = { 0.0f, 0.0f, 1.0f };
@@ -117,7 +121,6 @@ void Game::draw()
 
 void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 {
-	std::string newMessage;
 	
 	switch(key)
 	{
@@ -133,6 +136,12 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	case 'd':
 		MessageHandler::sendMovementInput(network, 'd', currentPlayer.getTransform()->getPosition(), playerNum);
 		break;
+	case 'q':
+		MessageHandler::sendMovementInput(network, 'q', currentPlayer.getTransform()->getPosition(), playerNum);
+		break;
+	case 'e':
+		MessageHandler::sendMovementInput(network, 'e', currentPlayer.getTransform()->getPosition(), playerNum);
+		break;
 	default:
 		break;
 	}
@@ -145,8 +154,7 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 	case 32: // the space bar
 		break;
 	case 27: // the escape key
-	case 'q': // the 'q' key
-		exit(1);
+	
 		break;
 	}
 }
@@ -191,37 +199,18 @@ void Game::cameraFollow()
 	glm::vec3 playerPositionWithOffset;
 
 	if (playerNum == 1) {
-		playerPositionWithOffset = currentPlayer.getTransform()->getPosition() - glm::vec3(0.0f, 0.0f, -3.0f);
+		playerPositionWithOffset = currentPlayer.getTransform()->getPosition() - glm::vec3(-0.5f, -2.0f, -3.0f);
 	}
 	else {
-		playerPositionWithOffset = currentPlayer.getTransform()->getPosition() - glm::vec3(0.0f, 0.0f, 3.0f);
+		playerPositionWithOffset = currentPlayer.getTransform()->getPosition() - glm::vec3(0.5f, -2.0f, 3.0f);
 	}
 
 
 	camera.getTransform()->setPosition(camera.getTransform()->getPosition() * (1.0f - t) + (playerPositionWithOffset) * t);
 
+	camera.getTransform()->m_pLocalToWorldMatrix = glm::lookAt(glm::vec3(0.0f, 1.0f, 3.0f), currentPlayer.getTransform()->getPosition(), glm::vec3(0., -1., 0.));
 
 
-	//float bufferDistance = 2.0f;
-	//glm::vec3 desired_velocity;
-	//glm::vec3 distance = (currentPlayer.getTransform()->getPosition() - (camera.getTransform()->getPosition()));
-	//float magintude = glm::sqrt(glm::pow(distance.x, 2) + glm::pow(distance.y, 2) + pow(distance.z ,2));
-
-	//if (magintude > 4.0f) {
-	//	desired_velocity = glm::normalize(currentPlayer.getTransform()->getPosition() - camera.getTransform()->getPosition()) * .07f;s
-	//	desired_velocity.y = 0;
-	//
-	//}
-	//else if (magintude > 3.0f) {
-	//	desired_velocity = { 0 ,0 ,0};
-
-	//} else {
-	//	desired_velocity = glm::normalize(currentPlayer.getTransform()->getPosition() - camera.getTransform()->getPosition()) * -.07f;
-	//	desired_velocity.y = 0;
-	//	desired_velocity.x = desired_velocity.x  * -1;
-	//}
-	////camera.getTransform()->m_pLocalToWorldMatrix = glm::lookAt(glm::vec3(0.0f, 1.0f, 3.0f), currentPlayer.getTransform()->getPosition(), glm::vec3(0., -1., 0.));
-	//camera.getTransform()->setPosition(camera.getTransform()->getPosition() + desired_velocity);
 	
 }
 
@@ -262,6 +251,7 @@ void Game::handlePackets()
 			else {
 				currentPlayer = player2;
 				camera.getTransform()->setRotationAngleY(-180);
+				
 			}
 
 			break;
