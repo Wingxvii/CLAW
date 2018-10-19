@@ -213,10 +213,6 @@ void Game::cameraFollow()
 	playerPositionWithOffset = currentPlayer.getTransform()->getPosition() + offset;
 
 	camera.getTransform()->setPosition(camera.getTransform()->getPosition() * (1.0f - t) + (playerPositionWithOffset) * t);
-
-	camera.getTransform()->m_pLocalToWorldMatrix = glm::lookAt(glm::vec3(0.0f, 1.0f, 3.0f), currentPlayer.getTransform()->getPosition(), glm::vec3(0., -1., 0.));
-
-
 	
 }
 
