@@ -236,8 +236,6 @@ void Game::cameraFollow()
 
 	camera.getTransform()->setPosition(camera.getTransform()->getPosition() * (1.0f - t) + (playerPositionWithOffset) * t);
 
-	camera.getTransform()->m_pLocalToWorldMatrix = glm::lookAt(glm::vec3(0.0f, 1.0f, 3.0f), currentPlayer.getTransform()->getPosition(), glm::vec3(0., -1., 0.));
-
 
 }
 
@@ -325,13 +323,12 @@ void Game::updatePlayers(const std::vector<std::string>& data, PacketTypes _pack
 		int playerToRotate = std::stoi(data[0]);
 		float rotation = std::stof(data[1]);
 
-		if (playerToRotate == 1) {
-			player1.getTransform()->setRotationAngleY(rotation);
+		if (playerToRotate == playerNum) {
+			players[playerNum-1].getTransform()->setRotationAngleY(rotation);
 			rotateCamera(rotation);
 		}
 		else {
-			player2.getTransform()->setRotationAngleY(rotation);
-			rotateCamera(rotation);
+			players[playerNum - 1].getTransform()->setRotationAngleY(rotation);
 		}
 
 	}

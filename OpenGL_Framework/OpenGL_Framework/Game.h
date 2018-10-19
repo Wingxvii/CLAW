@@ -81,6 +81,7 @@ private:
 
 	Player player1;
 	Player player2;
+	Player players[2] = {};
 
 	PhysicalEntity lava_map;
 
