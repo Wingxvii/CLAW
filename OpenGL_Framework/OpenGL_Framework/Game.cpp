@@ -47,8 +47,24 @@ void Game::initializeGame()
 		exit(0);
 	}
 
+	//load Map shaders
+	if (!PassThrough.Load("./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag")) {
+		std::cout << "Shaders failed to init.\n";
+		system("pause");
+		exit(0);
+	}
+
+	////load map mesh
+	//if (!map.LoadfromFile("./Assets/Models/map_lava1.obj")) {
+	//	std::cout << "Model failed to load.\n";
+	//	system("pause");
+	//	exit(0);
+	//}
+
 	player1.setMesh(&box);
 	player2.setMesh(&box);
+	//lava_map.setMesh(&map);
+	
 
 	camera.perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 1000.0f);
 	camera.getTransform()->m_pLocalPosition = glm::vec3(0.0f, 1.5f, 6.0f);
@@ -120,9 +136,15 @@ void Game::draw()
 	glDrawArrays(GL_TRIANGLES, 0, box.GetNumVertices());
 	glBindVertexArray(0);
 
+
 	//unbinds
 	GrassTexture.UnBind();
-	PassThrough.UnBind();
+
+
+	//PassThrough.SendUniformMat4("uModel", convertToFloats(lava_map.getTransform()->getLocalToWorldMatrix()), false);
+	//glDrawArrays(GL_TRIANGLES, 0, map.GetNumVertices());
+	//glBindVertexArray(0);
+	//PassThrough.UnBind();
 
 	glutSwapBuffers();
 }
@@ -217,7 +239,12 @@ void Game::cameraFollow()
 	camera.getTransform()->m_pLocalToWorldMatrix = glm::lookAt(glm::vec3(0.0f, 1.0f, 3.0f), currentPlayer.getTransform()->getPosition(), glm::vec3(0., -1., 0.));
 
 
-	
+}
+
+void Game::rotateCamera(float rotation)
+{
+	camera.getTransform()->setRotationAngleY(rotation);
+
 }
 
 void Game::handlePackets()
@@ -300,9 +327,11 @@ void Game::updatePlayers(const std::vector<std::string>& data, PacketTypes _pack
 
 		if (playerToRotate == 1) {
 			player1.getTransform()->setRotationAngleY(rotation);
+			rotateCamera(rotation);
 		}
 		else {
 			player2.getTransform()->setRotationAngleY(rotation);
+			rotateCamera(rotation);
 		}
 
 	}
