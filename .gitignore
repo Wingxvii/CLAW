@@ -1,4 +1,4 @@
-﻿# C++
+# C++
 
 # Prerequisites
 *.d
@@ -88,7 +88,6 @@ StyleCopReport.xml
 *_i.h
 *.ilk
 *.meta
-*.obj
 *.pch
 *.pdb
 *.pgc
@@ -351,5 +350,8 @@ ASALocalRun/
 *.exp
 *.idb
 
+#exclude generated .objs
 /proj.win32/.vs/
 /proj.win32/Debug.win32
+Game Server/Game Server/x64/Debug/
+OpenGL_Framework/OpenGL_Framework/Debug/
