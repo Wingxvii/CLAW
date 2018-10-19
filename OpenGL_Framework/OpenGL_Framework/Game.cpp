@@ -41,7 +41,7 @@ void Game::initializeGame()
 	}
 
 	//load crate mesh
-	if (!map.LoadfromFile("./Assets/Models/FlatMap.obj")) {
+	if (!map.LoadfromFile("./Assets/Models/map_lava1.obj")) {
 		std::cout << "Model failed to load.\n";
 		system("pause");
 		exit(0);
