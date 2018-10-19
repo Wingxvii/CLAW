@@ -78,9 +78,16 @@ void ServerGame::receiveFromClients()
 
 				case POSITION_DATA:
 					parsedData = Tokenizer::tokenize(',', packet.data);
-
 					handleIncomingPositionData(parsedData);
+
 					break;
+				case ROTATION_DATA:
+					parsedData = Tokenizer::tokenize(',', packet.data);
+					handleIncomingRotationData(parsedData);
+
+					break;
+
+
 				default:
 					printf(network_data, "\n");
 
@@ -137,10 +144,6 @@ void ServerGame::sendMessage(int clientID, int packetType, std::string message)
 void ServerGame::handleIncomingPositionData(const std::vector<std::string>& data)
 {
 
-	glm::mat4 ry = glm::mat4(1.0);
-	
-	
-
 	int playerNum = std::stoi(data[0]);
 	int keycode = std::stoi(data[1]);
 	glm::vec3 position = {std::stof(data[2]), std::stof(data[3]), std::stof(data[4])};
@@ -163,26 +166,39 @@ void ServerGame::handleIncomingPositionData(const std::vector<std::string>& data
 	case 'd':
 		position.x += 0.1f;
 
-	case 'q':
-		ry = glm::rotate(ry, glm::radians(1.0f), glm::vec3{ 0.0f,1.0f,0.0f });
-		position = glm::vec4(position, 1) * ry;
-		break;
-
-	case 'e':
-		ry = glm::rotate(ry, glm::radians(-1.0f), glm::vec3{ 0.0f,1.0f,0.0f });
-		position = glm::vec4(position, 1) * ry;
 		break;
 	default:
 		break;
 	}
 
-	sendMessage(0, POSITION_DATA, std::to_string(playerNum) + "," + to_string(position.x) + "," + to_string(position.y) 
-		+ "," + to_string(position.z) + ","); //send vecter to add;
+		sendMessage(0, POSITION_DATA, std::to_string(playerNum) + "," + to_string(position.x) + "," + to_string(position.y)
+			+ "," + to_string(position.z) + ","); //send vecter to add;
 
 		if (network->sessions.size() > 1) {
 			sendMessage(1, POSITION_DATA, std::to_string(playerNum) + "," + to_string(position.x) + "," + to_string(position.y)
 				+ "," + to_string(position.z) + ","); //send vecter to add;
 		}
+}
+
+void ServerGame::handleIncomingRotationData(const std::vector<std::string>& data)
+{
+
+	int playerNum = std::stoi(data[0]);
+	int keycode = std::stoi(data[1]);
+	float rotation = std::stoi(data[2]);
+
+	if (keycode == 'q') {
+		rotation += 1.0f;
+	}
+	else {
+		rotation -= 1.0f;
+	}
+	sendMessage(0, ROTATION_DATA, std::to_string(playerNum) + "," + to_string(rotation) + ","); //send vecter to add;
+
+	if (network->sessions.size() > 1) {
+		sendMessage(1, ROTATION_DATA, std::to_string(playerNum) + "," + to_string(rotation) + ","); //send vecter to add;
+	}
+
 
 }
 

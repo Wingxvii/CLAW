@@ -150,10 +150,10 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		MessageHandler::sendMovementInput(network, 'd', currentPlayer.getTransform()->getPosition(), playerNum);
 		break;
 	case 'q':
-		MessageHandler::sendMovementInput(network, 'q', currentPlayer.getTransform()->getPosition(), playerNum);
+		MessageHandler::sendRotationInput(network, 'q', currentPlayer.getTransform()->getRotationAngleY(), playerNum);
 		break;
 	case 'e':
-		MessageHandler::sendMovementInput(network, 'e', currentPlayer.getTransform()->getPosition(), playerNum);
+		MessageHandler::sendRotationInput(network, 'e', currentPlayer.getTransform()->getRotationAngleY(), playerNum);
 		break;
 	default:
 		break;
@@ -271,11 +271,13 @@ void Game::handlePackets()
 
 		case POSITION_DATA:
 			parsedData = Tokenizer::tokenize(',', packet.data);
-
-			updatePlayers(parsedData);
+			updatePlayers(parsedData, (PacketTypes)packet.packet_type);
 
 			break;
-
+		case ROTATION_DATA:
+			parsedData = Tokenizer::tokenize(',', packet.data);
+			updatePlayers(parsedData, (PacketTypes)packet.packet_type);
+			break;
 		default:
 
 			printf("error in packet types\n");
@@ -286,16 +288,33 @@ void Game::handlePackets()
 
 }
 
-void Game::updatePlayers(const std::vector<std::string>& data)
+void Game::updatePlayers(const std::vector<std::string>& data, PacketTypes _packet)
 {
-	int playerToMove = std::stoi(data[0]);
-	glm::vec3 translate = {std::stof(data[1]), std::stof(data[2]), std::stof(data[3])};
-	
-	if (playerToMove == 1) {
-		player1.getTransform()->setPosition(translate);
+	if (_packet == POSITION_DATA) {
+		int playerToMove = std::stoi(data[0]);
+		glm::vec3 translate = { std::stof(data[1]), std::stof(data[2]), std::stof(data[3]) };
+
+		if (playerToMove == 1) {
+			player1.getTransform()->setPosition(translate);
+		}
+		else {
+			player2.getTransform()->setPosition(translate);
+		}
 	}
 	else {
-		player2.getTransform()->setPosition(translate);
+		int playerToRotate = std::stoi(data[0]);
+		float rotation = std::stof(data[1]);
+
+		if (playerToRotate == 1) {
+			player1.getTransform()->setRotationAngleY(rotation);
+		}
+		else {
+			player2.getTransform()->setRotationAngleY(rotation);
+		}
+
 	}
+
 }
+
+
 

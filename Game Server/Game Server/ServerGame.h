@@ -36,6 +36,7 @@ private:
 	void sendMessage(int clientid, int message_type, std::string message);
 
 	void handleIncomingPositionData(const std::vector<std::string>&);
+	void handleIncomingRotationData(const std::vector<std::string>&);
 
 	unsigned int currentClient;
 

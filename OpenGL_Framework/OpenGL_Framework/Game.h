@@ -63,7 +63,7 @@ public:
 private:
 	void handlePackets();
 
-	void updatePlayers(const std::vector<std::string>&);
+	void updatePlayers(const std::vector<std::string>&, PacketTypes _packet);
 
 	int playerNum = 0;
 

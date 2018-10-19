@@ -26,6 +26,13 @@ void MessageHandler::sendMovementInput(ClientNetwork * network, int keycode, glm
 	sendToServer(network, POSITION_DATA, message);
 }
 
+void MessageHandler::sendRotationInput(ClientNetwork * network, int keycode, float currentRotation, int playerNum)
+{
+	std::string message = std::to_string(playerNum) + "," + std::to_string(keycode) + "," +
+		std::to_string(currentRotation) + ",";
+	sendToServer(network, ROTATION_DATA, message);
+}
+
 
 void MessageHandler::sendToServer(ClientNetwork* network, int packet_type, std::string message)
 {

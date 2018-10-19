@@ -21,6 +21,7 @@ public:
 	//This is for keys related to movement and send which key was pusehd along with the position of the player
 	static void sendMovementInput(ClientNetwork* network, int keycode, glm::vec3 currentPosition, int playerNum);
 
+	static void sendRotationInput(ClientNetwork* network, int keycode, float currentRotation, int playerNum);
 private: 
 	static void sendToServer(ClientNetwork* network, int packet_type, std::string message);
 };
