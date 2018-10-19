@@ -61,6 +61,8 @@ public:
 
 
 private:
+	void rotateCamera(float rotation); 
+
 	void handlePackets();
 
 	void updatePlayers(const std::vector<std::string>&, PacketTypes _packet);
@@ -73,11 +75,14 @@ private:
 	Camera camera;
 
 	Mesh box;
+	Mesh map;
 	Texture GrassTexture;
 	ShaderProgram PassThrough;
 
 	Player player1;
 	Player player2;
+
+	PhysicalEntity lava_map;
 
 	Player currentPlayer;
 
