@@ -146,24 +146,27 @@ void ServerGame::handleIncomingPositionData(const std::vector<std::string>& data
 	int playerNum = std::stoi(data[0]);
 	int keycode = std::stoi(data[1]);
 	glm::vec3 position = {std::stof(data[2]), std::stof(data[3]), std::stof(data[4])};
+	glm::vec3 forward = {std::stof(data[5]) ,0.0f,std::stof(data[6]) };
+
+	glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0.0f,1.0f,0.0f)));
 
 	switch (keycode)
 	{
 	case 'a':
-		position.x += -0.1f;
+		position += 0.1f*right;
 		
 		break;
 	case 's':
 
-		position.z += 0.1f;
+		position += 0.1f*forward;
 		
 		break;
 	case 'w':
-		position.z += -0.1f;
+		position += -0.1f*forward;
 		
 		break;
 	case 'd':
-		position.x += 0.1f;
+		position += -0.1f*right;
 
 		break;
 	default:

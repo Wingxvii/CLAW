@@ -40,4 +40,6 @@ public:
 	glm::vec4 color;
 
 	glm::vec3 forward;
+	glm::vec3 right;
+
 };

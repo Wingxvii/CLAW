@@ -133,16 +133,16 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	switch(key)
 	{
 	case 'a':
-		MessageHandler::sendMovementInput(network, 'a', currentPlayer.getTransform()->getPosition(),playerNum);
+		MessageHandler::sendMovementInput(network, 'a', currentPlayer.getTransform()->getPosition(), currentPlayer.getTransform()->forward  ,playerNum);
 		break;
 	case 's':
-		MessageHandler::sendMovementInput(network, 's', currentPlayer.getTransform()->getPosition(), playerNum);
+		MessageHandler::sendMovementInput(network, 's', currentPlayer.getTransform()->getPosition(), currentPlayer.getTransform()->forward, playerNum);
 		break;
 	case 'w':
-		MessageHandler::sendMovementInput(network, 'w', currentPlayer.getTransform()->getPosition(), playerNum);
+		MessageHandler::sendMovementInput(network, 'w', currentPlayer.getTransform()->getPosition(), currentPlayer.getTransform()->forward, playerNum);
 		break;
 	case 'd':
-		MessageHandler::sendMovementInput(network, 'd', currentPlayer.getTransform()->getPosition(), playerNum);
+		MessageHandler::sendMovementInput(network, 'd', currentPlayer.getTransform()->getPosition(), currentPlayer.getTransform()->forward, playerNum);
 		break;
 	case 'q':
 		MessageHandler::sendRotationInput(network, 'q', currentPlayer.getTransform()->getRotationAngleY(), playerNum);
