@@ -143,45 +143,67 @@ void ServerGame::handleIncomingPositionData(const std::vector<std::string>& data
 
 	int playerNum = std::stoi(data[0]);
 	int keycode = std::stoi(data[1]);
-	glm::vec3 position = {std::stof(data[2]), std::stof(data[3]), std::stof(data[4])};
+	glm::mat4 position;
+	position[0][0] = std::stof(data[2]);
+	position[0][1] = std::stof(data[3]);
+	position[0][2] = std::stof(data[4]);
+	position[0][3] = std::stof(data[5]);
+	position[1][0] = std::stof(data[6]);
+	position[1][1] = std::stof(data[7]);
+	position[1][2] = std::stof(data[8]);
+	position[1][3] = std::stof(data[9]);
+	position[2][0] = std::stof(data[10]);
+	position[2][1] = std::stof(data[11]);
+	position[2][2] = std::stof(data[12]);
+	position[2][3] = std::stof(data[13]);
+	position[3][0] = std::stof(data[14]);
+	position[3][1] = std::stof(data[15]);
+	position[3][2] = std::stof(data[16]);
+	position[3][3] = std::stof(data[17]);
+
+	
 
 	switch (keycode)
 	{
 	case 'a':
-		position.x += -0.1f;
-		
+		position = glm::translate(position, glm::vec3(-0.1f, 0,0));
 		break;
 	case 's':
 
-		position.z += 0.1f;
-		
+		position = glm::translate(position, glm::vec3(0, 0, 0.1f));
+
 		break;
 	case 'w':
-		position.z += -0.1f;
-		
+		position = glm::translate(position, glm::vec3(0, 0, -0.1f));
+
 		break;
 	case 'd':
-		position.x += 0.1f;
+		position = glm::translate(position, glm::vec3(0.1f, 0, 0));
 
 	case 'q':
 		ry = glm::rotate(ry, glm::radians(1.0f), glm::vec3{ 0.0f,1.0f,0.0f });
-		position = glm::vec4(position, 1) * ry;
+		position*=ry;
 		break;
 
 	case 'e':
 		ry = glm::rotate(ry, glm::radians(-1.0f), glm::vec3{ 0.0f,1.0f,0.0f });
-		position = glm::vec4(position, 1) * ry;
+		position*=ry;
 		break;
 	default:
 		break;
 	}
 
-	sendMessage(0, POSITION_DATA, std::to_string(playerNum) + "," + to_string(position.x) + "," + to_string(position.y) 
-		+ "," + to_string(position.z) + ","); //send vecter to add;
+	std::string message = std::to_string(playerNum) + "," + std::to_string(position[0][0]) + "," +
+		std::to_string(position[0][1]) + "," + std::to_string(position[0][2]) + "," + std::to_string(position[0][3]) + "," + std::to_string(position[1][0]) + "," +
+		std::to_string(position[1][1]) + "," + std::to_string(position[1][2]) + "," + std::to_string(position[1][3]) + "," + std::to_string(position[2][0]) + "," +
+		std::to_string(position[2][1]) + "," + std::to_string(position[2][2]) + "," + std::to_string(position[2][3]) + "," + std::to_string(position[3][0]) + "," +
+		std::to_string(position[3][1]) + "," + std::to_string(position[3][2]) + "," + std::to_string(position[3][3]) + ",";
+
+
+	sendMessage(0, POSITION_DATA, message); //send vecter to add;
 
 		if (network->sessions.size() > 1) {
-			sendMessage(1, POSITION_DATA, std::to_string(playerNum) + "," + to_string(position.x) + "," + to_string(position.y)
-				+ "," + to_string(position.z) + ","); //send vecter to add;
+			sendMessage(1, POSITION_DATA, message); //send vecter to add;
 		}
 
 }

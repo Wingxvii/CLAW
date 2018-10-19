@@ -19,10 +19,13 @@ void MessageHandler::sendKeyInput(ClientNetwork * network, int keycode, int play
 
 }
 
-void MessageHandler::sendMovementInput(ClientNetwork * network, int keycode, glm::vec3 currentPosition, int playerNum)
+void MessageHandler::sendMovementInput(ClientNetwork * network, int keycode, glm::mat4 currentPosition, int playerNum)
 {
-	std::string message = std::to_string(playerNum) + "," + std::to_string(keycode) + "," + std::to_string(currentPosition.x) + "," +
-		std::to_string(currentPosition.y) + "," + std::to_string(currentPosition.z) + ",";
+	std::string message = std::to_string(playerNum) + "," + std::to_string(keycode) + "," + std::to_string(currentPosition[0][0]) + "," + 
+		std::to_string(currentPosition[0][1]) + "," + std::to_string(currentPosition[0][2]) + "," + std::to_string(currentPosition[0][3]) + "," + std::to_string(currentPosition[1][0]) + "," +
+		std::to_string(currentPosition[1][1]) + "," + std::to_string(currentPosition[1][2]) + "," + std::to_string(currentPosition[1][3]) + "," + std::to_string(currentPosition[2][0]) + "," +
+		std::to_string(currentPosition[2][1]) + "," + std::to_string(currentPosition[2][2]) + "," + std::to_string(currentPosition[2][3]) + "," + std::to_string(currentPosition[3][0]) + "," +
+		std::to_string(currentPosition[3][1]) + "," + std::to_string(currentPosition[3][2]) + "," + std::to_string(currentPosition[3][3]) + ",";
 	sendToServer(network, POSITION_DATA, message);
 }
 

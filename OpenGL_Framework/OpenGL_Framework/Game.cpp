@@ -55,14 +55,9 @@ void Game::initializeGame()
 	
 
 	player1.getTransform()->setPosition(glm::vec3(-1.0f, 0.0f, 0.0f));
-	player1.directionFacing = glm::vec3(0.0f, 0.0f, 1.0f);
 
 	player2.getTransform()->setPosition(glm::vec3(1.0f, 0.0f, -10.0f));
 	player2.getTransform()->setRotationAngleY(180);
-	player2.directionFacing = glm::vec3(0.0f, 0.0f, -1.0f);
-
-	player1.directionFacing = { 0.0f, 0.0f, -1.0f };
-	player2.directionFacing = { 0.0f, 0.0f, 1.0f };
 
 	
 }
@@ -138,22 +133,22 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	switch(key)
 	{
 	case 'a':
-		MessageHandler::sendMovementInput(network, 'a', currentPlayer.getTransform()->getPosition(),playerNum);
+		MessageHandler::sendMovementInput(network, 'a', currentPlayer.getTransform()->getLocalToWorldMatrix(),playerNum);
 		break;
 	case 's':
-		MessageHandler::sendMovementInput(network, 's', currentPlayer.getTransform()->getPosition(), playerNum);
+		MessageHandler::sendMovementInput(network, 's', currentPlayer.getTransform()->getLocalToWorldMatrix(), playerNum);
 		break;
 	case 'w':
-		MessageHandler::sendMovementInput(network, 'w', currentPlayer.getTransform()->getPosition(), playerNum);
+		MessageHandler::sendMovementInput(network, 'w', currentPlayer.getTransform()->getLocalToWorldMatrix(), playerNum);
 		break;
 	case 'd':
-		MessageHandler::sendMovementInput(network, 'd', currentPlayer.getTransform()->getPosition(), playerNum);
+		MessageHandler::sendMovementInput(network, 'd', currentPlayer.getTransform()->getLocalToWorldMatrix(), playerNum);
 		break;
 	case 'q':
-		MessageHandler::sendMovementInput(network, 'q', currentPlayer.getTransform()->getPosition(), playerNum);
+		MessageHandler::sendMovementInput(network, 'q', currentPlayer.getTransform()->getLocalToWorldMatrix(), playerNum);
 		break;
 	case 'e':
-		MessageHandler::sendMovementInput(network, 'e', currentPlayer.getTransform()->getPosition(), playerNum);
+		MessageHandler::sendMovementInput(network, 'e', currentPlayer.getTransform()->getLocalToWorldMatrix(), playerNum);
 		break;
 	default:
 		break;
@@ -289,13 +284,49 @@ void Game::handlePackets()
 void Game::updatePlayers(const std::vector<std::string>& data)
 {
 	int playerToMove = std::stoi(data[0]);
-	glm::vec3 translate = {std::stof(data[1]), std::stof(data[2]), std::stof(data[3])};
+	glm::mat4 recievedPosition;
+	recievedPosition[0][0] = std::stof(data[1]);
+	recievedPosition[0][1] = std::stof(data[2]);
+	recievedPosition[0][2] = std::stof(data[3]);
+	recievedPosition[0][3] = std::stof(data[4]);
+	recievedPosition[1][0] = std::stof(data[5]);
+	recievedPosition[1][1] = std::stof(data[6]);
+	recievedPosition[1][2] = std::stof(data[7]);
+	recievedPosition[1][3] = std::stof(data[8]);
+	recievedPosition[2][0] = std::stof(data[9]);
+	recievedPosition[2][1] = std::stof(data[10]);
+	recievedPosition[2][2] = std::stof(data[11]);
+	recievedPosition[2][3] = std::stof(data[12]);
+	recievedPosition[3][0] = std::stof(data[13]);
+	recievedPosition[3][1] = std::stof(data[14]);
+	recievedPosition[3][2] = std::stof(data[15]);
+	recievedPosition[3][3] = std::stof(data[16]);
+
+	//glm::mat4 transformationMatrix = glm::mat4(1.0);
+	//transformationMatrix[0][3] = recievedPosition[0][3];
+	//transformationMatrix[1][3] = recievedPosition[1][3];
+	//transformationMatrix[2][3] = recievedPosition[2][3];
+
+	recievedPosition = glm::transpose(recievedPosition);
 	
+
+	std::cout << "(" << recievedPosition[0][0] << "," << recievedPosition[0][1] << "," << recievedPosition[0][2] << "," << recievedPosition[0][3] << "\n";
+	std::cout << recievedPosition[1][0] << "," << recievedPosition[1][1] << "," << recievedPosition[1][2] << "," << recievedPosition[1][3] << "\n";
+	std::cout << recievedPosition[2][0] << "," << recievedPosition[2][1] << "," << recievedPosition[2][2] << "," << recievedPosition[2][3] << "\n";
+	std::cout << recievedPosition[3][0] << "," << recievedPosition[3][1] << "," << recievedPosition[3][2] << "," << recievedPosition[3][3] << ")\n";
+
 	if (playerToMove == 1) {
-		player1.getTransform()->setPosition(translate);
+		
+		
+		player1.getTransform()->m_pLocalToWorldMatrix = recievedPosition;
+		player1.getTransform()->setPosition(glm::vec3(recievedPosition[0][3], recievedPosition[1][3], recievedPosition[2][3]));
+
 	}
 	else {
-		player2.getTransform()->setPosition(translate);
+
+
+		player2.getTransform()->m_pLocalToWorldMatrix = recievedPosition;
+		player2.getTransform()->setPosition(glm::vec3(recievedPosition[0][3], recievedPosition[1][3], recievedPosition[2][3]));
 	}
 }
 

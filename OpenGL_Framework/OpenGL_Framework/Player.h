@@ -8,6 +8,7 @@ public:
 	Player(Mesh* p_mesh);
 	~Player();
 
-	glm::vec3 directionFacing;
+	glm::vec3 forwardv;
+	float forwardr;
 };
 
