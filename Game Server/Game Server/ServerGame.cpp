@@ -69,7 +69,6 @@ void ServerGame::receiveFromClients()
 					break;
 
 				case MESSAGE:
-
 						printf(packet.data, "\n");
 					
 						//sendMessage(iter->first, MESSAGE, "Hello Back");

@@ -38,4 +38,6 @@ public:
 	// Other Properties
 	std::string name;
 	glm::vec4 color;
+
+	glm::vec3 forward;
 };

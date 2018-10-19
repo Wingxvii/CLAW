@@ -50,6 +50,11 @@ glm::mat4 Transform::getLocalToWorldMatrix()
 
 void Transform::update(float dt)
 {
+	//find forward direction
+	forward.x = sin(glm::radians(m_pRotY));
+	forward.y = cos(glm::radians(m_pRotY));
+	forward = glm::normalize(forward);
+
 	// Create 4x4 transformation matrix
 
 	// Create rotation matrix

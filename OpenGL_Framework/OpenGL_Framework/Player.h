@@ -7,7 +7,5 @@ public:
 	Player();
 	Player(Mesh* p_mesh);
 	~Player();
-
-	glm::vec3 directionFacing;
 };
 

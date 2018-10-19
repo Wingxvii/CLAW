@@ -55,14 +55,9 @@ void Game::initializeGame()
 	
 
 	player1.getTransform()->setPosition(glm::vec3(-1.0f, 0.0f, 0.0f));
-	player1.directionFacing = glm::vec3(0.0f, 0.0f, 1.0f);
 
 	player2.getTransform()->setPosition(glm::vec3(1.0f, 0.0f, -10.0f));
 	player2.getTransform()->setRotationAngleY(180);
-	player2.directionFacing = glm::vec3(0.0f, 0.0f, -1.0f);
-
-	player1.directionFacing = { 0.0f, 0.0f, -1.0f };
-	player2.directionFacing = { 0.0f, 0.0f, 1.0f };
 
 	
 }
@@ -211,13 +206,11 @@ void Game::cameraFollow()
 {
 	glm::vec3 playerPositionWithOffset;
 
-	if (playerNum == 1) {
-		playerPositionWithOffset = currentPlayer.getTransform()->getPosition() - glm::vec3(-0.5f, -2.0f, -3.0f);
-	}
-	else {
-		playerPositionWithOffset = currentPlayer.getTransform()->getPosition() - glm::vec3(0.5f, -2.0f, 3.0f);
-	}
+	glm::vec3 offset;
+	glm::vec2 offset2D = currentPlayer.getTransform()->forward*3.0f;
+	offset = glm::vec3(offset2D.x, 2.0f, offset2D.y);
 
+	playerPositionWithOffset = currentPlayer.getTransform()->getPosition() + offset;
 
 	camera.getTransform()->setPosition(camera.getTransform()->getPosition() * (1.0f - t) + (playerPositionWithOffset) * t);
 
