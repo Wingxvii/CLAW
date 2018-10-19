@@ -73,8 +73,13 @@ private:
 	Camera camera;
 
 	Mesh box;
+	Mesh map;
+
 	Texture GrassTexture;
+	Texture FlatBlueTexture;
 	ShaderProgram PassThrough;
+
+	PhysicalEntity mapTransform;
 
 	Player player1;
 	Player player2;

@@ -22,7 +22,7 @@ Game::~Game()
 void Game::initializeGame()
 {
 	updateTimer = new Timer();
-		
+
 	glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_TEXTURE_2D);
 
@@ -40,8 +40,22 @@ void Game::initializeGame()
 		exit(0);
 	}
 
+	//load crate mesh
+	if (!map.LoadfromFile("./Assets/Models/FlatMap.obj")) {
+		std::cout << "Model failed to load.\n";
+		system("pause");
+		exit(0);
+	}
+
 	//load texture
 	if (!GrassTexture.Load("./Assets/Textures/Grass.png"))
+	{
+		system("Pause");
+		exit(0);
+	}
+
+	//load texture
+	if (!FlatBlueTexture.Load("./Assets/Textures/FlatBlue.png"))
 	{
 		system("Pause");
 		exit(0);
@@ -52,12 +66,15 @@ void Game::initializeGame()
 
 	camera.perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 1000.0f);
 	camera.getTransform()->m_pLocalPosition = glm::vec3(0.0f, 1.5f, 6.0f);
-	
+
+
+	mapTransform.getTransform()->setPosition(glm::vec3(0.0f, 0.0f, -50.0f));
 
 	player1.getTransform()->setPosition(glm::vec3(-1.0f, 0.0f, 0.0f));
 
 	player2.getTransform()->setPosition(glm::vec3(1.0f, 0.0f, -10.0f));
 	player2.getTransform()->setRotationAngleY(180);
+
 
 	
 }
@@ -99,7 +116,6 @@ float* convertToFloats(glm::mat4 matrix) {
 
 void Game::draw()
 {
-
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -107,6 +123,16 @@ void Game::draw()
 	PassThrough.Bind();
 	PassThrough.SendUniformMat4("uView", convertToFloats(glm::inverse(camera.getTransform()->getLocalToWorldMatrix())), false);
 	PassThrough.SendUniformMat4("uProj", convertToFloats(camera.getProjection()), false);
+
+	PassThrough.SendUniform("uTex", 0);
+	PassThrough.SendUniform("lightPosition", glm::inverse(camera.getTransform()->getLocalToWorldMatrix()) * glm::vec4(2.0f, -4.0f, 3.0f, 0.0f));
+	PassThrough.SendUniform("lightAmbient", glm::vec3(0.15f, 0.15f, 0.15f));
+	PassThrough.SendUniform("lightDiffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+	PassThrough.SendUniform("lightSpecular", glm::vec3(0.9f, 0.9f, 0.9f));
+	PassThrough.SendUniform("lightSpecularExponent", 50.0f);
+	PassThrough.SendUniform("attenuation_Constant", 1.0f);
+	PassThrough.SendUniform("attenuation_Linear", 0.0001f);
+	PassThrough.SendUniform("attenuation_Quadratic", 0.00001f);
 
 	GrassTexture.Bind();
 
@@ -119,12 +145,20 @@ void Game::draw()
 	PassThrough.SendUniformMat4("uModel", convertToFloats(player2.getTransform()->getLocalToWorldMatrix()), false);
 	glDrawArrays(GL_TRIANGLES, 0, box.GetNumVertices());
 	glBindVertexArray(0);
-
-	//unbinds
 	GrassTexture.UnBind();
+
+	//map
+	FlatBlueTexture.Bind();
+	PassThrough.SendUniformMat4("uModel", convertToFloats(mapTransform.getTransform()->getLocalToWorldMatrix()), false);
+	glBindVertexArray(map.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, map.GetNumVertices());
 	PassThrough.UnBind();
+	//unbinds
+	FlatBlueTexture.UnBind();
 
 	glutSwapBuffers();
+
+
 }
 
 void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
