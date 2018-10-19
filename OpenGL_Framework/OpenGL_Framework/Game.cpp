@@ -213,7 +213,7 @@ void Game::cameraFollow()
 	playerPositionWithOffset = currentPlayer.getTransform()->getPosition() + offset;
 
 	camera.getTransform()->setPosition(camera.getTransform()->getPosition() * (1.0f - t) + (playerPositionWithOffset) * t);
-	
+	camera.getTransform()->setRotationAngleY(currentPlayer.getTransform()->getRotationAngleY());
 }
 
 void Game::handlePackets()
