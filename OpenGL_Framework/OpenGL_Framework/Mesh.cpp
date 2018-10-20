@@ -112,12 +112,30 @@ bool Mesh::LoadfromFile(const std::string & file)
 			//vertex data
 
 			glm::vec3 temp;
-
 			sscanf_s(inputString, "v %f %f %f", &temp.x, &temp.y, &temp.z);
+			if (temp.x > maxSize.x) {
+				maxSize.x = temp.x;
+			}
+			else if (temp.x < minSize.x) {
+				minSize.x = temp.x;
+			}
+			if (temp.y > maxSize.y) {
+				maxSize.y = temp.x;
+			}
+			else if (temp.y < minSize.y) {
+				minSize.y = temp.y;
+			}
+
+			if (temp.z > maxSize.z) {
+				maxSize.z = temp.z;
+			}
+			else if (temp.z < minSize.z) {
+				minSize.z = temp.z;
+			}
 			vertexData.push_back(temp);
 		}
 		else if (strstr(inputString, "f") != nullptr) {
-			//vertex data
+			//face data
 
 			MeshFace temp;
 				sscanf_s(inputString, "f %u/%u/%u %u/%u/%u %u/%u/%u",

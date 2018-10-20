@@ -43,7 +43,10 @@
     <ClCompile Include="MessageHandler.cpp">
       <Filter>Source Files\Wrappers</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\Wrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -95,8 +98,9 @@
       <Filter>Header Files\Wrappers</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
-      <Filter>Source Files\GameObjects</Filter>
+      <Filter>Header Files\Wrappers</Filter>
     </ClInclude>
+    <ClInclude Include="BoxCollider.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">

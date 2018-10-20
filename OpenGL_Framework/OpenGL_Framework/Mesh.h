@@ -27,6 +27,9 @@ public:
 	GLuint VBO_Normals = GL_NONE;
 	GLuint VAO = GL_NONE;
 
+	glm::vec3 maxSize{ 0.0f, 0.0f, 0.0f };
+	glm::vec3 minSize{ 10000.0f, 10000.0f,10000.0f };
+
 private:
 	unsigned int _NumFaces = 0;
 	unsigned int _NumVertices = 0;
