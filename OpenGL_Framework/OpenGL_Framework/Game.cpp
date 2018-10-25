@@ -184,6 +184,13 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	case 'e':
 		MessageHandler::sendRotationInput(network, 'e', currentPlayer.getTransform()->getRotationAngleY(), playerNum);
 		break;
+	case 'i':
+		MessageHandler::sendRotationInput(network, 'q', currentPlayer.getTransform()->getRotationAngleY(), playerNum);
+		MessageHandler::sendRotationInput(network, 'q', currentPlayer.getTransform()->getRotationAngleY(), playerNum);
+		MessageHandler::sendRotationInput(network, 'q', currentPlayer.getTransform()->getRotationAngleY(), playerNum);
+		MessageHandler::sendRotationInput(network, 'q', currentPlayer.getTransform()->getRotationAngleY(), playerNum);
+		break;
+
 	default:
 		break;
 	}

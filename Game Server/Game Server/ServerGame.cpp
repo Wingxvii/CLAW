@@ -19,6 +19,7 @@ ServerGame::ServerGame(void)
 	network = new ServerNetwork();
 }
 
+//fixed update
 void ServerGame::update()
 {
 	// get new clients

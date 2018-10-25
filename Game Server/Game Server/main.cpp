@@ -1,10 +1,14 @@
 #include "ServerGame.h"
 // used for multi-threading
 #include <process.h>
+#include <ctime>
+#include <iostream>
+
 
 void serverLoop(void);
 
 ServerGame * server;
+float queueTime = 0.0f;
 
 int main()
 {
@@ -19,8 +23,25 @@ int main()
 
 void serverLoop()
 {
-	while (true)
-	{
-		server->update();
+	float queueTime = 0.0f;
+	clock_t deltaTime = 0.0f;
+	clock_t prevTime = 0.0f;
+
+
+	while (true) {
+
+		deltaTime = std::clock() - prevTime;
+		prevTime = std::clock();
+		queueTime += deltaTime;
+		//std::cout << " Time Elapsed: " << deltaTime << " Ms" << endl;
+
+		if (queueTime > 33) {
+			queueTime -= 33;
+			server->update();
+			//std::cout << " Updated" << endl;
+		}
+
 	}
+
+
 }
