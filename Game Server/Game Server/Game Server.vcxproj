@@ -122,6 +122,7 @@
     <ClInclude Include="ClientPair.h" />
     <ClInclude Include="NetworkServices.h" />
     <ClInclude Include="Packet.h" />
+    <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="ServerGame.h" />
     <ClInclude Include="ServerNetwork.h" />
     <ClInclude Include="Tokenizer.h" />
@@ -130,6 +131,7 @@
     <ClCompile Include="ClientPair.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NetworkServices.cpp" />
+    <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="ServerGame.cpp" />
     <ClCompile Include="ServerNetwork.cpp" />
     <ClCompile Include="Tokenizer.cpp" />

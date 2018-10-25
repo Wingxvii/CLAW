@@ -49,8 +49,6 @@ void ServerGame::receiveFromClients()
 	{
 		int data_length = network->receiveData(iter->first, network_data);
 		
-		
-
 		if (data_length > 0)
 		{
 
