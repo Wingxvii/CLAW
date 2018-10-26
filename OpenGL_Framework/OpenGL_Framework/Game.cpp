@@ -43,6 +43,12 @@ void Game::initializeGame()
 		system("pause");
 		exit(0);
 	}
+	//load crate mesh
+	if (!box2.LoadfromFile("./Assets/Models/crate.obj")) {
+		std::cout << "Model failed to load.\n";
+		system("pause");
+		exit(0);
+	}
 
 	//load crate mesh
 	if (!map.LoadfromFile("./Assets/Models/map_lava1.obj")) {
@@ -66,7 +72,7 @@ void Game::initializeGame()
 	}
 
 	player1.setMesh(&box);
-	player2.setMesh(&box);
+	player2.setMesh(&box2);
 
 	camera.perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 1000.0f);
 	camera.transform->m_pLocalPosition = glm::vec3(0.0f, 1.5f, 6.0f);
@@ -130,6 +136,8 @@ void Game::draw()
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	
+
 	//binds
 	PassThrough.Bind();
 	PassThrough.SendUniformMat4("uView", convertToFloats(glm::inverse(camera.transform->getLocalToWorldMatrix())), false);
@@ -164,15 +172,13 @@ void Game::draw()
 	FlatBlueTexture.Bind();
 	PassThrough.SendUniformMat4("uModel", convertToFloats(mapTransform.getMesh()->transform->getLocalToWorldMatrix()), false);
 	glBindVertexArray(map.VAO);
-	glDrawArrays(GL_TRIANGLES, 0, map.GetNumVertices());
-
-	
+	glDrawArrays(GL_TRIANGLES, 0, map.GetNumVertices());	
 	
 	PassThrough.UnBind();
 	//unbinds
 	FlatBlueTexture.UnBind();
-	drawBoundingBox(player1.getMesh()->BoundingBox, player1.getMesh());
 	
+	drawBoundingBox(player1.getMesh()->BoundingBox, player1.getMesh());
 
 	glutSwapBuffers();
 
@@ -276,6 +282,11 @@ void Game::drawBoundingBox(BoxCollider boundingbox, Mesh* mesh)
 	BoundingShader.Bind();
 	BoundingShader.SendUniformMat4("uView", convertToFloats(glm::inverse(camera.transform->getLocalToWorldMatrix())), false);
 	BoundingShader.SendUniformMat4("uProj", convertToFloats(camera.getProjection()), false);
+	GLuint VAO = GL_NONE;
+	//Vertex array object
+	glGenVertexArrays(1, &VAO);
+	//bind to opengl
+	glBindVertexArray(VAO);
 
 
 	// Cube 1x1x1, centered on origin
@@ -310,7 +321,7 @@ void Game::drawBoundingBox(BoxCollider boundingbox, Mesh* mesh)
 
 	glm::vec3 size = glm::vec3(boundingbox.m_maxBound.x - boundingbox.m_minBound.x, boundingbox.m_maxBound.y - boundingbox.m_minBound.y, boundingbox.m_maxBound.z - boundingbox.m_minBound.z);
 	glm::vec3 center = glm::vec3((boundingbox.m_minBound.x + boundingbox.m_maxBound.x) / 2, (boundingbox.m_minBound.y + boundingbox.m_maxBound.y) / 2, (boundingbox.m_minBound.z + boundingbox.m_maxBound.z) / 2);
-
+	size = size ;
 	glm::mat4 transform = glm::mat4(1.0);
 	transform = glm::translate(glm::mat4(1), center);
 	transform = transform * glm::scale(glm::mat4(1), size);
@@ -321,9 +332,9 @@ void Game::drawBoundingBox(BoxCollider boundingbox, Mesh* mesh)
 	
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
-	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(
-		1,  // attribute
+		0,  // attribute
 		4,                  // number of elements per vertex, here (x,y,z,w)
 		GL_FLOAT,           // the type of each element
 		GL_FALSE,           // take our values as-is
@@ -339,6 +350,8 @@ void Game::drawBoundingBox(BoxCollider boundingbox, Mesh* mesh)
 
 	glDisableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+	
 
 	glDeleteBuffers(1, &vbo_vertices);
 	glDeleteBuffers(1, &ibo_elements);

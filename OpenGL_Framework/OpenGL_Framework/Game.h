@@ -74,6 +74,7 @@ private:
 	Camera camera;
 
 	Mesh box;
+	Mesh box2;
 	Mesh map;
 
 	Texture GrassTexture;
