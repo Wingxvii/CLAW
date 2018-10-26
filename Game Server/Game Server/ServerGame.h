@@ -4,6 +4,7 @@
 #include <vector>
 #include "ClientPair.h"
 #include "Tokenizer.h"
+#include "Player.h"
 
 #include "include/glm/glm.hpp"
 #include "include/glm/ext.hpp"
@@ -31,6 +32,9 @@ private:
 
 	// data buffer
 	char network_data[MAX_PACKET_SIZE];
+
+	Player p1 = Player(1);
+	Player p2 = Player(2);
 
 	void pairClients(int);
 	void sendMessage(int clientid, int message_type, std::string message);

@@ -122,19 +122,23 @@
     <ClInclude Include="ClientPair.h" />
     <ClInclude Include="NetworkServices.h" />
     <ClInclude Include="Packet.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="ServerGame.h" />
     <ClInclude Include="ServerNetwork.h" />
     <ClInclude Include="Tokenizer.h" />
+    <ClInclude Include="Transform.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClientPair.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NetworkServices.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="ServerGame.cpp" />
     <ClCompile Include="ServerNetwork.cpp" />
     <ClCompile Include="Tokenizer.cpp" />
+    <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
