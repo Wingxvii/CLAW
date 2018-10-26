@@ -6,19 +6,21 @@
 
 enum PacketTypes {
 
+	//recieves 3 vec3 for transform
 	INIT_CONNECTION = 0,
 
+	//recieves a string
 	MESSAGE = 1,
 
-	POSITION_DATA = 2,
+	//recieves 3 vec3 for transform
+	TRANSFORMATION_DATA = 2,
 
 	INPUT_DATA = 3,
 
 	PLAYER_NUM = 4,
 
+	//recieves letter
 	KEY_INPUT = 5,
-
-	ROTATION_DATA = 6,
 
 };
 

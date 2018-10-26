@@ -37,7 +37,7 @@ void Camera::orthographic(float left, float right, float bottom, float top, floa
 
 glm::mat4 Camera::getView() const
 {
-	return getTransform()->getLocalToWorldMatrix();
+	return transform->getLocalToWorldMatrix();
 }
 
 glm::mat4 Camera::getProjection() const

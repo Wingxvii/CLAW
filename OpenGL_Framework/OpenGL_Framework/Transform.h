@@ -8,9 +8,9 @@
 class Transform
 {
 public:
-	float m_pScale;
+	glm::vec3 m_pScale;
 
-	float m_pRotX = 0.0f, m_pRotY = 0.0f, m_pRotZ = 0.0f; // local rotation angles		 
+	glm::vec3 m_pRotation;
 
 	glm::vec3 m_pLocalPosition;
 						 
@@ -22,14 +22,12 @@ public:
 	~Transform();
 
 	void setPosition(glm::vec3 newPosition);
-	void setRotationAngleX(float newAngle);
-	void setRotationAngleY(float newAngle);
-	void setRotationAngleZ(float newAngle);
+	void setRotation(glm::vec3 newAngle);
 	void setScale(float newScale);
+	void setScale(glm::vec3 newScale);
 
 	glm::vec3 getPosition();
 	float getRotationAngleY();
-
 	glm::mat4 getLocalToWorldMatrix();
 
 	// TODO: Implement this update function

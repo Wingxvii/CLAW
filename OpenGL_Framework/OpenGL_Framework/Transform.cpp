@@ -13,22 +13,18 @@ void Transform::setPosition(glm::vec3 newPosition)
 	m_pLocalPosition = newPosition;
 }
 
-void Transform::setRotationAngleX(float newAngle)
+void Transform::setRotation(glm::vec3 newAngle)
 {
-	m_pRotX = newAngle;
+	m_pRotation = newAngle;
 }
 
-void Transform::setRotationAngleY(float newAngle)
-{
-	m_pRotY = newAngle;
-}
-
-void Transform::setRotationAngleZ(float newAngle)
-{
-	m_pRotZ = newAngle;
-}
 
 void Transform::setScale(float newScale)
+{
+	m_pScale = glm::vec3(newScale,newScale,newScale);
+}
+
+void Transform::setScale(glm::vec3 newScale)
 {
 	m_pScale = newScale;
 }
@@ -40,7 +36,7 @@ glm::vec3 Transform::getPosition()
 
 float Transform::getRotationAngleY()
 {
-	return m_pRotY;
+	return m_pRotation.y;
 }
 
 glm::mat4 Transform::getLocalToWorldMatrix()
@@ -51,8 +47,8 @@ glm::mat4 Transform::getLocalToWorldMatrix()
 void Transform::update(float dt)
 {
 	//find forward direction
-	forward.x = sin(glm::radians(m_pRotY));
-	forward.y = cos(glm::radians(m_pRotY));
+	forward.x = sin(glm::radians(m_pRotation.y));
+	forward.y = cos(glm::radians(m_pRotation.y));
 	forward = glm::normalize(forward);
 
 	// Create 4x4 transformation matrix
@@ -64,11 +60,11 @@ void Transform::update(float dt)
 	glm::mat4 rz = glm::mat4(1.0);
 
 	//rx.RotateX(m_pRotX);
-	rx = glm::rotate(rx, glm::radians(m_pRotX), glm::vec3{ 1.0f,0.0f,0.0f });
+	rx = glm::rotate(rx, glm::radians(m_pRotation.x), glm::vec3{ 1.0f,0.0f,0.0f });
 	//ry.RotateY(m_pRotY);
-	ry = glm::rotate(ry, glm::radians(m_pRotY), glm::vec3{ 0.0f,1.0f,0.0f });
+	ry = glm::rotate(ry, glm::radians(m_pRotation.y), glm::vec3{ 0.0f,1.0f,0.0f });
 	//rz.RotateZ(m_pRotZ);
-	rz = glm::rotate(rz, glm::radians(m_pRotZ), glm::vec3{ 0.0f,0.0f,1.0f });
+	rz = glm::rotate(rz, glm::radians(m_pRotation.z), glm::vec3{ 0.0f,0.0f,1.0f });
 	// Note: pay attention to rotation order, ZYX is not the same as XYZ
 	m_pLocalRotation = rz * ry * rx;
 
@@ -80,7 +76,7 @@ void Transform::update(float dt)
 	// Create scale matrix
 	glm::mat4 scale = glm::mat4(1.0);
 	//scale.Scale(m_pScale);
-	scale = scale * m_pScale;
+	glm::scale(scale, m_pScale);
 
 	// Combine all above transforms into a single matrix
 	// This is the local transformation matrix, ie. where is this game object relative to it's parent

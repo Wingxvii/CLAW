@@ -13,15 +13,13 @@ class MessageHandler
 {
 public:
 	//Init is used as a simple ping to make sure connection is established
-	static void sendInitConnection(ClientNetwork* network);
+	static void sendInitConnection(ClientNetwork* network, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, int playerNum);
 	//a Message is a simple string with that the server can print to it's console 
 	static void sendMessage(ClientNetwork* network, std::string message);
 	//This sends a keycode of a key that was pressed which will allow the server to process 
-	static void sendKeyInput(ClientNetwork* network, int keycode, int playerNum);
-	//This is for keys related to movement and send which key was pusehd along with the position of the player
-	static void sendMovementInput(ClientNetwork* network, int keycode, glm::vec3 currentPosition, glm::vec3 dir, int playerNum);
+	static void sendKeyInput(ClientNetwork* network, char keycode, int playerNum);
 
-	static void sendRotationInput(ClientNetwork* network, int keycode, float currentRotation, int playerNum);
+	static void sendTransformationInput(ClientNetwork* network, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, int playerNum);
 private: 
 	static void sendToServer(ClientNetwork* network, int packet_type, std::string message);
 };

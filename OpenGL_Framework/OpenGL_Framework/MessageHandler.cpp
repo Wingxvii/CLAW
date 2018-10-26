@@ -1,9 +1,13 @@
 #include "MessageHandler.h"
 
-void MessageHandler::sendInitConnection(ClientNetwork * network) 
+void MessageHandler::sendInitConnection(ClientNetwork * network, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, int playerNum)
 {
+	std::string message = std::to_string(playerNum) + "," + std::to_string(position.x) + "," + std::to_string(position.y) + "," + std::to_string(position.z)
+		+ "," + std::to_string(rotation.x) + "," + std::to_string(rotation.y) + "," + std::to_string(rotation.x)
+		+ "," + std::to_string(scale.x) + "," + std::to_string(scale.y) + "," + std::to_string(scale.y) + ",";
+
 	// send init packet
-	sendToServer(network, INIT_CONNECTION, "");
+	sendToServer(network, INIT_CONNECTION, message);
 }
 
 void MessageHandler::sendMessage(ClientNetwork * network, std::string message)
@@ -12,25 +16,21 @@ void MessageHandler::sendMessage(ClientNetwork * network, std::string message)
 	sendToServer(network, MESSAGE, message);
 }
 
-void MessageHandler::sendKeyInput(ClientNetwork * network, int keycode, int playerNum)
+void MessageHandler::sendKeyInput(ClientNetwork * network, char key, int playerNum)
 {
-	std::string message = std::to_string(playerNum) + "," + std::to_string(keycode) + ",";
-	sendToServer(network, INPUT_DATA, message);
+	std::string message = std::to_string(playerNum) + "," + std::to_string(key) + ",";
+	sendToServer(network, KEY_INPUT, message);
 
 }
 
-void MessageHandler::sendMovementInput(ClientNetwork * network, int keycode, glm::vec3 currentPosition, glm::vec3 dir, int playerNum)
+void MessageHandler::sendTransformationInput(ClientNetwork * network, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, int playerNum)
 {
-	std::string message = std::to_string(playerNum) + "," + std::to_string(keycode) + "," + std::to_string(currentPosition.x) + "," +
-		std::to_string(currentPosition.y) + "," + std::to_string(currentPosition.z) + "," + std::to_string(dir.x) + "," + std::to_string(dir.y) + ",";
-	sendToServer(network, POSITION_DATA, message);
-}
+	std::string message = std::to_string(playerNum) + "," + std::to_string(position.x) + "," + std::to_string(position.y) + "," + std::to_string(position.z)
+		+ "," + std::to_string(rotation.x) + "," + std::to_string(rotation.y) + "," + std::to_string(rotation.x)
+		+ "," + std::to_string(scale.x) + "," + std::to_string(scale.y) + "," + std::to_string(scale.y) + ",";
 
-void MessageHandler::sendRotationInput(ClientNetwork * network, int keycode, float currentRotation, int playerNum)
-{
-	std::string message = std::to_string(playerNum) + "," + std::to_string(keycode) + "," +
-		std::to_string(currentRotation) + ",";
-	sendToServer(network, ROTATION_DATA, message);
+
+	sendToServer(network, TRANSFORMATION_DATA, message);
 }
 
 

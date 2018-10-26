@@ -81,6 +81,10 @@ void ServerGame::receiveFromClients()
 						//sendMessage(iter->first, MESSAGE, "Hello Back");
 			
 					break;
+				case KEY_INPUT:
+					parsedData = Tokenizer::tokenize(',', packet.data);
+					handleIncomingKey(parsedData);
+					break;
 
 				default:
 					printf(network_data, "\n");

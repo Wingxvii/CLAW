@@ -13,11 +13,12 @@ public:
 	Entity();
 	~Entity();
 
-	Transform* getTransform() const;
+	
 	int m_entityType = (int)EntityTypes::BASE_ENTITY;
+	
 	
 private:
 	
-	Transform* m_trans = new Transform();
+	
 };
 
