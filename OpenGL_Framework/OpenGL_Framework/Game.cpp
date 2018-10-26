@@ -45,6 +45,12 @@ void Game::initializeGame()
 		system("pause");
 		exit(0);
 	}
+	//load crate mesh
+	if (!box2.LoadfromFile("./Assets/Models/crate.obj")) {
+		std::cout << "Model failed to load.\n";
+		system("pause");
+		exit(0);
+	}
 
 	//load crate mesh
 	if (!map.LoadfromFile("./Assets/Models/map_lava1.obj")) {
@@ -68,7 +74,7 @@ void Game::initializeGame()
 	}
 
 	player1.setMesh(&box);
-	player2.setMesh(&box);
+	player2.setMesh(&box2);
 
 	camera.perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 1000.0f);
 	camera.transform->m_pLocalPosition = glm::vec3(0.0f, 1.5f, 6.0f);
