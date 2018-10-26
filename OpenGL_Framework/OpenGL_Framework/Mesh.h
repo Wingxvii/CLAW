@@ -5,6 +5,7 @@
 #include <vector>
 #include "glm/glm.hpp"
 
+#include "BoxCollider.h"
 class Mesh {
 public:
 	Mesh();
@@ -29,6 +30,12 @@ public:
 
 	glm::vec3 maxSize{ 0.0f, 0.0f, 0.0f };
 	glm::vec3 minSize{ 10000.0f, 10000.0f,10000.0f };
+
+	BoxCollider BoundingBox;
+
+	Transform* transform = new Transform();
+
+	std::vector<glm::vec3> vertices;
 
 private:
 	unsigned int _NumFaces = 0;

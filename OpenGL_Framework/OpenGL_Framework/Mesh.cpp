@@ -132,6 +132,7 @@ bool Mesh::LoadfromFile(const std::string & file)
 			else if (temp.z < minSize.z) {
 				minSize.z = temp.z;
 			}
+			vertices.push_back(temp);
 			vertexData.push_back(temp);
 		}
 		else if (strstr(inputString, "f") != nullptr) {
@@ -210,6 +211,9 @@ bool Mesh::LoadfromFile(const std::string & file)
 	unPackedNormalData.clear();
 	unPackedTextureData.clear();
 	unPackedVertexData.clear();
+
+	BoundingBox.m_maxBound = maxSize;
+	BoundingBox.m_minBound = minSize;
 
 	return true;
 }

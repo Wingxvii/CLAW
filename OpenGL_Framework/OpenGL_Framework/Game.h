@@ -59,6 +59,7 @@ public:
 
 	void cameraFollow();
 
+	void drawBoundingBox(BoxCollider boundingbox, Mesh* mesh);
 
 private:
 	void handlePackets();
@@ -78,6 +79,7 @@ private:
 	Texture GrassTexture;
 	Texture FlatBlueTexture;
 	ShaderProgram PassThrough;
+	ShaderProgram BoundingShader;
 
 	PhysicalEntity mapTransform;
 
@@ -87,7 +89,7 @@ private:
 	Player currentPlayer;
 
 	glm::vec3 cameraVelocity = {0,0,0};
-	glm::vec3 cameraSteering = { 0,0,0 };
+	glm::vec3 cameraSteering = {0,0,0};
 
 	float t = 0;
 };
