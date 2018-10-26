@@ -288,6 +288,7 @@ void Game::drawBoundingBox(BoxCollider boundingbox, Mesh* mesh)
 	   0.5,  0.5,  0.5, 1.0,
 	  -0.5,  0.5,  0.5, 1.0,
 	};
+
 	GLuint vbo_vertices;
 	glGenBuffers(1, &vbo_vertices);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
@@ -308,10 +309,14 @@ void Game::drawBoundingBox(BoxCollider boundingbox, Mesh* mesh)
 	glm::vec3 size = glm::vec3(boundingbox.m_maxBound.x - boundingbox.m_minBound.x, boundingbox.m_maxBound.y - boundingbox.m_minBound.y, boundingbox.m_maxBound.z - boundingbox.m_minBound.z);
 	glm::vec3 center = glm::vec3((boundingbox.m_minBound.x + boundingbox.m_maxBound.x) / 2, (boundingbox.m_minBound.y + boundingbox.m_maxBound.y) / 2, (boundingbox.m_minBound.z + boundingbox.m_maxBound.z) / 2);
 
-	glm::mat4 transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size);
-	BoundingShader.SendUniformMat4("uModel", convertToFloats(mesh->transform->getLocalToWorldMatrix()), false);
-	/* Apply object's transformation matrix */
+	glm::mat4 transform = glm::mat4(1.0);
+	transform = glm::translate(glm::mat4(1), center);
+	transform = transform * glm::scale(glm::mat4(1), size);
 	glm::mat4 m = mesh->transform->getLocalToWorldMatrix() * transform;
+
+	BoundingShader.SendUniformMat4("uModel", convertToFloats(m), false);
+	/* Apply object's transformation matrix */
+	
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
 	glEnableVertexAttribArray(1);
