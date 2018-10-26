@@ -33,14 +33,13 @@ private:
 	// data buffer
 	char network_data[MAX_PACKET_SIZE];
 
-	Player p1 = Player(1);
-	Player p2 = Player(2);
+	Player p[2] = { Player(1),Player(2) };
 
 	void pairClients(int);
 	void sendMessage(int clientid, int message_type, std::string message);
 
-	void handleIncomingPositionData(const std::vector<std::string>&);
-	void handleIncomingRotationData(const std::vector<std::string>&);
+	void handleIncomingKey(const std::vector<std::string>&);
+	void handleIncomingTransformation(const std::vector<std::string>&);
 
 	unsigned int currentClient;
 

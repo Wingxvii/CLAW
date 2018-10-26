@@ -29,6 +29,13 @@ void ServerGame::update()
 
 		client_id++;
 
+		if (client_id == 1) {
+			p[1].active = true;
+		}
+		else if (client_id == 2) {
+			p[2].active = true;
+		}
+
 		pairClients(client_id);
 	}
 
@@ -63,7 +70,8 @@ void ServerGame::receiveFromClients()
 				case INIT_CONNECTION:
 
 					printf("server received init packet from client\n");
-
+					parsedData = Tokenizer::tokenize(',', packet.data);
+					handleIncomingTransformation(parsedData);
 
 					break;
 
@@ -73,18 +81,6 @@ void ServerGame::receiveFromClients()
 						//sendMessage(iter->first, MESSAGE, "Hello Back");
 			
 					break;
-
-				case POSITION_DATA:
-					parsedData = Tokenizer::tokenize(',', packet.data);
-					handleIncomingPositionData(parsedData);
-
-					break;
-				case ROTATION_DATA:
-					parsedData = Tokenizer::tokenize(',', packet.data);
-					handleIncomingRotationData(parsedData);
-
-					break;
-
 
 				default:
 					printf(network_data, "\n");
@@ -139,67 +135,67 @@ void ServerGame::sendMessage(int clientID, int packetType, std::string message)
 //Index 0 is the player num 
 //Index 1 is the key pushed
 //Index 2-4 player position data
-void ServerGame::handleIncomingPositionData(const std::vector<std::string>& data)
+void ServerGame::handleIncomingKey(const std::vector<std::string>& data)
 {
 
 	int playerNum = std::stoi(data[0]);
 	int keycode = std::stoi(data[1]);
-	glm::vec3 position = {std::stof(data[2]), std::stof(data[3]), std::stof(data[4])};
-	glm::vec3 forward = {std::stof(data[5]) ,0.0f,std::stof(data[6]) };
-
-	glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0.0f,1.0f,0.0f)));
 
 	switch (keycode)
 	{
 	case 'a':
-		position += 0.1f*right;
+		p[playerNum].transform.position += 0.1f*p[playerNum].transform.getLeft();
 		
 		break;
 	case 's':
 
-		position += 0.1f*forward;
-		
+		p[playerNum].transform.position += 0.1f*p[playerNum].transform.getBackward();
+
 		break;
 	case 'w':
-		position += -0.1f*forward;
-		
+		p[playerNum].transform.position += -0.1f*p[playerNum].transform.getBackward();
+
 		break;
 	case 'd':
-		position += -0.1f*right;
+		p[playerNum].transform.position += -0.1f*p[playerNum].transform.getLeft();
+
+		break;
+
+	case 'q':
+		p[playerNum].transform.rotation.y += 1.0f;
+		break;
+	case 'e':
+		p[playerNum].transform.rotation.y -= 1.0f;
 
 		break;
 	default:
 		break;
 	}
 
-		sendMessage(0, POSITION_DATA, std::to_string(playerNum) + "," + to_string(position.x) + "," + to_string(position.y)
-			+ "," + to_string(position.z) + ","); //send vecter to add;
+	sendMessage(0, TRANSFORMATION_DATA, std::to_string(playerNum) + "," + to_string(p[playerNum].transform.position.x) + "," + to_string(p[playerNum].transform.position.y)
+		+ "," + to_string(p[playerNum].transform.position.z) + "," + to_string(p[playerNum].transform.rotation.x) + "," + to_string(p[playerNum].transform.rotation.y)
+		+ "," + to_string(p[playerNum].transform.rotation.z) + "," + to_string(p[playerNum].transform.scale.x) + "," + to_string(p[playerNum].transform.scale.y)
+		+ "," + to_string(p[playerNum].transform.scale.z) + ",");
 
 		if (network->sessions.size() > 1) {
-			sendMessage(1, POSITION_DATA, std::to_string(playerNum) + "," + to_string(position.x) + "," + to_string(position.y)
-				+ "," + to_string(position.z) + ","); //send vecter to add;
+			sendMessage(1, TRANSFORMATION_DATA, std::to_string(playerNum) + "," + to_string(p[playerNum].transform.position.x) + "," + to_string(p[playerNum].transform.position.y)
+				+ "," + to_string(p[playerNum].transform.position.z) + "," + to_string(p[playerNum].transform.rotation.x) + "," + to_string(p[playerNum].transform.rotation.y)
+				+ "," + to_string(p[playerNum].transform.rotation.z) + "," + to_string(p[playerNum].transform.scale.x) + "," + to_string(p[playerNum].transform.scale.y)
+				+ "," + to_string(p[playerNum].transform.scale.z) + ",");
 		}
 }
 
-void ServerGame::handleIncomingRotationData(const std::vector<std::string>& data)
+void ServerGame::handleIncomingTransformation(const std::vector<std::string>& data)
 {
-
 	int playerNum = std::stoi(data[0]);
-	int keycode = std::stoi(data[1]);
-	float rotation = std::stoi(data[2]);
-
-	if (keycode == 'q') {
-		rotation += 1.0f;
-	}
-	else {
-		rotation -= 1.0f;
-	}
-	sendMessage(0, ROTATION_DATA, std::to_string(playerNum) + "," + to_string(rotation) + ","); //send vecter to add;
-
-	if (network->sessions.size() > 1) {
-		sendMessage(1, ROTATION_DATA, std::to_string(playerNum) + "," + to_string(rotation) + ","); //send vecter to add;
-	}
-
-
+	p[playerNum].transform.position.x = std::stoi(data[1]);
+	p[playerNum].transform.position.y = std::stoi(data[2]);
+	p[playerNum].transform.position.z = std::stoi(data[3]);
+	p[playerNum].transform.rotation.x = std::stoi(data[4]);
+	p[playerNum].transform.rotation.y = std::stoi(data[5]);
+	p[playerNum].transform.rotation.z = std::stoi(data[6]);
+	p[playerNum].transform.scale.x = std::stoi(data[7]);
+	p[playerNum].transform.scale.y = std::stoi(data[8]);
+	p[playerNum].transform.scale.z = std::stoi(data[9]);
 }
 

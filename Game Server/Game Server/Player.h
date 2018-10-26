@@ -12,6 +12,7 @@ public:
 	Rigidbody rigidbody;
 	Transform transform;
 	int playerNumber;
+	bool active;
 
 
 };
