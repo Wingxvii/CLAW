@@ -81,7 +81,7 @@ void Rigidbody::update()
 
 		//applies gravity
 		if (gravity) {
-			lVelocity += new glm::vec3(0,-gravAccel/(mass + 0.0001), 0);
+			lVelocity += glm::vec3(0,-gravAccel/(mass + 0.0001), 0);
 		}
 
 		//moves position
