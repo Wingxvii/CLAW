@@ -4,8 +4,20 @@
 #include <fstream>
 #include <iostream>
 
+bool ShaderProgram::_IsInitDefault = false;
+GLuint ShaderProgram::_VertShaderDefault = 0;
+GLuint ShaderProgram::_FragShaderDefault = 0;
+GLuint ShaderProgram::_ProgramDefault = 0;
+
+
 ShaderProgram::ShaderProgram()
 {
+	setDefault();
+}
+
+ShaderProgram::ShaderProgram(const std::string & vertFile, const std::string & fragFile)
+{
+	Load(vertFile,fragFile);
 }
 
 ShaderProgram::~ShaderProgram()
@@ -16,8 +28,37 @@ ShaderProgram::~ShaderProgram()
 
 }
 
+bool ShaderProgram::initDefault()
+{
+	if (!_IsInitDefault) {
+		ShaderProgram errorShader;
+		bool compileSuccess = errorShader.Load("./Assets/Shaders/error.vert", "./Assets/Shaders/error.frag");
+		if (!compileSuccess) {
+			std::cout << "Default Shader invalid\n";
+			system("pause");
+			exit(EXIT_FAILURE);
+		}
+		_VertShaderDefault = errorShader._VertexShader;
+		_FragShaderDefault = errorShader._FragShader;
+		_ProgramDefault = errorShader._Program;
+		_IsInitDefault = true;
+
+	}
+	return _IsInitDefault;
+}
+
+void ShaderProgram::setDefault()
+{
+	_VertexShader = _VertShaderDefault;
+	_FragShader = _FragShaderDefault;
+	_Program = _ProgramDefault;
+}
+
 bool ShaderProgram::Load(const std::string & vertFile, const std::string & fragFile)
 {
+	_vertexFilename = vertFile;
+	_fragFilename = fragFile;
+
 	//create shader and program objects
 	_VertexShader = glCreateShader(GL_VERTEX_SHADER);
 	_FragShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -39,7 +80,7 @@ bool ShaderProgram::Load(const std::string & vertFile, const std::string & fragF
 
 		OutputShaderLog(_VertexShader);
 		UnLoad();
-
+		setDefault();
 		return false;
 	}
 	if (!CompileShader(_FragShader)) {
@@ -47,7 +88,7 @@ bool ShaderProgram::Load(const std::string & vertFile, const std::string & fragF
 
 		OutputShaderLog(_FragShader);
 		UnLoad();
-
+		setDefault();
 		return false;
 	}
 	
@@ -71,6 +112,11 @@ bool ShaderProgram::Load(const std::string & vertFile, const std::string & fragF
 
 }
 
+bool ShaderProgram::reload()
+{
+	return Load(_vertexFilename, _fragFilename);
+}
+
 bool ShaderProgram::isLoaded() const
 {
 	return _IsInit;
@@ -78,17 +124,17 @@ bool ShaderProgram::isLoaded() const
 
 void ShaderProgram::UnLoad()
 {
-	if (_VertexShader != GL_NONE) {
+	if (_VertexShader != GL_NONE && _VertexShader != _VertShaderDefault) {
 		glDetachShader(_Program, _VertexShader);
 		glDeleteShader(_VertexShader);
 		_VertexShader = GL_NONE;
 	}
-	if (_FragShader != GL_NONE) {
+	if (_FragShader != GL_NONE && _VertexShader != _VertShaderDefault) {
 		glDetachShader(_Program, _VertexShader);
 		glDeleteShader(_VertexShader);
 		_VertexShader = GL_NONE;
 	}
-	if (_Program != GL_NONE) {
+	if (_Program != GL_NONE && _VertexShader != _VertShaderDefault) {
 		glDeleteProgram(_Program);
 		_Program = GL_NONE;
 	}
@@ -136,6 +182,8 @@ int ShaderProgram::GetAttribLocation(const std::string & attribName)
 int ShaderProgram::GetUniformLocation(const std::string & uniformName)
 {
 	return glGetUniformLocation(_Program, uniformName.c_str());
+
+
 }
 
 void ShaderProgram::SendUniform(const std::string & name, int integer)

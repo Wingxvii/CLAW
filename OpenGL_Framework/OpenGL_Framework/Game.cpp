@@ -24,11 +24,11 @@ void Game::initializeGame()
 	glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_TEXTURE_2D);
 
+	ShaderProgram::initDefault();
+
 	//load crate shaders
 	if (!PassThrough.Load("./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag")) {
 		std::cout << "Shaders failed to init.\n";
-		system("pause");
-		exit(0);
 	}
 	//load crate shaders
 	if (!BoundingShader.Load("./Assets/Shaders/BoundingBox.vert", "./Assets/Shaders/BoundingBox.frag")) {
@@ -208,6 +208,8 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	case 'e':
 		MessageHandler::sendKeyInput(network, 'e', playerNum);
 		break;
+	case 'r':
+		PassThrough.reload();
 	default:
 		break;
 	}

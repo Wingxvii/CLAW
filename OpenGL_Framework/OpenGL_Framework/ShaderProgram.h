@@ -7,10 +7,16 @@
 class ShaderProgram {
 public:
 	ShaderProgram();
+	ShaderProgram(const std::string &vertFile, const std::string &fragFile);
+
 	~ShaderProgram();
+
+	static bool initDefault();
+	void setDefault();
 
 	//loads a vertex shader and a fragment shader and places them in a program
 	bool Load(const std::string &vertFile, const std::string &fragFile);
+	bool reload();
 	bool isLoaded() const;
 	//clears all data from opengl
 	void UnLoad();
@@ -52,6 +58,14 @@ private:
 	GLuint _VertexShader = 0;
 	GLuint _FragShader = 0;
 	GLuint _Program = 0;
+
+	std::string _vertexFilename;
+	std::string _fragFilename;
+
+	static bool _IsInitDefault;
+	static GLuint _VertShaderDefault;
+	static GLuint _FragShaderDefault;
+	static GLuint _ProgramDefault;
 
 	//pulls entire shader file into one string
 	std::string ReadFile(const std::string &fileName)const;

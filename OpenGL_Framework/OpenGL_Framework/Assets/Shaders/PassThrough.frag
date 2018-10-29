@@ -22,7 +22,6 @@ out vec4 outColor;
 void main()
 {
 	outColor.rgb = lightAmbient;
-	
 	//account for rasterizer interpolating 
 	vec3 normal = normalize(norm);
 	
