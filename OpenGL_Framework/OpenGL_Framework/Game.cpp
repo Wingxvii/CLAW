@@ -81,6 +81,7 @@ void Game::initializeGame()
 	mapTransform.getMesh()->transform->setPosition(glm::vec3(0.0f, 0.0f, -50.0f));
 
 	player1.getMesh()->transform->setPosition(glm::vec3(-1.0f, 0.0f, 0.0f));
+	player1.getMesh()->transform->setRotation(glm::vec3(0, 0, 0));
 
 	player2.getMesh()->transform->setPosition(glm::vec3(1.0f, 0.0f, -10.0f));
 	player2.getMesh()->transform->setRotation(glm::vec3(0,180,0));
@@ -295,13 +296,12 @@ void Game::drawBoundingBox(BoxCollider boundingbox, Mesh* mesh)
 	GLfloat vertices[] = {
 	  -0.5, -0.5, -0.5, 1.0,
 	   0.5, -0.5, -0.5, 1.0,
-	   0.5, -0.5, -0.5, 1.0,
-	   0.5,  0.5, -0.5, 1.0,
-	  -0.5,  0.5, -0.5, 1.0,
-	  -0.5, -0.5,  0.5, 1.0,
 	   0.5, -0.5,  0.5, 1.0,
+	  -0.5, -0.5,  0.5, 1.0,
+	  -0.5,  0.5, -0.5, 1.0,
+	   0.5,  0.5, -0.5, 1.0,
 	   0.5,  0.5,  0.5, 1.0,
-	  -0.5,  0.5,  0.5, 1.0,
+	  -0.5,  0.5, -0.5, 1.0,
 	};
 
 	GLuint vbo_vertices;
