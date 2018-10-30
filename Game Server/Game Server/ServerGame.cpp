@@ -152,7 +152,6 @@ void ServerGame::handleIncomingKey(const std::vector<std::string>& data)
 		
 		break;
 	case 's':
-
 		p[playerNum].transform.position += 0.1f * p[playerNum].transform.getBackward();
 
 		break;

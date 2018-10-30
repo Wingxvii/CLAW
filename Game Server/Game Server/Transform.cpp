@@ -17,7 +17,7 @@ glm::vec3 Transform::getBackward()
 	glm::vec3 back = glm::vec3(0, 0, 0);
 	//find back direction
 	back.x = sin(glm::radians(rotation.y));
-	back.y = cos(glm::radians(rotation.x));
+	back.z = cos(glm::radians(rotation.y));
 	back = glm::normalize(back);
 
 	return back;
