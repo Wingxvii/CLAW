@@ -65,7 +65,7 @@ void Game::initializeGame()
 	}
 
 	//load texture
-	if (!FlatBlueTexture.Load("./Assets/Textures/FlatBlue.png"))
+	if (!FlatBlueTexture.Load("./Assets/Textures/LavaMapTexture.png"))
 	{
 		system("Pause");
 		exit(0);
@@ -146,10 +146,10 @@ void Game::draw()
 
 	PassThrough.SendUniform("uTex", 0);
 	PassThrough.SendUniform("lightPosition", glm::inverse(camera.transform->getLocalToWorldMatrix()) * glm::vec4(2.0f, -4.0f, 3.0f, 0.0f));
-	PassThrough.SendUniform("lightAmbient", glm::vec3(0.15f, 0.15f, 0.15f));
+	PassThrough.SendUniform("lightAmbient", glm::vec3(0.5f, 0.5f, 0.5f));
 	PassThrough.SendUniform("lightDiffuse", glm::vec3(0.5f, 0.5f, 0.5f));
 	PassThrough.SendUniform("lightSpecular", glm::vec3(0.9f, 0.9f, 0.9f));
-	PassThrough.SendUniform("lightSpecularExponent", 50.0f);
+	PassThrough.SendUniform("lightSpecularExponent", 5.0f);
 	PassThrough.SendUniform("attenuation_Constant", 1.0f);
 	PassThrough.SendUniform("attenuation_Linear", 0.0001f);
 	PassThrough.SendUniform("attenuation_Quadratic", 0.00001f);
