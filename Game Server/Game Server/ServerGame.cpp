@@ -148,20 +148,20 @@ void ServerGame::handleIncomingKey(const std::vector<std::string>& data)
 	switch (keycode)
 	{
 	case 'a':
-		p[playerNum].transform.position += 0.1f*p[playerNum].transform.getLeft();
+		p[playerNum].transform.position += 0.1f * p[playerNum].transform.getLeft();
 		
 		break;
 	case 's':
 
-		p[playerNum].transform.position += 0.1f*p[playerNum].transform.getBackward();
+		p[playerNum].transform.position += 0.1f * p[playerNum].transform.getBackward();
 
 		break;
 	case 'w':
-		p[playerNum].transform.position += -0.1f*p[playerNum].transform.getBackward();
+		p[playerNum].transform.position += -0.1f * p[playerNum].transform.getBackward();
 
 		break;
 	case 'd':
-		p[playerNum].transform.position += -0.1f*p[playerNum].transform.getLeft();
+		p[playerNum].transform.position += -0.1f * p[playerNum].transform.getLeft();
 
 		break;
 

@@ -294,10 +294,13 @@ void Game::drawBoundingBox(BoxCollider boundingbox, Mesh* mesh)
 
 	// Cube 1x1x1, centered on origin
 	GLfloat vertices[] = {
+	//bottom
 	  -0.5, -0.5, -0.5, 1.0,
 	   0.5, -0.5, -0.5, 1.0,
 	   0.5, -0.5,  0.5, 1.0,
 	  -0.5, -0.5,  0.5, 1.0,
+
+	 //top
 	  -0.5,  0.5, -0.5, 1.0,
 	   0.5,  0.5, -0.5, 1.0,
 	   0.5,  0.5,  0.5, 1.0,
@@ -336,8 +339,8 @@ void Game::drawBoundingBox(BoxCollider boundingbox, Mesh* mesh)
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(
-		0,  // attribute
-		4,                  // number of elements per vertex, here (x,y,z,w)
+		0,                  // attribute
+		4,                  // number of elements per vertex
 		GL_FLOAT,           // the type of each element
 		GL_FALSE,           // take our values as-is
 		0,                  // no extra data between each position
