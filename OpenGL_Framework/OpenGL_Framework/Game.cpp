@@ -467,7 +467,6 @@ void Game::handlePackets()
 			}
 			else {
 				currentPlayer = player2;
-				camera.transform->setRotation(glm::vec3(0,-180,0));
 				collisionObjects.push_back(player1);
 			}
 
@@ -504,6 +503,9 @@ void Game::updatePlayers(const std::vector<std::string>& data, PacketTypes _pack
 		}
 		else {
 			player2->getMesh()->transform->setPosition(translate);
+			player2->getMesh()->transform->setRotation(rotation);
+			player2->getMesh()->transform->setScale(scale);
+
 		}
 
 }
