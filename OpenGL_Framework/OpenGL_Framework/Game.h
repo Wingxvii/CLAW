@@ -59,7 +59,7 @@ public:
 
 	void cameraFollow();
 
-	void drawBoundingBox(BoxCollider boundingbox, Mesh* mesh);
+	
 
 private:
 	void handlePackets();
@@ -70,6 +70,7 @@ private:
 
 	float* getData(glm::mat4);
 
+	std::vector<PhysicalEntity * > collisionObjects;
 
 	Camera camera;
 
@@ -79,18 +80,35 @@ private:
 
 	Texture GrassTexture;
 	Texture FlatBlueTexture;
+	Texture Sky;
+
 	ShaderProgram PassThrough;
 	ShaderProgram BoundingShader;
 
-	PhysicalEntity mapTransform;
+	PhysicalEntity *mapTransform = new PhysicalEntity();
+	PhysicalEntity *skyBoxTransform = new PhysicalEntity();
 
-	Player player1;
-	Player player2;
 
-	Player currentPlayer;
+	Player *player1 = new Player();
+	Player *player2 = new Player();
+
+	Player *currentPlayer = new Player();
 
 	glm::vec3 cameraVelocity = {0,0,0};
 	glm::vec3 cameraSteering = {0,0,0};
 
+	glm::vec4 boundingBoxColor = { 1.0f, 0.0f, 0.0f, 1.0f };
+
 	float t = 0;
+
+	void drawBoundingBox(BoxCollider boundingbox, Mesh* mesh);
+
+	void checkCollisions();
+
+	bool wPushed = false;
+	bool sPushed = false;
+	bool aPushed = false;
+	bool dPushed = false;
+	bool qPushed = false;
+	bool ePushed = false;
 };

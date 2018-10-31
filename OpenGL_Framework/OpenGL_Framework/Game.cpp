@@ -71,27 +71,23 @@ void Game::initializeGame()
 		exit(0);
 	}
 
-	player1.setMesh(&box);
-	player2.setMesh(&box2);
+	player1->setMesh(&box);
+	player2->setMesh(&box2);
 
 	camera.perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 1000.0f);
 	camera.transform->m_pLocalPosition = glm::vec3(0.0f, 1.5f, 6.0f);
 
 
-	mapTransform.getMesh()->transform->setPosition(glm::vec3(0.0f, 0.0f, -50.0f));
+	mapTransform->getMesh()->transform->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 
-	player1.getMesh()->transform->setPosition(glm::vec3(-1.0f, 0.0f, 0.0f));
-	player1.getMesh()->transform->setRotation(glm::vec3(0, 0, 0));
+	player1->getMesh()->transform->setPosition(glm::vec3(-1.0f, 0.0f, 0.0f));
+	player1->getMesh()->transform->setRotation(glm::vec3(0, 0, 0));
 
-	player2.getMesh()->transform->setPosition(glm::vec3(1.0f, 0.0f, -10.0f));
-	player2.getMesh()->transform->setRotation(glm::vec3(0,180,0));
+	player2->getMesh()->transform->setPosition(glm::vec3(1.0f, 0.0f, -10.0f));
+	player2->getMesh()->transform->setRotation(glm::vec3(0,180,0));
 
-	MessageHandler::sendInitConnection(network, player1.getMesh()->transform->m_pLocalPosition, player1.getMesh()->transform->m_pRotation, player1.getMesh()->transform->m_pScale, 1);
-	MessageHandler::sendInitConnection(network, player2.getMesh()->transform->m_pLocalPosition, player2.getMesh()->transform->m_pRotation, player2.getMesh()->transform->m_pScale, 2);
-
-
-
-	
+	MessageHandler::sendInitConnection(network, player1->getMesh()->transform->m_pLocalPosition, player1->getMesh()->transform->m_pRotation, player1->getMesh()->transform->m_pScale, 1);
+	MessageHandler::sendInitConnection(network, player2->getMesh()->transform->m_pLocalPosition, player2->getMesh()->transform->m_pRotation, player2->getMesh()->transform->m_pScale, 2);
 }
 
 void Game::update()
@@ -104,16 +100,41 @@ void Game::update()
 
 	
 	t = pow(0.1, 60.0f * deltaTime);
-	//camera.getTransform()->setRotationAngleY(45);
 	cameraFollow();
 	camera.transform->update(deltaTime);
 
 
-	player1.getMesh()->transform->update(deltaTime);
+	player1->getMesh()->transform->update(deltaTime);
 	
-	player2.getMesh()->transform->update(deltaTime);
+	player2->getMesh()->transform->update(deltaTime);
+
+	checkCollisions();
 
 	handlePackets();
+
+	if (wPushed) {
+		MessageHandler::sendKeyInput(network, 'w', playerNum);
+	} 
+
+	if (aPushed) {
+		MessageHandler::sendKeyInput(network, 'a', playerNum);
+	}
+
+	if (sPushed) {
+		MessageHandler::sendKeyInput(network, 's', playerNum);
+	}
+
+	if (dPushed) {
+		MessageHandler::sendKeyInput(network, 'd', playerNum);
+	}
+
+	if (qPushed) {
+		MessageHandler::sendKeyInput(network, 'q', playerNum);
+	}
+
+	if (ePushed) {
+		MessageHandler::sendKeyInput(network, 'e', playerNum);
+	}
 		
 	//...
 }
@@ -157,13 +178,13 @@ void Game::draw()
 	GrassTexture.Bind();
 
 	//cube 1
-	PassThrough.SendUniformMat4("uModel", convertToFloats(player1.getMesh()->transform->getLocalToWorldMatrix()), false);
+	PassThrough.SendUniformMat4("uModel", convertToFloats(player1->getMesh()->transform->getLocalToWorldMatrix()), false);
 	
 	glBindVertexArray(box.VAO);
 	glDrawArrays(GL_TRIANGLES, 0, box.GetNumVertices());
 
 	//cube 2
-	PassThrough.SendUniformMat4("uModel", convertToFloats(player2.getMesh()->transform->getLocalToWorldMatrix()), false);
+	PassThrough.SendUniformMat4("uModel", convertToFloats(player2->getMesh()->transform->getLocalToWorldMatrix()), false);
 	
 	glDrawArrays(GL_TRIANGLES, 0, box.GetNumVertices());
 	glBindVertexArray(0);
@@ -171,7 +192,7 @@ void Game::draw()
 
 	//map
 	FlatBlueTexture.Bind();
-	PassThrough.SendUniformMat4("uModel", convertToFloats(mapTransform.getMesh()->transform->getLocalToWorldMatrix()), false);
+	PassThrough.SendUniformMat4("uModel", convertToFloats(mapTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
 	glBindVertexArray(map.VAO);
 	glDrawArrays(GL_TRIANGLES, 0, map.GetNumVertices());	
 	
@@ -179,7 +200,8 @@ void Game::draw()
 	//unbinds
 	FlatBlueTexture.UnBind();
 	
-	drawBoundingBox(player1.getMesh()->BoundingBox, player1.getMesh());
+	drawBoundingBox(player1->getMesh()->BoundingBox, player1->getMesh());
+	drawBoundingBox(player2->getMesh()->BoundingBox, player2->getMesh());
 
 	glutSwapBuffers();
 
@@ -188,25 +210,31 @@ void Game::draw()
 
 void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 {
-	
+	//try using bools 
 	switch(key)
 	{
 	case 'a':
-		MessageHandler::sendKeyInput(network, 'a', playerNum);
+		aPushed = true;
+		//MessageHandler::sendKeyInput(network, 'a', playerNum);
 		break;
 	case 's':
+		sPushed = true;
 		MessageHandler::sendKeyInput(network, 's', playerNum);
 		break;
 	case 'w':
-		MessageHandler::sendKeyInput(network, 'w', playerNum);
+		wPushed = true;
+		//MessageHandler::sendKeyInput(network, 'w', playerNum);
 		break;
 	case 'd':
-		MessageHandler::sendKeyInput(network, 'd', playerNum);
+		dPushed = true;
+		//MessageHandler::sendKeyInput(network, 'd', playerNum);
 		break;
 	case 'q':
-		MessageHandler::sendKeyInput(network, 'q', playerNum);
+		qPushed = true;
+		//MessageHandler::sendKeyInput(network, 'q', playerNum);
 		break;
 	case 'e':
+		ePushed = true;
 		MessageHandler::sendKeyInput(network, 'e', playerNum);
 		break;
 	case 'r':
@@ -218,12 +246,30 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 
 void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 {
-	switch(key)
+	//try using bools 
+	switch (key)
 	{
-	case 32: // the space bar
+	case 'a':
+		aPushed = false;
 		break;
-	case 27: // the escape key
-	
+	case 's':
+		sPushed = false;
+		break;
+	case 'w':
+		wPushed = false;
+		break;
+	case 'd':
+		dPushed = false;
+		break;
+	case 'q':
+		qPushed = false;
+		break;
+	case 'e':
+		ePushed = false;
+		break;
+	case 'r':
+		PassThrough.reload();
+	default:
 		break;
 	}
 }
@@ -268,13 +314,13 @@ void Game::cameraFollow()
 	glm::vec3 playerPositionWithOffset;
 
 	glm::vec3 offset;
-	glm::vec2 offset2D = currentPlayer.getMesh()->transform->forward*3.0f;
+	glm::vec2 offset2D = currentPlayer->getMesh()->transform->forward*3.0f;
 	offset = glm::vec3(offset2D.x, 2.0f, offset2D.y);
 
-	playerPositionWithOffset = currentPlayer.getMesh()->transform->getPosition() + offset;
+	playerPositionWithOffset = currentPlayer->getMesh()->transform->getPosition() + offset;
 
 	camera.transform->setPosition(camera.transform->getPosition() * (1.0f - t) + (playerPositionWithOffset) * t);
-	camera.transform->setRotation(glm::vec3(0,currentPlayer.getMesh()->transform->getRotationAngleY(),0));
+	camera.transform->setRotation(glm::vec3(0,currentPlayer->getMesh()->transform->getRotationAngleY(),0));
 }
 
 void Game::drawBoundingBox(BoxCollider boundingbox, Mesh* mesh)
@@ -285,6 +331,7 @@ void Game::drawBoundingBox(BoxCollider boundingbox, Mesh* mesh)
 	BoundingShader.Bind();
 	BoundingShader.SendUniformMat4("uView", convertToFloats(glm::inverse(camera.transform->getLocalToWorldMatrix())), false);
 	BoundingShader.SendUniformMat4("uProj", convertToFloats(camera.getProjection()), false);
+	BoundingShader.SendUniform("uColor", boundingBoxColor);
 	GLuint VAO = GL_NONE;
 	//Vertex array object
 	glGenVertexArrays(1, &VAO);
@@ -364,6 +411,25 @@ void Game::drawBoundingBox(BoxCollider boundingbox, Mesh* mesh)
 	BoundingShader.UnBind();
 }
 
+void Game::checkCollisions()
+{
+	boundingBoxColor = { 1.0f, 0.0f, 0.0f, 1.0f };
+	for (int i = 0; i < collisionObjects.size(); i++) {
+		
+		if (currentPlayer->getMesh()->BoundingBox.m_maxBound.x < collisionObjects[i]->getMesh()->BoundingBox.m_minBound.x ||
+			currentPlayer->getMesh()->BoundingBox.m_minBound.x > collisionObjects[i]->getMesh()->BoundingBox.m_maxBound.x) return;
+
+		if (currentPlayer->getMesh()->BoundingBox.m_maxBound.y < collisionObjects[i]->getMesh()->BoundingBox.m_minBound.y ||
+			currentPlayer->getMesh()->BoundingBox.m_minBound.y > collisionObjects[i]->getMesh()->BoundingBox.m_maxBound.y) return;
+
+		if (currentPlayer->getMesh()->BoundingBox.m_maxBound.z < collisionObjects[i]->getMesh()->BoundingBox.m_minBound.z ||
+			currentPlayer->getMesh()->BoundingBox.m_minBound.z > collisionObjects[i]->getMesh()->BoundingBox.m_maxBound.z) return;
+
+		boundingBoxColor = { 0.0f, 1.0f, 0.0f, 1.0f };
+	}
+
+}
+
 void Game::handlePackets()
 {
 	Packet packet;
@@ -397,11 +463,12 @@ void Game::handlePackets()
 
 			if (playerNum == 1) {
 				currentPlayer = player1;
+				collisionObjects.push_back(player2);
 			}
 			else {
 				currentPlayer = player2;
 				camera.transform->setRotation(glm::vec3(0,-180,0));
-				
+				collisionObjects.push_back(player1);
 			}
 
 			break;
@@ -430,13 +497,13 @@ void Game::updatePlayers(const std::vector<std::string>& data, PacketTypes _pack
 
 
 		if (playerToMove == 1) {
-			player1.getMesh()->transform->setPosition(translate);
-			player1.getMesh()->transform->setRotation(rotation);
-			player1.getMesh()->transform->setScale(scale);
+			player1->getMesh()->transform->setPosition(translate);
+			player1->getMesh()->transform->setRotation(rotation);
+			player1->getMesh()->transform->setScale(scale);
 
 		}
 		else {
-			player2.getMesh()->transform->setPosition(translate);
+			player2->getMesh()->transform->setPosition(translate);
 		}
 
 }
