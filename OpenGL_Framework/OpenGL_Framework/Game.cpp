@@ -50,7 +50,14 @@ void Game::initializeGame()
 		exit(0);
 	}
 
-	//load crate mesh
+	//load map mesh
+	if (!skyBox.LoadfromFile("./Assets/Models/skybox.obj")) {
+		std::cout << "Model failed to load.\n";
+		system("pause");
+		exit(0);
+	}
+
+	//load sky box mesh
 	if (!map.LoadfromFile("./Assets/Models/map_lava1.obj")) {
 		std::cout << "Model failed to load.\n";
 		system("pause");
@@ -71,14 +78,24 @@ void Game::initializeGame()
 		exit(0);
 	}
 
+	//load texture
+	if (!Sky.Load("./Assets/Textures/skybox.png"))
+	{
+		system("Pause");
+		exit(0);
+	}
+
 	player1->setMesh(&box);
 	player2->setMesh(&box2);
+
+	skyBoxTransform->setMesh(&skyBox);
 
 	camera.perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 1000.0f);
 	camera.transform->m_pLocalPosition = glm::vec3(0.0f, 1.5f, 6.0f);
 
 
 	mapTransform->getMesh()->transform->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+	skyBoxTransform->getMesh()->transform->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 
 	player1->getMesh()->transform->setPosition(glm::vec3(-1.0f, 0.0f, 0.0f));
 	player1->getMesh()->transform->setRotation(glm::vec3(0, 0, 0));
@@ -190,6 +207,14 @@ void Game::draw()
 	glBindVertexArray(0);
 	GrassTexture.UnBind();
 
+	Sky.Bind();
+	PassThrough.SendUniformMat4("uModel", convertToFloats(skyBoxTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
+
+	glBindVertexArray(skyBox.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, skyBox.GetNumVertices());
+	glBindVertexArray(0);
+	Sky.UnBind();
+	
 	//map
 	FlatBlueTexture.Bind();
 	PassThrough.SendUniformMat4("uModel", convertToFloats(mapTransform->getMesh()->transform->getLocalToWorldMatrix()), false);

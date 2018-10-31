@@ -77,6 +77,7 @@ private:
 	Mesh box;
 	Mesh box2;
 	Mesh map;
+	Mesh skyBox;
 
 	Texture GrassTexture;
 	Texture FlatBlueTexture;
