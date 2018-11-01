@@ -49,7 +49,7 @@ public:
 	void SendUniform(const std::string &name, const glm::vec3 &vector);
 	void SendUniform(const std::string &name, const glm::vec4 &vector);
 	void SendUniformMat3(const std::string &name, float *matrix, bool transpose);
-	void SendUniformMat4(const std::string &name, float *matrix, bool transpose);
+	void SendUniformMat4(const std::string &name, const float *matrix, bool transpose);
 
 
 

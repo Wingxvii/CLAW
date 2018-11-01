@@ -125,7 +125,7 @@ void Game::update()
 	
 	player2->getMesh()->transform->update(deltaTime);
 
-	checkCollisions();
+	//checkCollisions();
 
 	handlePackets();
 
@@ -155,18 +155,6 @@ void Game::update()
 		
 	//...
 }
-
-float* convertToFloats(glm::mat4 matrix) {
-
-	float* fArray = new float[16];
-
-	const float *pSource = (const float*)glm::value_ptr(matrix);
-	for (int i = 0; i < 16; ++i)
-		fArray[i] = pSource[i];
-
-	return fArray;
-}
-
 void Game::draw()
 {
 	glEnable(GL_LINE_SMOOTH);
@@ -179,8 +167,8 @@ void Game::draw()
 
 	//binds
 	PassThrough.Bind();
-	PassThrough.SendUniformMat4("uView", convertToFloats(glm::inverse(camera.transform->getLocalToWorldMatrix())), false);
-	PassThrough.SendUniformMat4("uProj", convertToFloats(camera.getProjection()), false);
+	PassThrough.SendUniformMat4("uView", glm::value_ptr(glm::inverse(camera.transform->getLocalToWorldMatrix())), false);
+	PassThrough.SendUniformMat4("uProj", glm::value_ptr(camera.getProjection()), false);
 
 	PassThrough.SendUniform("uTex", 0);
 	PassThrough.SendUniform("lightPosition", glm::inverse(camera.transform->getLocalToWorldMatrix()) * glm::vec4(2.0f, -4.0f, 3.0f, 0.0f));
@@ -195,20 +183,20 @@ void Game::draw()
 	GrassTexture.Bind();
 
 	//cube 1
-	PassThrough.SendUniformMat4("uModel", convertToFloats(player1->getMesh()->transform->getLocalToWorldMatrix()), false);
+	PassThrough.SendUniformMat4("uModel", glm::value_ptr(player1->getMesh()->transform->getLocalToWorldMatrix()), false);
 	
 	glBindVertexArray(box.VAO);
 	glDrawArrays(GL_TRIANGLES, 0, box.GetNumVertices());
 
 	//cube 2
-	PassThrough.SendUniformMat4("uModel", convertToFloats(player2->getMesh()->transform->getLocalToWorldMatrix()), false);
+	PassThrough.SendUniformMat4("uModel", glm::value_ptr(player2->getMesh()->transform->getLocalToWorldMatrix()), false);
 	
 	glDrawArrays(GL_TRIANGLES, 0, box.GetNumVertices());
 	glBindVertexArray(0);
 	GrassTexture.UnBind();
 
 	Sky.Bind();
-	PassThrough.SendUniformMat4("uModel", convertToFloats(skyBoxTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
+	PassThrough.SendUniformMat4("uModel", glm::value_ptr(skyBoxTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
 
 	glBindVertexArray(skyBox.VAO);
 	glDrawArrays(GL_TRIANGLES, 0, skyBox.GetNumVertices());
@@ -217,7 +205,7 @@ void Game::draw()
 	
 	//map
 	FlatBlueTexture.Bind();
-	PassThrough.SendUniformMat4("uModel", convertToFloats(mapTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
+	PassThrough.SendUniformMat4("uModel", glm::value_ptr(mapTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
 	glBindVertexArray(map.VAO);
 	glDrawArrays(GL_TRIANGLES, 0, map.GetNumVertices());	
 	
@@ -225,8 +213,8 @@ void Game::draw()
 	//unbinds
 	FlatBlueTexture.UnBind();
 	
-	drawBoundingBox(player1->getMesh()->BoundingBox, player1->getMesh());
-	drawBoundingBox(player2->getMesh()->BoundingBox, player2->getMesh());
+	//drawBoundingBox(player1->getMesh()->BoundingBox, player1->getMesh());
+	//drawBoundingBox(player2->getMesh()->BoundingBox, player2->getMesh());
 
 	glutSwapBuffers();
 
@@ -354,8 +342,8 @@ void Game::drawBoundingBox(BoxCollider boundingbox, Mesh* mesh)
 		return;
 
 	BoundingShader.Bind();
-	BoundingShader.SendUniformMat4("uView", convertToFloats(glm::inverse(camera.transform->getLocalToWorldMatrix())), false);
-	BoundingShader.SendUniformMat4("uProj", convertToFloats(camera.getProjection()), false);
+	BoundingShader.SendUniformMat4("uView", glm::value_ptr(glm::inverse(camera.transform->getLocalToWorldMatrix())), false);
+	BoundingShader.SendUniformMat4("uProj", glm::value_ptr(camera.getProjection()), false);
 	BoundingShader.SendUniform("uColor", boundingBoxColor);
 	GLuint VAO = GL_NONE;
 	//Vertex array object
@@ -404,7 +392,7 @@ void Game::drawBoundingBox(BoxCollider boundingbox, Mesh* mesh)
 	transform = transform * glm::scale(glm::mat4(1), size);
 	glm::mat4 m = mesh->transform->getLocalToWorldMatrix() * transform;
 
-	BoundingShader.SendUniformMat4("uModel", convertToFloats(m), false);
+	BoundingShader.SendUniformMat4("uModel", glm::value_ptr(m), false);
 	/* Apply object's transformation matrix */
 	
 
