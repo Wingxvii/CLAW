@@ -30,31 +30,35 @@ void ServerGame::update()
 		client_id++;
 
 		if (client_id == 1) {
-			p[1].active = true;
+			p[0].active = true;
 		}
 		else if (client_id == 2) {
-			p[2].active = true;
+			p[1].active = true;
 		}
 
 		pairClients(client_id);
 	}
 
-	//update physics
-	p[1].rigidbody.update();
-	p[2].rigidbody.update();
-
-	//checks collisions
-	if (collisionCheck(p[1])) {
-		p[1].transform.position = prevPosition1;
-	}
-	if (collisionCheck(p[2])) {
-		p[2].transform.position = prevPosition2;
-	}
-
-	prevPosition1 = p[1].transform.position;
-	prevPosition2 = p[2].transform.position;
-
 	receiveFromClients();
+
+	if (start) {
+
+		//update physics
+		p[0].rigidbody.update();
+		p[1].rigidbody.update();
+
+		//checks collisions
+		if (collisionCheck(p[1])) {
+			p[0].transform.position = prevPosition1;
+		}
+		if (collisionCheck(p[2])) {
+			p[1].transform.position = prevPosition2;
+		}
+
+		prevPosition1 = p[0].transform.position;
+		prevPosition2 = p[1].transform.position;
+	}
+
 
 
 }
@@ -105,9 +109,9 @@ void ServerGame::receiveFromClients()
 					parsedData = Tokenizer::tokenize(',', packet.data);
 					handleIncomingCollider(parsedData);
 
-					if (collisionBoxes.size == 2) {
-						p[1].collider = &collisionBoxes[0];
-						p[2].collider = &collisionBoxes[1];
+					if (collisionBoxes.size() == 2) {
+						p[0].collider = &collisionBoxes[0];
+						p[1].collider = &collisionBoxes[1];
 					}
 
 					break;
@@ -256,7 +260,9 @@ void ServerGame::handleIncomingTransformation(const std::vector<std::string>& da
 	p[playerNum].rigidbody.minVelocity = 0.0f;
 	p[playerNum].rigidbody.rDrag = 0.01f;
 
-
+	if (playerNum == 2) {
+		start = true;
+	}
 }
 
 //processes the data for colliders

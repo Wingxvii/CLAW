@@ -45,7 +45,6 @@ Rigidbody::Rigidbody(Transform& parent)
 
 Rigidbody::~Rigidbody()
 {
-	delete parentTransform;
 }
 
 void Rigidbody::addForce(float magnitude, glm::vec3 dir)

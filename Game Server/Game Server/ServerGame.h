@@ -36,11 +36,11 @@ private:
 
 	Player p[2] = { Player(1),Player(2) };
 
-	//collision stuff
+	//collision stuffs
 	std::vector<BoxCollider> collisionBoxes;
 
-	glm::vec3 prevPosition1;
-	glm::vec3 prevPosition2;
+	glm::vec3 prevPosition1 = {0.0f,0.0f,0.0f};
+	glm::vec3 prevPosition2 = {0.0f, 0.0f, 0.0f};
 
 	void pairClients(int);
 	void sendMessage(int clientid, int message_type, std::string message);
@@ -52,5 +52,6 @@ private:
 
 	unsigned int currentClient;
 
+	bool start = false;
 
 };

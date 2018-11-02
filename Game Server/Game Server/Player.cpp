@@ -20,5 +20,5 @@ Player::Player(int num)
 
 Player::~Player()
 {
-	delete collider;
+	//delete collider;
 }
