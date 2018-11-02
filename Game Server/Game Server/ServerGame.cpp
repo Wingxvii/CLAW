@@ -47,6 +47,9 @@ void ServerGame::update()
 		p[0].rigidbody.update();
 		p[1].rigidbody.update();
 
+		p[0].collider->center = p[0].transform.position + p[0].collider->offset;
+		p[1].collider->center = p[1].transform.position + p[1].collider->offset;
+
 		//checks collisions
 		if (collisionCheck(p[0])) {
 			p[0].transform.position = prevPosition1;
@@ -57,6 +60,7 @@ void ServerGame::update()
 
 		prevPosition1 = p[0].transform.position;
 		prevPosition2 = p[1].transform.position;
+
 	}
 
 
@@ -274,9 +278,18 @@ void ServerGame::handleIncomingCollider(const std::vector<std::string>& data)
 	newCollider.size.x = std::stof(data[1]);
 	newCollider.size.y = std::stof(data[2]);
 	newCollider.size.z = std::stof(data[3]);
-	newCollider.center.x = std::stof(data[4]);
-	newCollider.center.y = std::stof(data[5]);
-	newCollider.center.z = std::stof(data[6]);
+
+	if (newCollider.tag == PLAYER) {
+		newCollider.offset.x = std::stof(data[4]);
+		newCollider.offset.y = std::stof(data[5]);
+		newCollider.offset.z = std::stof(data[6]);
+	}
+	else {
+		newCollider.center.x = std::stof(data[4]);
+		newCollider.center.y = std::stof(data[5]);
+		newCollider.center.z = std::stof(data[6]);
+	}
+
 	newCollider.index = collisionBoxes.size();
 
 	collisionBoxes.push_back(newCollider);

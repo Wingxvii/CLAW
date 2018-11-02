@@ -24,4 +24,6 @@ public:
 	glm::vec3 center;
 	int index;
 
+	glm::vec3 offset;
+
 };

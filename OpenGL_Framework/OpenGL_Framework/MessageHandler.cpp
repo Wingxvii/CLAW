@@ -47,9 +47,10 @@ void MessageHandler::sendBoundingBoxInfo(ClientNetwork * network, std::vector<Ph
 
 		if (e[i]->m_entityType == (int)EntityTypes::PLAYER) {
 			message = std::to_string(e[i]->m_entityType) + "," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.x) + "," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.y) +
-				"," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.z) + "," + std::to_string(e[i]->getMesh()->BoundingBox.m_center.x + e[i]->getMesh()->transform->m_pLocalPosition.x) + "," +
-				std::to_string(e[i]->getMesh()->BoundingBox.m_center.y + e[i]->getMesh()->transform->m_pLocalPosition.y) + "," + 
-				std::to_string(e[i]->getMesh()->BoundingBox.m_center.z + e[i]->getMesh()->transform->m_pLocalPosition.z) + ",";
+				"," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.z) + "," + 
+				std::to_string(e[i]->getMesh()->BoundingBox.m_size.x / 2) + "," +
+				std::to_string(e[i]->getMesh()->BoundingBox.m_size.y / 2) + "," +
+				std::to_string(e[i]->getMesh()->BoundingBox.m_size.z / 2) + ",";
 		}
 		else {
 

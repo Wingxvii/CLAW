@@ -105,8 +105,8 @@ void Game::initializeGame()
 	player2->getMesh()->transform->setRotation(glm::vec3(0,180,0));
 	player2->m_entityType = (int)EntityTypes::PLAYER;
 
-	MessageHandler::sendInitConnection(network, player1->getMesh()->transform->m_pLocalPosition, player1->getMesh()->transform->m_pRotation, player1->getMesh()->transform->m_pScale, 1);
-	MessageHandler::sendInitConnection(network, player2->getMesh()->transform->m_pLocalPosition, player2->getMesh()->transform->m_pRotation, player2->getMesh()->transform->m_pScale, 2);
+	MessageHandler::sendInitConnection(network, player1->getMesh()->transform->m_pLocalPosition, player1->getMesh()->transform->m_pRotation, player1->getMesh()->transform->m_pScale, 0);
+	MessageHandler::sendInitConnection(network, player2->getMesh()->transform->m_pLocalPosition, player2->getMesh()->transform->m_pRotation, player2->getMesh()->transform->m_pScale, 1);
 
 	entities.push_back(player1);
 	entities.push_back(player2);
@@ -136,27 +136,27 @@ void Game::update()
 	handlePackets();
 
 	if (wPushed) {
-		MessageHandler::sendKeyInput(network, 'w', playerNum);
+		MessageHandler::sendKeyInput(network, 'w', playerNum-1);
 	} 
 
 	if (aPushed) {
-		MessageHandler::sendKeyInput(network, 'a', playerNum);
+		MessageHandler::sendKeyInput(network, 'a', playerNum-1);
 	}
 
 	if (sPushed) {
-		MessageHandler::sendKeyInput(network, 's', playerNum);
+		MessageHandler::sendKeyInput(network, 's', playerNum-1);
 	}
 
 	if (dPushed) {
-		MessageHandler::sendKeyInput(network, 'd', playerNum);
+		MessageHandler::sendKeyInput(network, 'd', playerNum-1);
 	}
 
 	if (qPushed) {
-		MessageHandler::sendKeyInput(network, 'q', playerNum);
+		MessageHandler::sendKeyInput(network, 'q', playerNum-1);
 	}
 
 	if (ePushed) {
-		MessageHandler::sendKeyInput(network, 'e', playerNum);
+		MessageHandler::sendKeyInput(network, 'e', playerNum-1);
 	}
 
 
@@ -244,7 +244,7 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		break;
 	case 's':
 		sPushed = true;
-		MessageHandler::sendKeyInput(network, 's', playerNum);
+		MessageHandler::sendKeyInput(network, 's', playerNum-1);
 		break;
 	case 'w':
 		wPushed = true;
@@ -260,7 +260,7 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		break;
 	case 'e':
 		ePushed = true;
-		MessageHandler::sendKeyInput(network, 'e', playerNum);
+		MessageHandler::sendKeyInput(network, 'e', playerNum-1);
 		break;
 	case 'r':
 		PassThrough.reload();
@@ -468,14 +468,13 @@ void Game::handlePackets()
 
 			playerNum = std::stoi(parsedData[0]);
 
-			if (playerNum == 1) {
+			if (playerNum == 0) {
 				currentPlayer = player1;
+				collisionObjects.push_back(player1);
 				collisionObjects.push_back(player2);
-				
 			}
 			else {
 				currentPlayer = player2;
-				collisionObjects.push_back(player1);
 			}
 
 			break;
@@ -503,7 +502,7 @@ void Game::updatePlayers(const std::vector<std::string>& data, PacketTypes _pack
 		glm::vec3 scale = { std::stof(data[7]), std::stof(data[8]), std::stof(data[9]) };
 
 
-		if (playerToMove == 1) {
+		if (playerToMove == 0) {
 			player1->getMesh()->transform->setPosition(translate);
 			player1->getMesh()->transform->setRotation(rotation);
 			player1->getMesh()->transform->setScale(scale);
