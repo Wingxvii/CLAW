@@ -44,27 +44,59 @@ void ServerGame::update()
 	if (start) {
 
 		//update physics
-		p[0].rigidbody.update();
-		p[1].rigidbody.update();
+		//move cube transform
+		//p[0].rigidbody.update();
+		//p[1].rigidbody.update();
 
+		//move cube collider
 		if (p[0].collider) {
-			p[0].collider->center = p[0].transform.position + p[0].collider->offset;
+			p[0].collider->center += p[0].transform.position - prevPosition1;
 		}
 		if (p[1].collider) {
-			p[1].collider->center = p[1].transform.position + p[1].collider->offset;
+			p[1].collider->center += p[1].transform.position - prevPosition2;
 		}
+
 		//checks collisions
 		if (collisionCheck(p[0])) {
+			//revert movement if collide 
+			p[0].collider->center -= p[0].transform.position - prevPosition1;
 			p[0].transform.position = prevPosition1;
 		}
 		if (collisionCheck(p[1])) {
+			//revert movement if collide 
+			p[1].collider->center -= p[1].transform.position - prevPosition2;
 			p[1].transform.position = prevPosition2;
 		}
 
+		//update last frame position
 		prevPosition1 = p[0].transform.position;
 		prevPosition2 = p[1].transform.position;
 
 	}
+
+	//pass data back
+	if (network->sessions.size() > 0) {
+		sendMessage(0, TRANSFORMATION_DATA, std::to_string(0) + "," + to_string(p[0].transform.position.x) + "," + to_string(p[0].transform.position.y)
+			+ "," + to_string(p[0].transform.position.z) + "," + to_string(p[0].transform.rotation.x) + "," + to_string(p[0].transform.rotation.y)
+			+ "," + to_string(p[0].transform.rotation.z) + "," + to_string(p[0].transform.scale.x) + "," + to_string(p[0].transform.scale.y)
+			+ "," + to_string(p[0].transform.scale.z) + ",");
+		sendMessage(0, TRANSFORMATION_DATA, std::to_string(1) + "," + to_string(p[1].transform.position.x) + "," + to_string(p[1].transform.position.y)
+			+ "," + to_string(p[1].transform.position.z) + "," + to_string(p[1].transform.rotation.x) + "," + to_string(p[1].transform.rotation.y)
+			+ "," + to_string(p[1].transform.rotation.z) + "," + to_string(p[1].transform.scale.x) + "," + to_string(p[1].transform.scale.y)
+			+ "," + to_string(p[1].transform.scale.z) + ",");
+	}
+	if (network->sessions.size() > 1) {
+		sendMessage(1, TRANSFORMATION_DATA, std::to_string(1) + "," + to_string(p[1].transform.position.x) + "," + to_string(p[1].transform.position.y)
+			+ "," + to_string(p[1].transform.position.z) + "," + to_string(p[1].transform.rotation.x) + "," + to_string(p[1].transform.rotation.y)
+			+ "," + to_string(p[1].transform.rotation.z) + "," + to_string(p[1].transform.scale.x) + "," + to_string(p[1].transform.scale.y)
+			+ "," + to_string(p[1].transform.scale.z) + ",");
+		sendMessage(1, TRANSFORMATION_DATA, std::to_string(0) + "," + to_string(p[0].transform.position.x) + "," + to_string(p[0].transform.position.y)
+			+ "," + to_string(p[0].transform.position.z) + "," + to_string(p[0].transform.rotation.x) + "," + to_string(p[0].transform.rotation.y)
+			+ "," + to_string(p[0].transform.rotation.z) + "," + to_string(p[0].transform.scale.x) + "," + to_string(p[0].transform.scale.y)
+			+ "," + to_string(p[0].transform.scale.z) + ",");
+
+	}
+
 
 
 
@@ -119,9 +151,6 @@ void ServerGame::receiveFromClients()
 					if (collisionBoxes.size() == 2) {
 						p[0].collider = &collisionBoxes[0];
 						p[1].collider = &collisionBoxes[1];
-
-						p[0].collider->center = p[0].transform.position + p[0].collider->offset;
-						p[1].collider->center = p[1].transform.position + p[1].collider->offset;
 					}
 
 					break;
@@ -233,17 +262,6 @@ void ServerGame::handleIncomingKey(const std::vector<std::string>& data)
 
 	printf("Player: %i Moved to (%f,%f,%f)\n", playerNum, p[playerNum].transform.position.x, p[playerNum].transform.position.y, p[playerNum].transform.position.z);
 
-	sendMessage(0, TRANSFORMATION_DATA, std::to_string(playerNum) + "," + to_string(p[playerNum].transform.position.x) + "," + to_string(p[playerNum].transform.position.y)
-		+ "," + to_string(p[playerNum].transform.position.z) + "," + to_string(p[playerNum].transform.rotation.x) + "," + to_string(p[playerNum].transform.rotation.y)
-		+ "," + to_string(p[playerNum].transform.rotation.z) + "," + to_string(p[playerNum].transform.scale.x) + "," + to_string(p[playerNum].transform.scale.y)
-		+ "," + to_string(p[playerNum].transform.scale.z) + ",");
-
-		if (network->sessions.size() > 1) {
-			sendMessage(1, TRANSFORMATION_DATA, std::to_string(playerNum) + "," + to_string(p[playerNum].transform.position.x) + "," + to_string(p[playerNum].transform.position.y)
-				+ "," + to_string(p[playerNum].transform.position.z) + "," + to_string(p[playerNum].transform.rotation.x) + "," + to_string(p[playerNum].transform.rotation.y)
-				+ "," + to_string(p[playerNum].transform.rotation.z) + "," + to_string(p[playerNum].transform.scale.x) + "," + to_string(p[playerNum].transform.scale.y)
-				+ "," + to_string(p[playerNum].transform.scale.z) + ",");
-		}
 }
 
 //processes the data for player transformaitons
@@ -284,17 +302,9 @@ void ServerGame::handleIncomingCollider(const std::vector<std::string>& data)
 	newCollider.size.x = std::stof(data[1]);
 	newCollider.size.y = std::stof(data[2]);
 	newCollider.size.z = std::stof(data[3]);
-
-	if (newCollider.tag == PLAYER) {
-		newCollider.offset.x = std::stof(data[4]);
-		newCollider.offset.y = std::stof(data[5]);
-		newCollider.offset.z = std::stof(data[6]);
-	}
-	else {
-		newCollider.center.x = std::stof(data[4]);
-		newCollider.center.y = std::stof(data[5]);
-		newCollider.center.z = std::stof(data[6]);
-	}
+	newCollider.center.x = std::stof(data[4]);
+	newCollider.center.y = std::stof(data[5]);
+	newCollider.center.z = std::stof(data[6]);
 
 	newCollider.index = collisionBoxes.size();
 

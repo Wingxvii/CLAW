@@ -32,6 +32,7 @@ ClientNetwork::ClientNetwork(void)
 	std::string ip;
 
 	printf("Please Enter Server's IP Address \n");
+
 	std::cin >> ip;
 	//resolve server address and port
 	iResult = getaddrinfo(ip.c_str(), DEFAULT_PORT, &hints, &result);

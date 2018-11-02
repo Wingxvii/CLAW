@@ -45,21 +45,9 @@ void MessageHandler::sendBoundingBoxInfo(ClientNetwork * network, std::vector<Ph
 		glm::vec3 position = { m[0][3], m[1][3], m[2][3] };
 		
 
-		if (e[i]->m_entityType == (int)EntityTypes::PLAYER) {
-			message = std::to_string(e[i]->m_entityType) + "," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.x) + "," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.y) +
-				"," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.z) + "," + 
-				std::to_string(e[i]->getMesh()->BoundingBox.m_size.x / 2) + "," +
-				std::to_string(e[i]->getMesh()->BoundingBox.m_size.y / 2) + "," +
-				std::to_string(e[i]->getMesh()->BoundingBox.m_size.z / 2) + ",";
-		}
-		else {
-
-			
-			
-			message = std::to_string(e[i]->m_entityType) + "," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.x) + "," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.y) +
-				"," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.z) + "," + std::to_string(position.x) + "," +
-				std::to_string(position.y) + "," + std::to_string(position.z) + ",";
-		}
+		message = std::to_string(e[i]->m_entityType) + "," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.x) + "," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.y) +
+			"," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.z) + "," + std::to_string(position.x) + "," +
+			std::to_string(position.y + e[i]->getMesh()->BoundingBox.m_size.y / 2) + "," + std::to_string(position.z) + ",";
 
 		sendToServer(network, LOAD_COLLISIONS, message);
 
