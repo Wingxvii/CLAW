@@ -217,8 +217,8 @@ void Game::draw()
 	//unbinds
 	FlatBlueTexture.UnBind();
 	
-	drawBoundingBox(player1->getMesh()->BoundingBox, player1->getMesh());
-	drawBoundingBox(player2->getMesh()->BoundingBox, player2->getMesh());
+	//drawBoundingBox(player1->getMesh()->BoundingBox, *player1->getMesh());
+	//drawBoundingBox(player2->getMesh()->BoundingBox, *player2->getMesh());
 
 	glutSwapBuffers();
 
@@ -340,9 +340,9 @@ void Game::cameraFollow()
 	camera.transform->setRotation(glm::vec3(0,currentPlayer->getMesh()->transform->getRotationAngleY(),0));
 }
 
-void Game::drawBoundingBox(BoxCollider boundingbox, Mesh* mesh)
+void Game::drawBoundingBox(BoxCollider boundingbox, Mesh& mesh)
 {
-	if (mesh->GetNumVertices() == 0)
+	if (mesh.GetNumVertices() == 0)
 		return;
 
 	BoundingShader.Bind();
@@ -394,7 +394,7 @@ void Game::drawBoundingBox(BoxCollider boundingbox, Mesh* mesh)
 	glm::mat4 transform = glm::mat4(1.0);
 	transform = glm::translate(glm::mat4(1), center);
 	transform = transform * glm::scale(glm::mat4(1), size);
-	glm::mat4 m = mesh->transform->getLocalToWorldMatrix() * transform;
+	glm::mat4 m = mesh.transform->getLocalToWorldMatrix() * transform;
 
 	BoundingShader.SendUniformMat4("uModel", glm::value_ptr(m), false);
 	/* Apply object's transformation matrix */
@@ -426,6 +426,7 @@ void Game::drawBoundingBox(BoxCollider boundingbox, Mesh* mesh)
 	glDeleteBuffers(1, &ibo_elements);
 
 	BoundingShader.UnBind();
+	
 }
 
 void Game::handlePackets()

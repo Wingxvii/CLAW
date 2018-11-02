@@ -105,7 +105,7 @@ private:
 
 	float t = 0;
 
-	void drawBoundingBox(BoxCollider boundingbox, Mesh* mesh);
+	void drawBoundingBox(BoxCollider boundingbox, Mesh& mesh);
 
 	void checkCollisions();
 
