@@ -115,4 +115,6 @@ private:
 	bool dPushed = false;
 	bool qPushed = false;
 	bool ePushed = false;
+
+	bool sendBoundingInfo = true;
 };

@@ -158,6 +158,14 @@ void Game::update()
 	if (ePushed) {
 		MessageHandler::sendKeyInput(network, 'e', playerNum);
 	}
+
+
+	//make sure this happens last in the update 
+	if (playerNum == 1 && sendBoundingInfo) {
+		MessageHandler::sendBoundingBoxInfo(network, entities);
+		sendBoundingInfo = false;
+	}
+	
 		
 	//...
 }
@@ -463,7 +471,7 @@ void Game::handlePackets()
 			if (playerNum == 1) {
 				currentPlayer = player1;
 				collisionObjects.push_back(player2);
-				MessageHandler::sendBoundingBoxInfo(network, entities);
+				
 			}
 			else {
 				currentPlayer = player2;
