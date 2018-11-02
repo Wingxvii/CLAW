@@ -22,6 +22,8 @@ enum PacketTypes {
 	//recieves letter
 	KEY_INPUT = 5,
 
+	LOAD_COLLISIONS = 6,
+
 };
 
 struct Packet {

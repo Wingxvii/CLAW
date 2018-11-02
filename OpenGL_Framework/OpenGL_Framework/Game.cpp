@@ -99,12 +99,18 @@ void Game::initializeGame()
 
 	player1->getMesh()->transform->setPosition(glm::vec3(-1.0f, 0.0f, 0.0f));
 	player1->getMesh()->transform->setRotation(glm::vec3(0, 0, 0));
+	player1->m_entityType = (int)EntityTypes::PLAYER;
 
 	player2->getMesh()->transform->setPosition(glm::vec3(1.0f, 0.0f, -10.0f));
 	player2->getMesh()->transform->setRotation(glm::vec3(0,180,0));
+	player2->m_entityType = (int)EntityTypes::PLAYER;
 
 	MessageHandler::sendInitConnection(network, player1->getMesh()->transform->m_pLocalPosition, player1->getMesh()->transform->m_pRotation, player1->getMesh()->transform->m_pScale, 1);
 	MessageHandler::sendInitConnection(network, player2->getMesh()->transform->m_pLocalPosition, player2->getMesh()->transform->m_pRotation, player2->getMesh()->transform->m_pScale, 2);
+
+	entities.push_back(player1);
+	entities.push_back(player2);
+	
 }
 
 void Game::update()
@@ -163,8 +169,6 @@ void Game::draw()
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	
-
 	//binds
 	PassThrough.Bind();
 	PassThrough.SendUniformMat4("uView", glm::value_ptr(glm::inverse(camera.transform->getLocalToWorldMatrix())), false);
@@ -213,8 +217,8 @@ void Game::draw()
 	//unbinds
 	FlatBlueTexture.UnBind();
 	
-	//drawBoundingBox(player1->getMesh()->BoundingBox, player1->getMesh());
-	//drawBoundingBox(player2->getMesh()->BoundingBox, player2->getMesh());
+	drawBoundingBox(player1->getMesh()->BoundingBox, player1->getMesh());
+	drawBoundingBox(player2->getMesh()->BoundingBox, player2->getMesh());
 
 	glutSwapBuffers();
 
@@ -384,9 +388,9 @@ void Game::drawBoundingBox(BoxCollider boundingbox, Mesh* mesh)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	glm::vec3 size = glm::vec3(boundingbox.m_maxBound.x - boundingbox.m_minBound.x, boundingbox.m_maxBound.y - boundingbox.m_minBound.y, boundingbox.m_maxBound.z - boundingbox.m_minBound.z);
-	glm::vec3 center = glm::vec3((boundingbox.m_minBound.x + boundingbox.m_maxBound.x) / 2, (boundingbox.m_minBound.y + boundingbox.m_maxBound.y) / 2, (boundingbox.m_minBound.z + boundingbox.m_maxBound.z) / 2);
-	size = size ;
+	glm::vec3 size = boundingbox.m_size;
+	glm::vec3 center = boundingbox.m_center;
+	
 	glm::mat4 transform = glm::mat4(1.0);
 	transform = glm::translate(glm::mat4(1), center);
 	transform = transform * glm::scale(glm::mat4(1), size);
@@ -424,25 +428,6 @@ void Game::drawBoundingBox(BoxCollider boundingbox, Mesh* mesh)
 	BoundingShader.UnBind();
 }
 
-void Game::checkCollisions()
-{
-	boundingBoxColor = { 1.0f, 0.0f, 0.0f, 1.0f };
-	for (int i = 0; i < collisionObjects.size(); i++) {
-		
-		if (currentPlayer->getMesh()->BoundingBox.m_maxBound.x < collisionObjects[i]->getMesh()->BoundingBox.m_minBound.x ||
-			currentPlayer->getMesh()->BoundingBox.m_minBound.x > collisionObjects[i]->getMesh()->BoundingBox.m_maxBound.x) return;
-
-		if (currentPlayer->getMesh()->BoundingBox.m_maxBound.y < collisionObjects[i]->getMesh()->BoundingBox.m_minBound.y ||
-			currentPlayer->getMesh()->BoundingBox.m_minBound.y > collisionObjects[i]->getMesh()->BoundingBox.m_maxBound.y) return;
-
-		if (currentPlayer->getMesh()->BoundingBox.m_maxBound.z < collisionObjects[i]->getMesh()->BoundingBox.m_minBound.z ||
-			currentPlayer->getMesh()->BoundingBox.m_minBound.z > collisionObjects[i]->getMesh()->BoundingBox.m_maxBound.z) return;
-
-		boundingBoxColor = { 0.0f, 1.0f, 0.0f, 1.0f };
-	}
-
-}
-
 void Game::handlePackets()
 {
 	Packet packet;
@@ -477,6 +462,7 @@ void Game::handlePackets()
 			if (playerNum == 1) {
 				currentPlayer = player1;
 				collisionObjects.push_back(player2);
+				MessageHandler::sendBoundingBoxInfo(network, entities);
 			}
 			else {
 				currentPlayer = player2;

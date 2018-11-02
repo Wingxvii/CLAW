@@ -212,8 +212,8 @@ bool Mesh::LoadfromFile(const std::string & file)
 	unPackedTextureData.clear();
 	unPackedVertexData.clear();
 
-	BoundingBox.m_maxBound = maxSize;
-	BoundingBox.m_minBound = minSize;
+	BoundingBox.m_size = glm::vec3(maxSize.x - minSize.x, maxSize.y - minSize.y, maxSize.z - minSize.z);
+	BoundingBox.m_center = glm::vec3((minSize.x + maxSize.x) / 2, (minSize.y + maxSize.y) / 2, (minSize.z + maxSize.z) / 2);
 
 	return true;
 }

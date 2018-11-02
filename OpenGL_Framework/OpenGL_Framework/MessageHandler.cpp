@@ -33,6 +33,42 @@ void MessageHandler::sendTransformationInput(ClientNetwork * network, glm::vec3 
 	sendToServer(network, TRANSFORMATION_DATA, message);
 }
 
+void MessageHandler::sendBoundingBoxInfo(ClientNetwork * network, std::vector<PhysicalEntity* > e)
+{
+	std::string message = "";
+
+	for (int i = 0; i < e.size(); i++) {
+
+		if (e[i]->m_entityType = (int)EntityTypes::PLAYER) {
+			message = std::to_string(e[i]->m_entityType) + "," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.x) + "," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.y) +
+				"," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.z) + "," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.x / 2) + "," +
+				std::to_string(e[i]->getMesh()->BoundingBox.m_size.y / 2) + "," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.z / 2) + ",";
+		}
+		else {
+
+			glm::mat4 transform = glm::mat4(1.0);
+			transform = glm::translate(glm::mat4(1), e[i]->getMesh()->BoundingBox.m_center);
+			transform = transform * glm::scale(glm::mat4(1), e[i]->getMesh()->BoundingBox.m_size);
+			glm::mat4 m = e[i]->getMesh()->transform->getLocalToWorldMatrix() * transform;
+			glm::vec3 position = { m[0][3], m[1][3], m[2][3] };
+			
+			message = std::to_string(e[i]->m_entityType) + "," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.x) + "," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.y) +
+				"," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.z) + "," + std::to_string(position.x) + "," +
+				std::to_string(position.y) + "," + std::to_string(position.z) + ",";
+		}
+
+		
+
+		
+	}
+
+	
+
+
+
+
+}
+
 
 void MessageHandler::sendToServer(ClientNetwork* network, int packet_type, std::string message)
 {

@@ -2,9 +2,10 @@
 #include "Transform.h"
 
 enum class EntityTypes {
-	BASE_ENTITY = 0,
-	CAMERA = 1,
-	PLAYER = 2,
+	PLAYER = 0,
+	BREAKABLE = 1,
+	NONBREAKABLE = 2,
+	DEFAULT
 };
 
 class Entity
@@ -14,7 +15,7 @@ public:
 	~Entity();
 
 	
-	int m_entityType = (int)EntityTypes::BASE_ENTITY;
+	int m_entityType = (int)EntityTypes::DEFAULT;
 	
 	
 private:
