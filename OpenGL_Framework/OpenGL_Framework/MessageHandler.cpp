@@ -57,7 +57,8 @@ void MessageHandler::sendBoundingBoxInfo(ClientNetwork * network, std::vector<Ph
 				std::to_string(position.y) + "," + std::to_string(position.z) + ",";
 		}
 
-		
+		sendToServer(network, LOAD_COLLISIONS, message);
+
 
 		
 	}
