@@ -136,32 +136,32 @@ void Game::update()
 	handlePackets();
 
 	if (wPushed) {
-		MessageHandler::sendKeyInput(network, 'w', playerNum-1);
+		MessageHandler::sendKeyInput(network, 'w', playerNum);
 	} 
 
 	if (aPushed) {
-		MessageHandler::sendKeyInput(network, 'a', playerNum-1);
+		MessageHandler::sendKeyInput(network, 'a', playerNum);
 	}
 
 	if (sPushed) {
-		MessageHandler::sendKeyInput(network, 's', playerNum-1);
+		MessageHandler::sendKeyInput(network, 's', playerNum);
 	}
 
 	if (dPushed) {
-		MessageHandler::sendKeyInput(network, 'd', playerNum-1);
+		MessageHandler::sendKeyInput(network, 'd', playerNum);
 	}
 
 	if (qPushed) {
-		MessageHandler::sendKeyInput(network, 'q', playerNum-1);
+		MessageHandler::sendKeyInput(network, 'q', playerNum);
 	}
 
 	if (ePushed) {
-		MessageHandler::sendKeyInput(network, 'e', playerNum-1);
+		MessageHandler::sendKeyInput(network, 'e', playerNum);
 	}
 
 
 	//make sure this happens last in the update 
-	if (playerNum == 1 && sendBoundingInfo) {
+	if (playerNum == 0 && sendBoundingInfo) {
 		MessageHandler::sendBoundingBoxInfo(network, entities);
 		sendBoundingInfo = false;
 	}
@@ -244,7 +244,7 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		break;
 	case 's':
 		sPushed = true;
-		MessageHandler::sendKeyInput(network, 's', playerNum-1);
+		//MessageHandler::sendKeyInput(network, 's', playerNum);
 		break;
 	case 'w':
 		wPushed = true;
@@ -260,7 +260,7 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		break;
 	case 'e':
 		ePushed = true;
-		MessageHandler::sendKeyInput(network, 'e', playerNum-1);
+		//MessageHandler::sendKeyInput(network, 'e', playerNum);
 		break;
 	case 'r':
 		PassThrough.reload();

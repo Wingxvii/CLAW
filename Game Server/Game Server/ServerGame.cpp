@@ -1,5 +1,5 @@
 #include "ServerGame.h"
-
+#include <string>
 
 ServerGame::~ServerGame()
 {
@@ -47,9 +47,12 @@ void ServerGame::update()
 		p[0].rigidbody.update();
 		p[1].rigidbody.update();
 
-		p[0].collider->center = p[0].transform.position + p[0].collider->offset;
-		p[1].collider->center = p[1].transform.position + p[1].collider->offset;
-
+		if (p[0].collider) {
+			p[0].collider->center = p[0].transform.position + p[0].collider->offset;
+		}
+		if (p[1].collider) {
+			p[1].collider->center = p[1].transform.position + p[1].collider->offset;
+		}
 		//checks collisions
 		if (collisionCheck(p[0])) {
 			p[0].transform.position = prevPosition1;
@@ -116,6 +119,9 @@ void ServerGame::receiveFromClients()
 					if (collisionBoxes.size() == 2) {
 						p[0].collider = &collisionBoxes[0];
 						p[1].collider = &collisionBoxes[1];
+
+						p[0].collider->center = p[0].transform.position + p[0].collider->offset;
+						p[1].collider->center = p[1].transform.position + p[1].collider->offset;
 					}
 
 					break;
@@ -145,11 +151,11 @@ void ServerGame::pairClients(int id)
 
 	if (pairs.back()->getClient1() == -1) {
 		pairs.back()->setClient1(id);
-		sendMessage(pairs.back()->getClient1()-1, PLAYER_NUM, "1,");
+		sendMessage(pairs.back()->getClient1()-1, PLAYER_NUM, "0,");
 	}
 	else {
 		pairs.back()->setClient2(id);
-		sendMessage(pairs.back()->getClient2()-1, PLAYER_NUM, "2,");
+		sendMessage(pairs.back()->getClient2()-1, PLAYER_NUM, "1,");
 	}
 
 }
@@ -225,7 +231,7 @@ void ServerGame::handleIncomingKey(const std::vector<std::string>& data)
 		break;
 	}
 
-	
+	printf("Player: %i Moved to (%f,%f,%f)\n", playerNum, p[playerNum].transform.position.x, p[playerNum].transform.position.y, p[playerNum].transform.position.z);
 
 	sendMessage(0, TRANSFORMATION_DATA, std::to_string(playerNum) + "," + to_string(p[playerNum].transform.position.x) + "," + to_string(p[playerNum].transform.position.y)
 		+ "," + to_string(p[playerNum].transform.position.z) + "," + to_string(p[playerNum].transform.rotation.x) + "," + to_string(p[playerNum].transform.rotation.y)
@@ -264,7 +270,7 @@ void ServerGame::handleIncomingTransformation(const std::vector<std::string>& da
 	p[playerNum].rigidbody.minVelocity = 0.0f;
 	p[playerNum].rigidbody.rDrag = 0.01f;
 
-	if (playerNum == 2) {
+	if (playerNum == 1) {
 		start = true;
 	}
 }
