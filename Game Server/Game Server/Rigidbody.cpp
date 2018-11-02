@@ -4,10 +4,8 @@ Rigidbody::Rigidbody()
 {
 	lAccel = glm::vec3(0,0,0);
 	lVelocity = glm::vec3(0, 0, 0);
-	position = glm::vec3(0, 0, 0);
 	rAccel = glm::vec3(0, 0, 0);
 	rVelocity = glm::vec3(0, 0, 0);
-	rotation = glm::vec3(0, 0, 0);
 
 	maxVelocity = std::numeric_limits<float>::max();
 	minVelocity = 0.0f;
@@ -23,8 +21,31 @@ Rigidbody::Rigidbody()
 
 }
 
+Rigidbody::Rigidbody(Transform& parent)
+{
+	lAccel = glm::vec3(0, 0, 0);
+	lVelocity = glm::vec3(0, 0, 0);
+	rAccel = glm::vec3(0, 0, 0);
+	rVelocity = glm::vec3(0, 0, 0);
+
+	maxVelocity = std::numeric_limits<float>::max();
+	minVelocity = 0.0f;
+
+	lDrag = 0.0f;
+	rDrag = 0.9f;
+	mass = 1.0f;
+	gravAccel = 1.0f;
+
+	gravity = false;
+
+	keepUpdating = true;
+	//prob an error ************************************************************************
+	parentTransform = &parent;
+}
+
 Rigidbody::~Rigidbody()
 {
+	delete parentTransform;
 }
 
 void Rigidbody::addForce(float magnitude, glm::vec3 dir)
@@ -85,7 +106,7 @@ void Rigidbody::update()
 		}
 
 		//moves position
-		position += lVelocity;
-		rotation += rVelocity;
+		parentTransform->position += lVelocity;
+		parentTransform->rotation += rVelocity;
 	}
 }

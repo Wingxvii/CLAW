@@ -22,6 +22,11 @@ enum PacketTypes {
 	//recieves letter
 	KEY_INPUT = 5,
 
+	//sends all object collision boxes
+	LOAD_COLLISIONS = 6,
+
+	//send data about collisions
+	DEBUG_COLLISIONS = 7,
 };
 
 struct Packet {

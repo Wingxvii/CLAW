@@ -39,6 +39,21 @@ void ServerGame::update()
 		pairClients(client_id);
 	}
 
+	//update physics
+	p[1].rigidbody.update();
+	p[2].rigidbody.update();
+
+	//checks collisions
+	if (collisionCheck(p[1])) {
+		p[1].transform.position = prevPosition1;
+	}
+	if (collisionCheck(p[2])) {
+		p[2].transform.position = prevPosition2;
+	}
+
+	prevPosition1 = p[1].transform.position;
+	prevPosition2 = p[2].transform.position;
+
 	receiveFromClients();
 
 
@@ -84,6 +99,17 @@ void ServerGame::receiveFromClients()
 				case KEY_INPUT:
 					parsedData = Tokenizer::tokenize(',', packet.data);
 					handleIncomingKey(parsedData);
+					break;
+
+				case LOAD_COLLISIONS:
+					parsedData = Tokenizer::tokenize(',', packet.data);
+					handleIncomingCollider(parsedData);
+
+					if (collisionBoxes.size == 2) {
+						p[1].collider = &collisionBoxes[0];
+						p[2].collider = &collisionBoxes[1];
+					}
+
 					break;
 
 				default:
@@ -136,6 +162,20 @@ void ServerGame::sendMessage(int clientID, int packetType, std::string message)
 
 	network->sendTo(packet_data, packet_size, clientID);
 }
+
+//checks if a player collides with anything
+bool ServerGame::collisionCheck(Player _player)
+{
+	for (BoxCollider collision : collisionBoxes) {
+		if (collision.index != _player.collider->index) {
+			if (_player.collider->checkCollision(collision)) {
+				return true;
+			}
+		}
+	}
+	return false;
+
+}
 //Index 0 is the player num 
 //Index 1 is the key pushed
 //Index 2-4 player position data
@@ -144,6 +184,8 @@ void ServerGame::handleIncomingKey(const std::vector<std::string>& data)
 
 	int playerNum = std::stoi(data[0]);
 	int keycode = std::stoi(data[1]);
+
+	glm::vec3 tempPosition = p[playerNum].transform.position;
 
 	switch (keycode)
 	{
@@ -175,6 +217,8 @@ void ServerGame::handleIncomingKey(const std::vector<std::string>& data)
 		break;
 	}
 
+	
+
 	sendMessage(0, TRANSFORMATION_DATA, std::to_string(playerNum) + "," + to_string(p[playerNum].transform.position.x) + "," + to_string(p[playerNum].transform.position.y)
 		+ "," + to_string(p[playerNum].transform.position.z) + "," + to_string(p[playerNum].transform.rotation.x) + "," + to_string(p[playerNum].transform.rotation.y)
 		+ "," + to_string(p[playerNum].transform.rotation.z) + "," + to_string(p[playerNum].transform.scale.x) + "," + to_string(p[playerNum].transform.scale.y)
@@ -188,17 +232,48 @@ void ServerGame::handleIncomingKey(const std::vector<std::string>& data)
 		}
 }
 
+//processes the data for player transformaitons
 void ServerGame::handleIncomingTransformation(const std::vector<std::string>& data)
 {
 	int playerNum = std::stoi(data[0]);
-	p[playerNum].transform.position.x = std::stoi(data[1]);
-	p[playerNum].transform.position.y = std::stoi(data[2]);
-	p[playerNum].transform.position.z = std::stoi(data[3]);
-	p[playerNum].transform.rotation.x = std::stoi(data[4]);
-	p[playerNum].transform.rotation.y = std::stoi(data[5]);
-	p[playerNum].transform.rotation.z = std::stoi(data[6]);
-	p[playerNum].transform.scale.x = std::stoi(data[7]);
-	p[playerNum].transform.scale.y = std::stoi(data[8]);
-	p[playerNum].transform.scale.z = std::stoi(data[9]);
+	p[playerNum].transform.position.x = std::stof(data[1]);
+	p[playerNum].transform.position.y = std::stof(data[2]);
+	p[playerNum].transform.position.z = std::stof(data[3]);
+	p[playerNum].transform.rotation.x = std::stof(data[4]);
+	p[playerNum].transform.rotation.y = std::stof(data[5]);
+	p[playerNum].transform.rotation.z = std::stof(data[6]);
+	p[playerNum].transform.scale.x = std::stof(data[7]);
+	p[playerNum].transform.scale.y = std::stof(data[8]);
+	p[playerNum].transform.scale.z = std::stof(data[9]);
+	
+	//here is the init function:
+	p[playerNum].rigidbody.keepUpdating = true;
+	p[playerNum].rigidbody.gravity = false;
+	p[playerNum].rigidbody.gravAccel = -9.8f;
+	p[playerNum].rigidbody.lDrag = 0.01f;
+	p[playerNum].rigidbody.mass = 1;
+	p[playerNum].rigidbody.maxVelocity = 2.0f;
+	p[playerNum].rigidbody.minVelocity = 0.0f;
+	p[playerNum].rigidbody.rDrag = 0.01f;
+
+
+}
+
+//processes the data for colliders
+void ServerGame::handleIncomingCollider(const std::vector<std::string>& data)
+{
+	BoxCollider newCollider = BoxCollider();
+
+	newCollider.tag = (ColliderTag)std::stoi(data[0]);
+	newCollider.size.x = std::stof(data[1]);
+	newCollider.size.y = std::stof(data[2]);
+	newCollider.size.z = std::stof(data[3]);
+	newCollider.center.x = std::stof(data[4]);
+	newCollider.center.y = std::stof(data[5]);
+	newCollider.center.z = std::stof(data[6]);
+	newCollider.index = collisionBoxes.size();
+
+	collisionBoxes.push_back(newCollider);
+
 }
 

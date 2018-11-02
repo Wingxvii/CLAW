@@ -2,20 +2,23 @@
 
 Player::Player()
 {
-	rigidbody = Rigidbody();
 	transform = Transform();
+	rigidbody = Rigidbody(transform);
 	playerNumber = 1;
 	active = false;
+	collider = nullptr;
 }
 
 Player::Player(int num)
 {
-	rigidbody = Rigidbody();
 	transform = Transform();
+	rigidbody = Rigidbody(transform);
 	playerNumber = num;
 	active = false;
+	collider = nullptr;
 }
 
 Player::~Player()
 {
+	delete collider;
 }

@@ -2,6 +2,7 @@
 #include "include/glm/glm.hpp"
 #include "Rigidbody.h"
 #include "Transform.h"
+#include "BoxCollider.h"
 
 class Player {
 public:
@@ -11,6 +12,7 @@ public:
 
 	Rigidbody rigidbody;
 	Transform transform;
+	BoxCollider* collider;
 	int playerNumber;
 	bool active;
 

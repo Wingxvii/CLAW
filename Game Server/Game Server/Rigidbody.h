@@ -1,11 +1,12 @@
 #pragma once
 #include "include/glm/glm.hpp"
-
+#include "Transform.h"
 
 class Rigidbody {
 
 public:
 	Rigidbody();
+	Rigidbody(Transform&);
 	~Rigidbody();
 
 
@@ -23,10 +24,10 @@ public:
 
 	glm::vec3 lAccel;
 	glm::vec3 lVelocity;
-	glm::vec3 position;
 	glm::vec3 rAccel;
 	glm::vec3 rVelocity;
-	glm::vec3 rotation;
+	
+	Transform* parentTransform;
 
 	float maxVelocity;
 	float minVelocity;

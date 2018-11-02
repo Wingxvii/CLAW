@@ -5,6 +5,7 @@
 #include "ClientPair.h"
 #include "Tokenizer.h"
 #include "Player.h"
+#include "BoxCollider.h"
 
 #include "include/glm/glm.hpp"
 #include "include/glm/ext.hpp"
@@ -35,12 +36,21 @@ private:
 
 	Player p[2] = { Player(1),Player(2) };
 
+	//collision stuff
+	std::vector<BoxCollider> collisionBoxes;
+
+	glm::vec3 prevPosition1;
+	glm::vec3 prevPosition2;
+
 	void pairClients(int);
 	void sendMessage(int clientid, int message_type, std::string message);
+	bool collisionCheck(Player);
 
 	void handleIncomingKey(const std::vector<std::string>&);
 	void handleIncomingTransformation(const std::vector<std::string>&);
+	void handleIncomingCollider(const std::vector<std::string>&);
 
 	unsigned int currentClient;
+
 
 };

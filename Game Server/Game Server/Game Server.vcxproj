@@ -119,6 +119,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="ClientPair.h" />
     <ClInclude Include="NetworkServices.h" />
     <ClInclude Include="Packet.h" />
@@ -130,6 +131,7 @@
     <ClInclude Include="Transform.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="ClientPair.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NetworkServices.cpp" />
