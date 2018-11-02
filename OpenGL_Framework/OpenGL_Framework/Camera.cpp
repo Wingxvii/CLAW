@@ -6,7 +6,7 @@ Camera::Camera()
 {
 	int number = rand() % 2;
 	Camera((ProjectionType)number);
-	m_entityType = (int)EntityTypes::CAMERA;
+	m_entityType = (int)EntityTypes::DEFAULT;
 }
 
 Camera::Camera(ProjectionType projType)
@@ -15,7 +15,7 @@ Camera::Camera(ProjectionType projType)
 		perspective(60.0f, 1.0f, 0.1f, 100.0f);
 	else
 		orthographic(-10, 10, -10, 10, -100, 100);
-	m_entityType = (int)EntityTypes::CAMERA;
+	m_entityType = (int)EntityTypes::DEFAULT;
 }
 
 void Camera::perspective(float fovy, float aspect, float zNear, float zFar)

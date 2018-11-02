@@ -95,6 +95,9 @@ private:
 
 	Player *currentPlayer = new Player();
 
+
+	std::vector<PhysicalEntity* > entities;
+
 	glm::vec3 cameraVelocity = {0,0,0};
 	glm::vec3 cameraSteering = {0,0,0};
 
@@ -102,7 +105,7 @@ private:
 
 	float t = 0;
 
-	void drawBoundingBox(BoxCollider boundingbox, Mesh* mesh);
+	void drawBoundingBox(BoxCollider boundingbox, Mesh& mesh);
 
 	void checkCollisions();
 
