@@ -48,10 +48,10 @@ void ServerGame::update()
 		p[1].rigidbody.update();
 
 		//checks collisions
-		if (collisionCheck(p[1])) {
+		if (collisionCheck(p[0])) {
 			p[0].transform.position = prevPosition1;
 		}
-		if (collisionCheck(p[2])) {
+		if (collisionCheck(p[1])) {
 			p[1].transform.position = prevPosition2;
 		}
 
