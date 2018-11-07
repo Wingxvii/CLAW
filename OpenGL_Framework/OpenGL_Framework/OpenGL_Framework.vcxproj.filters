@@ -47,6 +47,7 @@
       <Filter>Source Files\Wrappers</Filter>
     </ClCompile>
     <ClCompile Include="BoxCollider.cpp" />
+    <ClCompile Include="MeshAnimator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -101,6 +102,7 @@
       <Filter>Header Files\Wrappers</Filter>
     </ClInclude>
     <ClInclude Include="BoxCollider.h" />
+    <ClInclude Include="MeshAnimator.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">

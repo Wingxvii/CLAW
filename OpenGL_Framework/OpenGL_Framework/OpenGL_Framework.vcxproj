@@ -79,6 +79,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshAnimator.cpp" />
     <ClCompile Include="MessageHandler.cpp" />
     <ClCompile Include="NetworkServices.cpp" />
     <ClCompile Include="PhysicalEntity.cpp" />
@@ -98,6 +99,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshAnimator.h" />
     <ClInclude Include="MessageHandler.h" />
     <ClInclude Include="NetworkServices.h" />
     <ClInclude Include="Packet.h" />
