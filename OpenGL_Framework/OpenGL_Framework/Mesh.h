@@ -68,7 +68,7 @@ public:
 
 	Transform* transform = new Transform();
 
-	std::vector<glm::vec3> vertices;
+	//std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> vertexData;
 	std::vector<glm::vec2> textureData;
 	std::vector<glm::vec3> normalData;

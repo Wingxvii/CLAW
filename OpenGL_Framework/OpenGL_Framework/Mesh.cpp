@@ -88,7 +88,7 @@ bool Mesh::LoadfromFile(const std::string & file)
 			else if (temp.z < minSize.z) {
 				minSize.z = temp.z;
 			}
-			vertices.push_back(temp);
+			
 			vertexData.push_back(temp);
 		}
 		else if (strstr(inputString, "f") != nullptr) {

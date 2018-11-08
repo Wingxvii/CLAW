@@ -37,11 +37,12 @@ void MeshAnimator::playAnimations(float dt, int animationIndex)
 		interpolatedMesh = animations[animationIndex][0];
 	}
 	else {
-		interpolatedMesh._NumVertices = animations[animationIndex][frameIndex].vertices.size();
+		interpolatedMesh._NumVertices = animations[animationIndex][frameIndex].vertexData.size();
 		for (int i = 0; i < interpolatedMesh._NumVertices; i++) {
 
-			interpolatedMesh.vertices[i] = animations[animationIndex][frameIndex].vertices[i] * (1.0f - (timer/frameDuration)) + animations[animationIndex][frameIndex+1].vertices[i] * (timer / frameDuration);
-			
+			interpolatedMesh.vertexData[i] = animations[animationIndex][frameIndex].vertexData[i] * (1.0f - (timer/frameDuration)) + animations[animationIndex][frameIndex+1].vertexData[i] * (timer / frameDuration);
+			interpolatedMesh.textureData[i] = animations[animationIndex][frameIndex].textureData[i] * (1.0f - (timer / frameDuration)) + animations[animationIndex][frameIndex + 1].textureData[i] * (timer / frameDuration);
+			interpolatedMesh.normalData[i] = animations[animationIndex][frameIndex].normalData[i] * (1.0f - (timer / frameDuration)) + animations[animationIndex][frameIndex + 1].normalData[i] * (timer / frameDuration);
 		}
 	}
 
