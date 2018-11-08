@@ -59,13 +59,13 @@ void ServerGame::update()
 		//checks collisions
 		if (collisionCheck(p[0])) {
 			//revert movement if collide 
-			p[0].collider->center -= p[0].transform.position - prevPosition1;
-			p[0].transform.position = prevPosition1;
+			//p[0].collider->center -= p[0].transform.position - prevPosition1;
+			//p[0].transform.position = prevPosition1;
 		}
 		if (collisionCheck(p[1])) {
 			//revert movement if collide 
-			p[1].collider->center -= p[1].transform.position - prevPosition2;
-			p[1].transform.position = prevPosition2;
+			//p[1].collider->center -= p[1].transform.position - prevPosition2;
+			//p[1].transform.position = prevPosition2;
 		}
 
 		//update last frame position

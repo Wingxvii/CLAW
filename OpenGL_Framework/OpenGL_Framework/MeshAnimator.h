@@ -18,8 +18,9 @@ public:
 	Mesh interpolatedMesh;
 	int frameIndex = 0;
 	int targetframe = 0;
-	float frameDuration = 0.1f;
+	float frameDuration = 5.0f;
 	float timer = 0;
+	float t = 0.0f;
 	bool loops = true;
 	bool bound = false;
 

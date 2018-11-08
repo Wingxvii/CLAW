@@ -137,7 +137,7 @@ void Game::update()
 	cameraFollow();
 	camera.transform->update(deltaTime);
 
-	character1Anim.playAnimations(deltaTime, 0);
+	character1Anim.playAnimations(deltaTime, 1);
 	character2Anim.playAnimations(deltaTime, 0);
 	mapAnim.playAnimations(deltaTime, 0);
 	skyBoxAnim.playAnimations(deltaTime, 0);
@@ -223,10 +223,12 @@ void Game::draw()
 	
 	glBindVertexArray(character1Anim.VAO);
 	glDrawArrays(GL_TRIANGLES, 0, character1Anim.interpolatedMesh._NumVertices);
+	glBindVertexArray(0);
 
 	//cube 2
 	PassThrough.SendUniformMat4("uModel", glm::value_ptr(player2->getMesh()->transform->getLocalToWorldMatrix()), false);
 	
+	glBindVertexArray(character2Anim.VAO);
 	glDrawArrays(GL_TRIANGLES, 0, character2Anim.interpolatedMesh._NumVertices);
 	glBindVertexArray(0);
 	DevilTexture.UnBind();
@@ -249,7 +251,7 @@ void Game::draw()
 	//unbinds
 	FlatBlueTexture.UnBind();
 	
-	//drawBoundingBox(player1->getMesh()->BoundingBox, *player1->getMesh());
+	drawBoundingBox(player1->getMesh()->BoundingBox, *player1->getMesh());
 	//drawBoundingBox(player2->getMesh()->BoundingBox, *player2->getMesh());
 
 	glutSwapBuffers();
