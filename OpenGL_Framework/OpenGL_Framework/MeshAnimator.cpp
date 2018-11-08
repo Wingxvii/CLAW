@@ -12,29 +12,43 @@ MeshAnimator::~MeshAnimator()
 {
 }
 
-void MeshAnimator::update(float dt)
+void MeshAnimator::playAnimations(float dt, int animationIndex)
 {
-	if (bound && frames.size() != 1) {
+	if (bound && (animations[animationIndex].size() > 1)) {
 		releaseCurrentMesh();
 		bound = false;
 	}
 
 	timer += dt;
-	if (frames.size() == 1) {
-		interpolatedMesh = frames[0];
+	if (timer >= frameDuration) {
+		timer = 0;
+		frameIndex++;
+	}
+
+	if (frameIndex+1 >= animations[animationIndex].size()) {
+		frameIndex = 0;
+	}
+
+	if (frameIndex == 5) {
+		int here = 0;
+	}
+
+	if (animations[animationIndex].size() == 1) {
+		interpolatedMesh = animations[animationIndex][0];
 	}
 	else {
-	
-
+		interpolatedMesh._NumVertices = animations[animationIndex][frameIndex].vertices.size();
 		for (int i = 0; i < interpolatedMesh._NumVertices; i++) {
-			interpolatedMesh.vertices[i] = frames[frameIndex].vertices[i] * (1.0f - g_mInterp) + frames[frameIndex+1].vertices[i] * g_mInterp;
+
+			interpolatedMesh.vertices[i] = animations[animationIndex][frameIndex].vertices[i] * (1.0f - (timer/frameDuration)) + animations[animationIndex][frameIndex+1].vertices[i] * (timer / frameDuration);
+			
 		}
-
-
-		
-
 	}
 
+	if (!bound) {
+		bindCurrentMesh();
+		bound = true;
+	}
 	
 }
 
@@ -43,11 +57,14 @@ bool MeshAnimator::loadMeshes(std::string meshPrefix, int numOfFrames)
 	bool worked;
 	for (int i = 0; i < numOfFrames; i++) {
 		Mesh temp;
-		worked = temp.LoadfromFile(meshPrefix + std::to_string(i));
+		worked = temp.LoadfromFile(meshPrefix + std::to_string(i+1) + ".obj");
 
 		frames.push_back(temp);
 	}
-
+	if (worked) {
+		animations.push_back(frames);
+	}
+	interpolatedMesh = animations[0][0]; //set default
 	return worked;
 }
 
@@ -125,6 +142,7 @@ void MeshAnimator::releaseCurrentMesh()
 	glDeleteBuffers(1, &VBO_Normals);
 	glDeleteBuffers(1, &VBO_UVs);
 	glDeleteBuffers(1, &VBO_Verticies);
+	glDeleteVertexArrays(1, &VAO);
 
 	VBO_Normals = 0;
 	VBO_UVs = 0;

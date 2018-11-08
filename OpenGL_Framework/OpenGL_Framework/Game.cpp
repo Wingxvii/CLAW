@@ -13,7 +13,7 @@ Game::~Game()
 	delete updateTimer;
 
 	PassThrough.UnLoad();
-	box.Unload();
+	
 	GrassTexture.Unload();
 }
 
@@ -33,35 +33,40 @@ void Game::initializeGame()
 	//load crate shaders
 	if (!BoundingShader.Load("./Assets/Shaders/BoundingBox.vert", "./Assets/Shaders/BoundingBox.frag")) {
 		std::cout << "Shaders failed to init.\n";
-		system("pause");
-		exit(0);
+		
 	}
 
-	//load crate mesh
-	if (!box.LoadfromFile("./Assets/Models/crate.obj")) {
+	//load character 1 idle 
+	if (!character1Anim.loadMeshes("./Assets/Models/DevilWalk", 1)) {
 		std::cout << "Model failed to load.\n";
-		system("pause");
-		exit(0);
+
 	}
-	//load crate mesh
-	if (!box2.LoadfromFile("./Assets/Models/crate.obj")) {
+	//load character 1 walk
+	if (!character1Anim.loadMeshes("./Assets/Models/DevilWalk", 8)) {
 		std::cout << "Model failed to load.\n";
-		system("pause");
-		exit(0);
+	
+	}
+	//load character 2 idle 
+	if (!character2Anim.loadMeshes("./Assets/Models/DevilWalk", 1)) {
+		std::cout << "Model failed to load.\n";
+		
+	}
+	//load character 2 walk
+	if (!character2Anim.loadMeshes("./Assets/Models/DevilWalk", 8)) {
+		std::cout << "Model failed to load.\n";
+		
 	}
 
-	//load map mesh
-	if (!skyBox.LoadfromFile("./Assets/Models/skybox.obj")) {
+	//load map mesh - for static objects load animation with only one frame
+	if (!mapAnim.loadMeshes("./Assets/Models/map_lava", 1)) {
 		std::cout << "Model failed to load.\n";
-		system("pause");
-		exit(0);
+		
 	}
 
 	//load sky box mesh
-	if (!map.LoadfromFile("./Assets/Models/map_lava1.obj")) {
+	if (!skyBoxAnim.loadMeshes("./Assets/Models/skybox", 1)) {
 		std::cout << "Model failed to load.\n";
-		system("pause");
-		exit(0);
+	
 	}
 
 	//load texture
@@ -78,6 +83,12 @@ void Game::initializeGame()
 		exit(0);
 	}
 
+	if (!DevilTexture.Load("./Assets/Textures/Devil.png"))
+	{
+		system("Pause");
+		exit(0);
+	}
+
 	//load texture
 	if (!Sky.Load("./Assets/Textures/skybox.png"))
 	{
@@ -85,10 +96,10 @@ void Game::initializeGame()
 		exit(0);
 	}
 
-	player1->setMesh(&box);
-	player2->setMesh(&box2);
+	player1->setMesh(&character1Anim.interpolatedMesh);
+	player2->setMesh(&character2Anim.interpolatedMesh);
 
-	skyBoxTransform->setMesh(&skyBox);
+	skyBoxTransform->setMesh(&skyBoxAnim.interpolatedMesh);
 
 	camera.perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 1000.0f);
 	camera.transform->m_pLocalPosition = glm::vec3(0.0f, 1.5f, 6.0f);
@@ -126,9 +137,22 @@ void Game::update()
 	cameraFollow();
 	camera.transform->update(deltaTime);
 
+	character1Anim.playAnimations(deltaTime, 0);
+	character2Anim.playAnimations(deltaTime, 0);
+	mapAnim.playAnimations(deltaTime, 0);
+	skyBoxAnim.playAnimations(deltaTime, 0);
+
+
+	if (playWalk1) {
+		
+	}
+	else {
+		
+	}
+	//player1->setMesh(&character1Anim.interpolatedMesh);
+	//player2->setMesh(&character2Anim.interpolatedMesh);
 
 	player1->getMesh()->transform->update(deltaTime);
-	
 	player2->getMesh()->transform->update(deltaTime);
 
 	//checkCollisions();
@@ -192,34 +216,34 @@ void Game::draw()
 	PassThrough.SendUniform("attenuation_Linear", 0.0001f);
 	PassThrough.SendUniform("attenuation_Quadratic", 0.00001f);
 
-	GrassTexture.Bind();
+	DevilTexture.Bind();
 
 	//cube 1
 	PassThrough.SendUniformMat4("uModel", glm::value_ptr(player1->getMesh()->transform->getLocalToWorldMatrix()), false);
 	
-	glBindVertexArray(box.VAO);
-	glDrawArrays(GL_TRIANGLES, 0, box.GetNumVertices());
+	glBindVertexArray(character1Anim.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, character1Anim.interpolatedMesh._NumVertices);
 
 	//cube 2
 	PassThrough.SendUniformMat4("uModel", glm::value_ptr(player2->getMesh()->transform->getLocalToWorldMatrix()), false);
 	
-	glDrawArrays(GL_TRIANGLES, 0, box.GetNumVertices());
+	glDrawArrays(GL_TRIANGLES, 0, character2Anim.interpolatedMesh._NumVertices);
 	glBindVertexArray(0);
-	GrassTexture.UnBind();
+	DevilTexture.UnBind();
 
 	Sky.Bind();
 	PassThrough.SendUniformMat4("uModel", glm::value_ptr(skyBoxTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
 
-	glBindVertexArray(skyBox.VAO);
-	glDrawArrays(GL_TRIANGLES, 0, skyBox.GetNumVertices());
+	glBindVertexArray(skyBoxAnim.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, skyBoxAnim.interpolatedMesh._NumVertices);
 	glBindVertexArray(0);
 	Sky.UnBind();
 	
 	//map
 	FlatBlueTexture.Bind();
 	PassThrough.SendUniformMat4("uModel", glm::value_ptr(mapTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
-	glBindVertexArray(map.VAO);
-	glDrawArrays(GL_TRIANGLES, 0, map.GetNumVertices());	
+	glBindVertexArray(mapAnim.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, mapAnim.interpolatedMesh._NumVertices);
 	
 	PassThrough.UnBind();
 	//unbinds
@@ -281,6 +305,7 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 		sPushed = false;
 		break;
 	case 'w':
+		playWalk1 = false;
 		wPushed = false;
 		break;
 	case 'd':
@@ -350,7 +375,7 @@ void Game::cameraFollow()
 
 void Game::drawBoundingBox(BoxCollider boundingbox, Mesh& mesh)
 {
-	if (mesh.GetNumVertices() == 0)
+	if (mesh._NumVertices == 0)
 		return;
 
 	BoundingShader.Bind();

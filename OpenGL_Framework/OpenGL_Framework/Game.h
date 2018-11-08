@@ -24,6 +24,7 @@
 #include "MessageHandler.h"
 #include "Tokenizer.h"
 #include "glm/ext.hpp"
+#include "MeshAnimator.h"
 
 using glm::vec2;
 
@@ -74,14 +75,15 @@ private:
 
 	Camera camera;
 
-	Mesh box;
-	Mesh box2;
-	Mesh map;
-	Mesh skyBox;
+	MeshAnimator character1Anim;
+	MeshAnimator character2Anim;
+	MeshAnimator mapAnim;
+	MeshAnimator skyBoxAnim;
 
 	Texture GrassTexture;
 	Texture FlatBlueTexture;
 	Texture Sky;
+	Texture DevilTexture;
 
 	ShaderProgram PassThrough;
 	ShaderProgram BoundingShader;
@@ -117,4 +119,7 @@ private:
 	bool ePushed = false;
 
 	bool sendBoundingInfo = true;
+
+	bool playIdle1;
+	bool playWalk1;
 };
