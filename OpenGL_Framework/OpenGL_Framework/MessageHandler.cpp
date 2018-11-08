@@ -38,28 +38,16 @@ void MessageHandler::sendBoundingBoxInfo(ClientNetwork * network, std::vector<Ph
 	std::string message = "";
 
 	for (int i = 0; i < e.size(); i++) {
-		glm::mat4 transform = glm::mat4(1.0);
-		transform = glm::translate(glm::mat4(1), e[i]->getMesh()->BoundingBox.m_center);
-		transform = transform * glm::scale(glm::mat4(1), e[i]->getMesh()->BoundingBox.m_size);
-		glm::mat4 m = e[i]->getMesh()->transform->getLocalToWorldMatrix() * transform;
-		glm::vec3 position = { m[0][3], m[1][3], m[2][3] };
-		
 
 		message = std::to_string(e[i]->m_entityType) + "," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.x) + "," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.y) +
-			"," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.z) + "," + std::to_string(position.x) + "," +
-			std::to_string(position.y + e[i]->getMesh()->BoundingBox.m_size.y / 2) + "," + std::to_string(position.z) + ",";
+			"," + std::to_string(e[i]->getMesh()->BoundingBox.m_size.z) + "," + std::to_string(e[i]->getMesh()->transform->getPosition().x) + "," +
+			std::to_string(e[i]->getMesh()->transform->getPosition().y + e[i]->getMesh()->BoundingBox.m_size.y / 2) + "," + std::to_string(e[i]->getMesh()->transform->getPosition().z) + ",";
 
 		sendToServer(network, LOAD_COLLISIONS, message);
 
 
-		
+
 	}
-
-	
-
-
-
-
 }
 
 

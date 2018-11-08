@@ -48,29 +48,31 @@ void ServerGame::update()
 		//p[0].rigidbody.update();
 		//p[1].rigidbody.update();
 
-		//move cube collider
+//move cube collider & checks collisions
 		if (p[0].collider) {
 			p[0].collider->center += p[0].transform.position - prevPosition1;
+
+			if (collisionCheck(p[0])) {
+				//revert movement if collide 
+				p[0].collider->center -= p[0].transform.position - prevPosition1;
+				p[0].transform.position = prevPosition1;
+			}
 		}
 		if (p[1].collider) {
 			p[1].collider->center += p[1].transform.position - prevPosition2;
+
+			if (collisionCheck(p[1])) {
+				//revert movement if collide 
+				p[1].collider->center -= p[1].transform.position - prevPosition2;
+				p[1].transform.position = prevPosition2;
+			}
 		}
 
-		//checks collisions
-		if (collisionCheck(p[0])) {
-			//revert movement if collide 
-			//p[0].collider->center -= p[0].transform.position - prevPosition1;
-			//p[0].transform.position = prevPosition1;
-		}
-		if (collisionCheck(p[1])) {
-			//revert movement if collide 
-			//p[1].collider->center -= p[1].transform.position - prevPosition2;
-			//p[1].transform.position = prevPosition2;
-		}
 
 		//update last frame position
 		prevPosition1 = p[0].transform.position;
 		prevPosition2 = p[1].transform.position;
+
 
 	}
 
