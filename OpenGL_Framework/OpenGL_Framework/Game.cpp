@@ -42,7 +42,7 @@ void Game::initializeGame()
 
 	}
 	//load character 1 walk
-	if (!character1Anim.loadMeshes("./Assets/Models/DevilWalk", 8)) {
+	if (!character1Anim.loadMeshes("./Assets/Models/DevilWalk", 21)) {
 		std::cout << "Model failed to load.\n";
 	
 	}
@@ -52,7 +52,7 @@ void Game::initializeGame()
 		
 	}
 	//load character 2 walk
-	if (!character2Anim.loadMeshes("./Assets/Models/DevilWalk", 8)) {
+	if (!character2Anim.loadMeshes("./Assets/Models/DevilWalk", 21)) {
 		std::cout << "Model failed to load.\n";
 		
 	}
@@ -213,7 +213,7 @@ void Game::draw()
 
 	PassThrough.SendUniform("uTex", 0);
 	PassThrough.SendUniform("lightPosition", glm::inverse(camera.transform->getLocalToWorldMatrix()) * glm::vec4(2.0f, -4.0f, 3.0f, 0.0f));
-	PassThrough.SendUniform("lightAmbient", glm::vec3(0.5f, 0.5f, 0.5f));
+	PassThrough.SendUniform("lightAmbient", glm::vec3(0.2f, 0.2f, 0.2f));
 	PassThrough.SendUniform("lightDiffuse", glm::vec3(0.5f, 0.5f, 0.5f));
 	PassThrough.SendUniform("lightSpecular", glm::vec3(0.9f, 0.9f, 0.9f));
 	PassThrough.SendUniform("lightSpecularExponent", 5.0f);

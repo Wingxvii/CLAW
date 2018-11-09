@@ -317,6 +317,9 @@ void ServerGame::handleIncomingCollider(const std::vector<std::string>& data)
 		newCollider.size.z = 2.0f;
 	}
 
+
+
+
 	collisionBoxes.push_back(newCollider);
 
 }
