@@ -7,6 +7,7 @@ enum ColliderTag {
 	PLAYER = 0,
 	BREAKABLE = 1,
 	NON_BREAKABLE = 2,
+	TRIGGER = 3,
 
 };
 

@@ -55,8 +55,7 @@ private:
 	bool start = false;
 
 
-	//jump
-	int jumpPower = 0;
-	bool jumping = false;
-
+	void handleJump( int player);
+	void handleAttack(int player);
+	void restart();
 };

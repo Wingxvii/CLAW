@@ -43,29 +43,35 @@ void ServerGame::update()
 
 	if (start) {
 
+		//checks to see if jumping
+		handleJump(0);
+		handleJump(1);
+
+
 		//update physics
 		//move cube transform
 		p[0].rigidbody.update();
 		p[1].rigidbody.update();
 
-//move cube collider & checks collisions
-		if (p[0].collider) {
+		//move cube collider & checks collisions 
+		if (p[0].collider && p[1].collider) {
+
 			p[0].collider->center += p[0].transform.position - prevPosition1;
+			p[1].collider->center += p[1].transform.position - prevPosition2;
 
 			if (collisionCheck(p[0])) {
 				//revert movement if collide		
 				p[0].collider->center -= p[0].transform.position - prevPosition1;
 				p[0].transform.position = prevPosition1;
 			}
-		}
-		if (p[1].collider) {
-			p[1].collider->center += p[1].transform.position - prevPosition2;
-
 			if (collisionCheck(p[1])) {
 				//revert movement if collide 
 				p[1].collider->center -= p[1].transform.position - prevPosition2;
 				p[1].transform.position = prevPosition2;
 			}
+
+			handleAttack(0);
+			handleAttack(1);
 		}
 
 
@@ -79,13 +85,27 @@ void ServerGame::update()
 	//here goes hardcoded collisions
 	if (p[0].transform.position.y < 1) {
 		p[0].transform.position.y = 1;
+
+		if (p[0].state == PlayerState::JUMP) {
+			p[0].state = PlayerState::IDLE;
+			p[0].rigidbody.inAir = false;
+			p[0].jumpPower = 30;
+
+		}
+			
 	}
 	if (p[1].transform.position.y < 1) {
 		p[1].transform.position.y = 1;
+		if (p[1].state == PlayerState::JUMP) {
+			p[1].state = PlayerState::IDLE;
+			p[1].rigidbody.inAir = false;
+			p[1].jumpPower = 30;
+
+		}
 	}
 
 
-	printf("Linear Velocity:(%f,%f,%f)\n", p[0].rigidbody.lVelocity.x, p[0].rigidbody.lVelocity.y, p[0].rigidbody.lVelocity.z);
+	//printf("Linear Velocity:(%f,%f,%f)\n", p[0].rigidbody.lVelocity.x, p[0].rigidbody.lVelocity.y, p[0].rigidbody.lVelocity.z);
 
 	//pass data back
 	if (network->sessions.size() > 0) {
@@ -263,19 +283,22 @@ void ServerGame::handleIncomingKey(const std::vector<std::string>& data)
 		break;
 
 	case 'q':
-		p[playerNum].transform.rotation.y += 1.0f;
+		p[playerNum].transform.rotation.y += 8.0f;
 		break;
 	case 'e':
-		p[playerNum].transform.rotation.y -= 1.0f;
+		p[playerNum].transform.rotation.y -= 8.0f;
 
 		break;
 
 
 	case 32: // jump charge
-
+		if (p[playerNum].jumpPower < 100) {
+			p[playerNum].jumpPower++;
+		}
 		break;
 	case 33: // jump release
-
+		p[playerNum].state = PlayerState::JUMP;
+		p[playerNum].rigidbody.inAir = true;
 		break;
 	default:
 		break;
@@ -294,6 +317,7 @@ void ServerGame::handleIncomingTransformation(const std::vector<std::string>& da
 	p[playerNum].transform.rotation.x = std::stof(data[4]);
 	p[playerNum].transform.rotation.y = std::stof(data[5]);
 	p[playerNum].transform.rotation.z = std::stof(data[6]);
+
 	p[playerNum].transform.scale.x = std::stof(data[7]);
 	p[playerNum].transform.scale.y = std::stof(data[8]);
 	p[playerNum].transform.scale.z = std::stof(data[9]);
@@ -301,12 +325,24 @@ void ServerGame::handleIncomingTransformation(const std::vector<std::string>& da
 	//here is the init function:
 	p[playerNum].rigidbody.keepUpdating = true;
 	p[playerNum].rigidbody.gravity = true;
-	p[playerNum].rigidbody.gravAccel = 0.1f;
+	p[playerNum].rigidbody.gravAccel = 0.2f;
 	p[playerNum].rigidbody.lDrag = 0.35f;
 	p[playerNum].rigidbody.mass = 1;
-	p[playerNum].rigidbody.maxVelocity = 10.0f;
+	p[playerNum].rigidbody.maxVelocity = 999.0f;
 	p[playerNum].rigidbody.minVelocity = 0.0f;
 	p[playerNum].rigidbody.rDrag = 0.05f;
+	p[playerNum].rigidbody.aDrag = 0.05f;
+
+	//restart calls
+	p[playerNum].startData = data;
+	p[playerNum].state = PlayerState::IDLE;
+	p[playerNum].jumpPower = 30;
+	p[playerNum].rigidbody.lAccel = glm::vec3(0.0f, 0.0f, 0.0f);
+	p[playerNum].rigidbody.inAir = false;
+
+	if (p[playerNum].collider) {
+		p[playerNum].collider->center = p[playerNum].transform.position + glm::vec3(0.0f, 2.0f, 0.0f);
+	}
 
 	if (playerNum == 1) {
 		start = true;
@@ -325,7 +361,6 @@ void ServerGame::handleIncomingCollider(const std::vector<std::string>& data)
 	newCollider.center.x = std::stof(data[4]);
 	newCollider.center.y = std::stof(data[5]);
 	newCollider.center.z = std::stof(data[6]);
-
 	newCollider.index = collisionBoxes.size();
 
 
@@ -342,3 +377,35 @@ void ServerGame::handleIncomingCollider(const std::vector<std::string>& data)
 
 }
 
+void ServerGame::handleJump( int player)
+{
+	//check if jumping
+	if (p[player].state == PlayerState::JUMP && p[player].jumpPower >= 0) {
+		p[player].rigidbody.addForce(-1.0f, p[player].transform.getBackward());
+		p[player].rigidbody.addForce(0.8f, glm::vec3(0, 1, 0));
+		p[player].jumpPower -= 8;
+	}
+}
+
+void ServerGame::handleAttack(int player)
+{
+	p[player].hitBox.center = p[player].collider->center + (p[player].transform.getBackward() * 2.0f);
+
+	if (p[player].state == PlayerState::JUMP) {
+		if (player == 0) {
+			if (p[0].hitBox.checkCollision(*p[1].collider)) {
+				handleIncomingTransformation(p[0].startData);
+				handleIncomingTransformation(p[1].startData);
+				printf("collided");
+
+			}
+		}
+		else {
+			if (p[1].hitBox.checkCollision(*p[0].collider)) {
+				handleIncomingTransformation(p[0].startData);
+				handleIncomingTransformation(p[1].startData);
+				printf("collided");
+			}
+		}
+	}
+}
