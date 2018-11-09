@@ -294,10 +294,10 @@ void ServerGame::handleIncomingTransformation(const std::vector<std::string>& da
 	//here is the init function:
 	p[playerNum].rigidbody.keepUpdating = true;
 	p[playerNum].rigidbody.gravity = true;
-	p[playerNum].rigidbody.gravAccel = -0.1f;
+	p[playerNum].rigidbody.gravAccel = 0.1f;
 	p[playerNum].rigidbody.lDrag = 0.2f;
 	p[playerNum].rigidbody.mass = 1;
-	p[playerNum].rigidbody.maxVelocity = 5.0f;
+	p[playerNum].rigidbody.maxVelocity = 10.0f;
 	p[playerNum].rigidbody.minVelocity = 0.0f;
 	p[playerNum].rigidbody.rDrag = 0.05f;
 
