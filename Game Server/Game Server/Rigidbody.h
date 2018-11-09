@@ -34,12 +34,14 @@ public:
 
 	float lDrag;
 	float rDrag;
+	float aDrag;
+
 	float mass;
 	float gravAccel;
 
 	bool gravity;
 
 	bool keepUpdating;
-
+	bool inAir;
 
 };

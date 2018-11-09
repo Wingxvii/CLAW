@@ -13,11 +13,12 @@ Rigidbody::Rigidbody()
 
 	lDrag = 0.0f;
 	rDrag = 0.9f;
+	aDrag = 0.0f;
 	mass = 1.0f;
 	gravAccel = 1.0f;
 
 	gravity = false;
-
+	inAir = false;
 	keepUpdating = true;
 
 }
@@ -34,10 +35,12 @@ Rigidbody::Rigidbody(Transform& parent)
 
 	lDrag = 0.05f;
 	rDrag = 0.9f;
+	aDrag = 0.0f;
 	mass = 1.0f;
 	gravAccel = 1.0f;
 
 	gravity = false;
+	inAir = false;
 
 	keepUpdating = true;
 	//prob an error ************************************************************************
@@ -50,12 +53,12 @@ Rigidbody::~Rigidbody()
 
 void Rigidbody::addForce(float magnitude, glm::vec3 dir)
 {
-	lAccel = (dir * magnitude) / mass;
+	lAccel += (dir * magnitude) / mass;
 }
 
 void Rigidbody::addForce(glm::vec3 force)
 {
-	lAccel = force / mass;
+	lAccel += force / mass;
 }
 
 void Rigidbody::freeze()
@@ -75,12 +78,12 @@ void Rigidbody::unfreeze()
 
 void Rigidbody::addRotationalForce(glm::vec3 force)
 {
-	rAccel = force;
+	rAccel += force;
 }
 
 void Rigidbody::addZRotation(float rotationZ)
 {
-	rAccel.z = rotationZ;
+	rAccel.z += rotationZ;
 }
 
 void Rigidbody::update()
@@ -89,7 +92,13 @@ void Rigidbody::update()
 	if (keepUpdating) {
 
 		//updates velocity
-		lVelocity = lVelocity *(1-lDrag) + lAccel;
+		if (inAir) {
+			lVelocity = lVelocity * (1 - aDrag) + lAccel;
+		}
+		else {
+			lVelocity = lVelocity * (1 - lDrag) + lAccel;
+		}
+
 		rVelocity = rVelocity *(1-rDrag) + rAccel;
 
 		//restricts velocity range
