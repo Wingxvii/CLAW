@@ -310,6 +310,13 @@ void ServerGame::handleIncomingCollider(const std::vector<std::string>& data)
 
 	newCollider.index = collisionBoxes.size();
 
+
+	if (newCollider.index == 0 || newCollider.index == 1) {
+		newCollider.size.x = 2.0f;
+		newCollider.size.y = 2.0f;
+		newCollider.size.z = 2.0f;
+	}
+
 	collisionBoxes.push_back(newCollider);
 
 }
