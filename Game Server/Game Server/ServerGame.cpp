@@ -77,6 +77,13 @@ void ServerGame::update()
 	}
 
 	//here goes hardcoded collisions
+	if (p[0].transform.position.y < 1) {
+		p[0].transform.position.y = 1;
+	}
+	if (p[1].transform.position.y < 1) {
+		p[1].transform.position.y = 1;
+	}
+
 
 	printf("Linear Velocity:(%f,%f,%f)\n", p[0].rigidbody.lVelocity.x, p[0].rigidbody.lVelocity.y, p[0].rigidbody.lVelocity.z);
 
@@ -295,7 +302,7 @@ void ServerGame::handleIncomingTransformation(const std::vector<std::string>& da
 	p[playerNum].rigidbody.keepUpdating = true;
 	p[playerNum].rigidbody.gravity = true;
 	p[playerNum].rigidbody.gravAccel = 0.1f;
-	p[playerNum].rigidbody.lDrag = 0.2f;
+	p[playerNum].rigidbody.lDrag = 0.35f;
 	p[playerNum].rigidbody.mass = 1;
 	p[playerNum].rigidbody.maxVelocity = 10.0f;
 	p[playerNum].rigidbody.minVelocity = 0.0f;
