@@ -134,13 +134,18 @@ void Game::update()
 
 	
 	t = pow(0.1, 60.0f * deltaTime);
-	cameraFollow();
-	camera.transform->update(deltaTime);
 
 	character1Anim.playAnimations(deltaTime, 1);
 	character2Anim.playAnimations(deltaTime, 0);
 	mapAnim.playAnimations(deltaTime, 0);
 	skyBoxAnim.playAnimations(deltaTime, 0);
+	
+	cameraFollow();
+
+	printf("Player Position: (%f,%f,%f), Camera Position: (%f,%f,%f)\n", player1->getMesh()->transform->getPosition().x, player1->getMesh()->transform->getPosition().y, player1->getMesh()->transform->getPosition().z, camera.transform->getPosition().x, camera.transform->getPosition().y, camera.transform->getPosition().z);
+
+	camera.transform->update(deltaTime);
+
 
 
 	if (playWalk1) {
@@ -254,6 +259,9 @@ void Game::draw()
 	drawBoundingBox(player1->getMesh()->BoundingBox, *player1->getMesh());
 	//drawBoundingBox(player2->getMesh()->BoundingBox, *player2->getMesh());
 
+
+
+
 	glutSwapBuffers();
 
 
@@ -366,12 +374,19 @@ void Game::cameraFollow()
 	glm::vec3 playerPositionWithOffset;
 
 	glm::vec3 offset;
-	glm::vec2 offset2D = currentPlayer->getMesh()->transform->forward*3.0f;
-	offset = glm::vec3(offset2D.x, 2.0f, offset2D.y);
+	glm::vec2 offset2D = currentPlayer->getMesh()->transform->forward*8.0f;
+
+
+	offset = glm::vec3(offset2D.x, 4.0f, offset2D.y);
 
 	playerPositionWithOffset = currentPlayer->getMesh()->transform->getPosition() + offset;
 
-	camera.transform->setPosition(camera.transform->getPosition() * (1.0f - t) + (playerPositionWithOffset) * t);
+
+
+	//camera.transform->setPosition(camera.transform->getPosition() * (1.0f - t) + (playerPositionWithOffset) * t);
+
+	camera.transform->setPosition(playerPositionWithOffset);
+
 	camera.transform->setRotation(glm::vec3(0,currentPlayer->getMesh()->transform->getRotationAngleY(),0));
 }
 

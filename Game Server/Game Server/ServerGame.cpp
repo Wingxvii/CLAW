@@ -53,7 +53,7 @@ void ServerGame::update()
 			p[0].collider->center += p[0].transform.position - prevPosition1;
 
 			if (collisionCheck(p[0])) {
-				//revert movement if collide 
+				//revert movement if collide		
 				p[0].collider->center -= p[0].transform.position - prevPosition1;
 				p[0].transform.position = prevPosition1;
 			}
@@ -262,7 +262,7 @@ void ServerGame::handleIncomingKey(const std::vector<std::string>& data)
 		break;
 	}
 
-	printf("Player: %i Moved to (%f,%f,%f)\n", playerNum, p[playerNum].transform.position.x, p[playerNum].transform.position.y, p[playerNum].transform.position.z);
+	//printf("Player: %i Moved to (%f,%f,%f)\n", playerNum, p[playerNum].transform.position.x, p[playerNum].transform.position.y, p[playerNum].transform.position.z);
 
 }
 

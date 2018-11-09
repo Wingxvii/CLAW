@@ -33,7 +33,7 @@ bool BoxCollider::checkCollision(BoxCollider otherObj)
 			//check Z axis
 			if (glm::abs(center.z - otherObj.center.z) < (size.z / 2) + (otherObj.size.z / 2))
 			{
-				printf("collided");
+				//printf("collided");
 
 				return true;
 			}
