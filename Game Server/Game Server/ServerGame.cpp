@@ -45,8 +45,8 @@ void ServerGame::update()
 
 		//update physics
 		//move cube transform
-		//p[0].rigidbody.update();
-		//p[1].rigidbody.update();
+		p[0].rigidbody.update();
+		p[1].rigidbody.update();
 
 //move cube collider & checks collisions
 		if (p[0].collider) {
@@ -75,6 +75,10 @@ void ServerGame::update()
 
 
 	}
+
+	//here goes hardcoded collisions
+
+	printf("Linear Velocity:(%f,%f,%f)\n", p[0].rigidbody.lVelocity.x, p[0].rigidbody.lVelocity.y, p[0].rigidbody.lVelocity.z);
 
 	//pass data back
 	if (network->sessions.size() > 0) {
@@ -235,19 +239,19 @@ void ServerGame::handleIncomingKey(const std::vector<std::string>& data)
 	switch (keycode)
 	{
 	case 'a':
-		p[playerNum].transform.position += 0.1f * p[playerNum].transform.getLeft();
+		p[playerNum].rigidbody.addForce(0.3f * p[playerNum].transform.getLeft());
 		
 		break;
 	case 's':
-		p[playerNum].transform.position += 0.1f * p[playerNum].transform.getBackward();
+		p[playerNum].rigidbody.addForce(0.3f * p[playerNum].transform.getBackward());
 
 		break;
 	case 'w':
-		p[playerNum].transform.position += -0.1f * p[playerNum].transform.getBackward();
+		p[playerNum].rigidbody.addForce(-0.3f * p[playerNum].transform.getBackward());
 
 		break;
 	case 'd':
-		p[playerNum].transform.position += -0.1f * p[playerNum].transform.getLeft();
+		p[playerNum].rigidbody.addForce(-0.3f * p[playerNum].transform.getLeft());
 
 		break;
 
@@ -258,11 +262,18 @@ void ServerGame::handleIncomingKey(const std::vector<std::string>& data)
 		p[playerNum].transform.rotation.y -= 1.0f;
 
 		break;
+
+
+	case 32: // jump charge
+
+		break;
+	case 33: // jump release
+
+		break;
 	default:
 		break;
 	}
 
-	//printf("Player: %i Moved to (%f,%f,%f)\n", playerNum, p[playerNum].transform.position.x, p[playerNum].transform.position.y, p[playerNum].transform.position.z);
 
 }
 
@@ -282,13 +293,13 @@ void ServerGame::handleIncomingTransformation(const std::vector<std::string>& da
 	
 	//here is the init function:
 	p[playerNum].rigidbody.keepUpdating = true;
-	p[playerNum].rigidbody.gravity = false;
-	p[playerNum].rigidbody.gravAccel = -9.8f;
-	p[playerNum].rigidbody.lDrag = 0.01f;
+	p[playerNum].rigidbody.gravity = true;
+	p[playerNum].rigidbody.gravAccel = -0.1f;
+	p[playerNum].rigidbody.lDrag = 0.2f;
 	p[playerNum].rigidbody.mass = 1;
-	p[playerNum].rigidbody.maxVelocity = 2.0f;
+	p[playerNum].rigidbody.maxVelocity = 5.0f;
 	p[playerNum].rigidbody.minVelocity = 0.0f;
-	p[playerNum].rigidbody.rDrag = 0.01f;
+	p[playerNum].rigidbody.rDrag = 0.05f;
 
 	if (playerNum == 1) {
 		start = true;

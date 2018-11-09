@@ -54,4 +54,9 @@ private:
 
 	bool start = false;
 
+
+	//jump
+	int jumpPower = 0;
+	bool jumping = false;
+
 };

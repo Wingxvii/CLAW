@@ -1,4 +1,5 @@
 #include "Rigidbody.h"
+#include <string>
 
 Rigidbody::Rigidbody()
 {
@@ -31,7 +32,7 @@ Rigidbody::Rigidbody(Transform& parent)
 	maxVelocity = std::numeric_limits<float>::max();
 	minVelocity = 0.0f;
 
-	lDrag = 0.0f;
+	lDrag = 0.05f;
 	rDrag = 0.9f;
 	mass = 1.0f;
 	gravAccel = 1.0f;
@@ -88,8 +89,8 @@ void Rigidbody::update()
 	if (keepUpdating) {
 
 		//updates velocity
-		lVelocity = lVelocity * lDrag + lAccel;
-		rVelocity = rVelocity * rDrag + rAccel;
+		lVelocity = lVelocity *(1-lDrag) + lAccel;
+		rVelocity = rVelocity *(1-rDrag) + rAccel;
 
 		//restricts velocity range
 		if (glm::length(lVelocity) > maxVelocity) {
@@ -107,5 +108,8 @@ void Rigidbody::update()
 		//moves position
 		parentTransform->position += lVelocity;
 		parentTransform->rotation += rVelocity;
+
+		lAccel = glm::vec3(0.0f, 0.0f, 0.0f);
+		rAccel = glm::vec3(0.0f, 0.0f, 0.0f);
 	}
 }
