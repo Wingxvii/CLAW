@@ -122,4 +122,6 @@ private:
 
 	bool playIdle1;
 	bool playWalk1;
+
+	float testangle = 0.0f;
 };

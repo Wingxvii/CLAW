@@ -42,21 +42,22 @@ void Game::initializeGame()
 
 	}
 	//load character 1 walk
-	if (!character1Anim.loadMeshes("./Assets/Models/DevilWalk", 21)) {
+	if (!character1Anim.loadMeshes("./Assets/Models/DevilWalk", 8)) {
 		std::cout << "Model failed to load.\n";
 	
 	}
+	character1Anim.loops = true;
 	//load character 2 idle 
 	if (!character2Anim.loadMeshes("./Assets/Models/DevilWalk", 1)) {
 		std::cout << "Model failed to load.\n";
 		
 	}
 	//load character 2 walk
-	if (!character2Anim.loadMeshes("./Assets/Models/DevilWalk", 21)) {
+	if (!character2Anim.loadMeshes("./Assets/Models/DevilWalk", 8)) {
 		std::cout << "Model failed to load.\n";
 		
 	}
-
+	character2Anim.loops = true;
 	//load map mesh - for static objects load animation with only one frame
 	if (!mapAnim.loadMeshes("./Assets/Models/map_lava", 1)) {
 		std::cout << "Model failed to load.\n";
@@ -201,6 +202,7 @@ void Game::update()
 }
 void Game::draw()
 {
+	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LINE_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
@@ -211,6 +213,7 @@ void Game::draw()
 	PassThrough.Bind();
 	PassThrough.SendUniformMat4("uView", glm::value_ptr(glm::inverse(camera.transform->getLocalToWorldMatrix())), false);
 	PassThrough.SendUniformMat4("uProj", glm::value_ptr(camera.getProjection()), false);
+	PassThrough.SendUniform("angle", glm::radians(testangle));
 
 	PassThrough.SendUniform("uTex", 0);
 	PassThrough.SendUniform("lightPosition", glm::inverse(camera.transform->getLocalToWorldMatrix()) * glm::vec4(2.0f, -4.0f, 3.0f, 0.0f));
@@ -302,6 +305,9 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		break;
 	case 'r':
 		PassThrough.reload();
+		break;
+	case 'm':
+		testangle++;
 		break;
 	default:
 		break;

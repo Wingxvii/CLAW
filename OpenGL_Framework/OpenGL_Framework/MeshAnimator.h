@@ -18,10 +18,10 @@ public:
 	Mesh interpolatedMesh;
 	int frameIndex = 0;
 	int targetframe = 0;
-	float frameDuration = 0.5f;
+	float frameDuration = 0.15f;
 	float timer = 0;
 	float t = 0.0f;
-	bool loops = true;
+	bool loops = false;
 	bool bound = false;
 
 	//The animations are held in 2d vector this index is for which animation you want to play 
