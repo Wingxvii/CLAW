@@ -189,6 +189,7 @@ void Game::update()
 	}
 
 
+
 	//make sure this happens last in the update 
 	if (playerNum == 0 && sendBoundingInfo) {
 		MessageHandler::sendBoundingBoxInfo(network, entities);
@@ -296,8 +297,12 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		ePushed = true;
 		//MessageHandler::sendKeyInput(network, 'e', playerNum);
 		break;
+	case 32:
+		MessageHandler::sendKeyInput(network, 32, playerNum);
+		break;
 	case 'r':
 		PassThrough.reload();
+		break;
 	default:
 		break;
 	}
@@ -329,6 +334,10 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 		break;
 	case 'r':
 		PassThrough.reload();
+		break;
+	case 32:
+		MessageHandler::sendKeyInput(network, 33, playerNum);
+		break;
 	default:
 		break;
 	}
