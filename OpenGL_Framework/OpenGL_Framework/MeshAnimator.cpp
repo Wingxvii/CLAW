@@ -66,6 +66,7 @@ bool MeshAnimator::loadMeshes(std::string meshPrefix, int numOfFrames)
 		animations.push_back(frames);
 	}
 	interpolatedMesh = animations[0][0]; //set default
+	frames.clear();
 	return worked;
 }
 

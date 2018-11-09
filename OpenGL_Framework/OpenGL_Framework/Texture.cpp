@@ -1,48 +1,86 @@
 #include "Texture.h"
-#include "SOIL\SOIL.H"
 
-#include <iostream>
+Texture::Texture(const std::string & file)
+{
+}
 
 Texture::~Texture()
 {
-	Unload();
+	unload();
 }
 
-bool Texture::Load(const std::string & file)
+bool Texture::load(const std::string & file)
 {
-	TextObj = SOIL_load_OGL_texture(file.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	
 
-	if (TextObj == 0) {
-		std::cout << "Texture failed to load\n" << SOIL_last_result() << "\n";
+	unsigned char* textureData;
+	textureData = SOIL_load_image(file.c_str(), &this->sizeX, &this->sizeY, &this->channels, SOIL_LOAD_RGBA);
+
+	if (this->sizeX == 0 || this->sizeY == 0 || this->channels == 0)
+	{
+		printf("TEXTURE BROKE: %s", file.c_str());
 		return false;
 	}
 
-	//modify the texture
-	Bind();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);//U AXIS
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);//V AXIS
-	
+	// if it's a 2D texture (width and height are both greater than 1
+	this->_Target = GL_TEXTURE_2D;
+	this->_InternalFormat = GL_RGBA8;
+
+	glGenTextures(1, &this->_TexHandle);
+	this->bind();
+	glTextureStorage2D(this->_TexHandle, 1, this->_InternalFormat, this->sizeX, this->sizeY);
+
+	glTextureSubImage2D(this->_TexHandle, 0, 0, 0, this->sizeX, this->sizeY, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
+
+	glTextureParameteri(this->_TexHandle, GL_TEXTURE_MIN_FILTER, this->_FilterMin);
+	glTextureParameteri(this->_TexHandle, GL_TEXTURE_MAG_FILTER, this->_FilterMag);
+	glTextureParameteri(this->_TexHandle, GL_TEXTURE_WRAP_S, this->_WrapX);
+	glTextureParameteri(this->_TexHandle, GL_TEXTURE_WRAP_T, this->_WrapY);
+
+	this->unbind();
+
+	SOIL_free_image_data(textureData);
 
 	return true;
 }
 
-void Texture::Unload()
+bool Texture::unload()
 {
-	if (TextObj != 0) {
-		//remove data from GPU
-		glDeleteTextures(1, &TextObj);
-		TextObj = 0;
+	if (this->_TexHandle)
+	{
+		glDeleteTextures(1, &this->_TexHandle);
+		this->_TexHandle = 0;
+		return true;
 	}
+
+	return false;
 }
 
-void Texture::Bind()
+#include <assert.h>
+void Texture::setActiveSlot(int textureSlot) const
 {
-	glBindTexture(GL_TEXTURE_2D, TextObj);
+	assert(textureSlot >= 0 && textureSlot < 32);
+	glActiveTexture(GL_TEXTURE0 + textureSlot);
 }
 
-void Texture::UnBind()
+void Texture::bind() const
 {
-	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindTexture(this->_Target, this->_TexHandle);
+}
+
+void Texture::bind(int textureSlot) const
+{
+	setActiveSlot(textureSlot);
+	bind();
+}
+
+void Texture::unbind() const
+{
+	glBindTexture(this->_Target, GL_NONE);
+}
+
+void Texture::unbind(int textureSlot) const
+{
+	setActiveSlot(textureSlot);
+	unbind();
 }

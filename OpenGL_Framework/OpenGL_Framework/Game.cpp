@@ -14,7 +14,7 @@ Game::~Game()
 
 	PassThrough.UnLoad();
 	
-	GrassTexture.Unload();
+	GrassTexture.unload();
 }
 
 void Game::initializeGame()
@@ -37,7 +37,7 @@ void Game::initializeGame()
 	}
 
 	//load character 1 idle 
-	if (!character1Anim.loadMeshes("./Assets/Models/DevilWalk", 1)) {
+	if (!character1Anim.loadMeshes("./Assets/Models/Devil_Idle", 4)) {
 		std::cout << "Model failed to load.\n";
 
 	}
@@ -48,7 +48,7 @@ void Game::initializeGame()
 	}
 	character1Anim.loops = true;
 	//load character 2 idle 
-	if (!character2Anim.loadMeshes("./Assets/Models/DevilWalk", 1)) {
+	if (!character2Anim.loadMeshes("./Assets/Models/Devil_Idle", 4)) {
 		std::cout << "Model failed to load.\n";
 		
 	}
@@ -71,27 +71,27 @@ void Game::initializeGame()
 	}
 
 	//load texture
-	if (!GrassTexture.Load("./Assets/Textures/Grass.png"))
+	if (!GrassTexture.load("./Assets/Textures/Grass.png"))
 	{
 		system("Pause");
 		exit(0);
 	}
 
 	//load texture
-	if (!FlatBlueTexture.Load("./Assets/Textures/LavaMapTexture.png"))
+	if (!FlatBlueTexture.load("./Assets/Textures/LavaMapTexture.png"))
 	{
 		system("Pause");
 		exit(0);
 	}
 
-	if (!DevilTexture.Load("./Assets/Textures/Devil.png"))
+	if (!DevilTexture.load("./Assets/Textures/Devil.png"))
 	{
 		system("Pause");
 		exit(0);
 	}
 
 	//load texture
-	if (!Sky.Load("./Assets/Textures/skybox.png"))
+	if (!Sky.load("./Assets/Textures/skybox.png"))
 	{
 		system("Pause");
 		exit(0);
@@ -146,8 +146,6 @@ void Game::update()
 	printf("Player Position: (%f,%f,%f), Camera Position: (%f,%f,%f)\n", player1->getMesh()->transform->getPosition().x, player1->getMesh()->transform->getPosition().y, player1->getMesh()->transform->getPosition().z, camera.transform->getPosition().x, camera.transform->getPosition().y, camera.transform->getPosition().z);
 
 	camera.transform->update(deltaTime);
-
-
 
 	if (playWalk1) {
 		
@@ -225,7 +223,7 @@ void Game::draw()
 	PassThrough.SendUniform("attenuation_Linear", 0.0001f);
 	PassThrough.SendUniform("attenuation_Quadratic", 0.00001f);
 
-	DevilTexture.Bind();
+	DevilTexture.bind(0);
 
 	//cube 1
 	PassThrough.SendUniformMat4("uModel", glm::value_ptr(player1->getMesh()->transform->getLocalToWorldMatrix()), false);
@@ -240,25 +238,25 @@ void Game::draw()
 	glBindVertexArray(character2Anim.VAO);
 	glDrawArrays(GL_TRIANGLES, 0, character2Anim.interpolatedMesh._NumVertices);
 	glBindVertexArray(0);
-	DevilTexture.UnBind();
+	DevilTexture.unbind(0);
 
-	Sky.Bind();
+	Sky.bind(0);
 	PassThrough.SendUniformMat4("uModel", glm::value_ptr(skyBoxTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
 
 	glBindVertexArray(skyBoxAnim.VAO);
 	glDrawArrays(GL_TRIANGLES, 0, skyBoxAnim.interpolatedMesh._NumVertices);
 	glBindVertexArray(0);
-	Sky.UnBind();
+	Sky.unbind(0);
 	
 	//map
-	FlatBlueTexture.Bind();
+	FlatBlueTexture.bind(0);
 	PassThrough.SendUniformMat4("uModel", glm::value_ptr(mapTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
 	glBindVertexArray(mapAnim.VAO);
 	glDrawArrays(GL_TRIANGLES, 0, mapAnim.interpolatedMesh._NumVertices);
 	
 	PassThrough.UnBind();
 	//unbinds
-	FlatBlueTexture.UnBind();
+	FlatBlueTexture.unbind(0);
 	
 	drawBoundingBox(player1->getMesh()->BoundingBox, *player1->getMesh());
 	//drawBoundingBox(player2->getMesh()->BoundingBox, *player2->getMesh());

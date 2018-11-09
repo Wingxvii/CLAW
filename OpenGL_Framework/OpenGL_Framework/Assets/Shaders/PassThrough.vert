@@ -15,7 +15,8 @@ out vec3 pos;
 
 void main()
 {
-	texcoord = vec2(in_uv.x * cos(angle) - in_uv.y * sin(angle), in_uv.x * sin(angle) + in_uv.y * cos(angle));
+	texcoord = in_uv;
+    texcoord.y = 1 - texcoord.y;
 	norm = mat3(uView) * mat3(uModel) * in_normal;
 	
 	vec4 viewSpace = uView * uModel * vec4(in_vert, 1.0f);
