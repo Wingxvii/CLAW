@@ -141,9 +141,10 @@ void Game::update()
 	mapAnim.playAnimations(deltaTime, 0);
 	skyBoxAnim.playAnimations(deltaTime, 0);
 	
+	currentPlayer->getMesh()->transform->m_pRotation.y = camera.transform->m_pRotation.y;
 	cameraFollow();
 
-	printf("Player Position: (%f,%f,%f), Camera Position: (%f,%f,%f)\n", player1->getMesh()->transform->getPosition().x, player1->getMesh()->transform->getPosition().y, player1->getMesh()->transform->getPosition().z, camera.transform->getPosition().x, camera.transform->getPosition().y, camera.transform->getPosition().z);
+	//printf("Player Position: (%f,%f,%f), Camera Position: (%f,%f,%f)\n", player1->getMesh()->transform->getPosition().x, player1->getMesh()->transform->getPosition().y, player1->getMesh()->transform->getPosition().z, camera.transform->getPosition().x, camera.transform->getPosition().y, camera.transform->getPosition().z);
 
 	camera.transform->update(deltaTime);
 
@@ -178,15 +179,6 @@ void Game::update()
 	if (dPushed) {
 		MessageHandler::sendKeyInput(network, 'd', playerNum);
 	}
-
-	if (qPushed) {
-		MessageHandler::sendKeyInput(network, 'q', playerNum);
-	}
-
-	if (ePushed) {
-		MessageHandler::sendKeyInput(network, 'e', playerNum);
-	}
-
 
 
 	//make sure this happens last in the update 
@@ -290,14 +282,6 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		dPushed = true;
 		//MessageHandler::sendKeyInput(network, 'd', playerNum);
 		break;
-	case 'q':
-		qPushed = true;
-		//MessageHandler::sendKeyInput(network, 'q', playerNum);
-		break;
-	case 'e':
-		ePushed = true;
-		//MessageHandler::sendKeyInput(network, 'e', playerNum);
-		break;
 	case 32:
 		MessageHandler::sendKeyInput(network, 32, playerNum);
 		break;
@@ -329,12 +313,6 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 		break;
 	case 'd':
 		dPushed = false;
-		break;
-	case 'q':
-		qPushed = false;
-		break;
-	case 'e':
-		ePushed = false;
 		break;
 	case 'r':
 		PassThrough.reload();
@@ -400,7 +378,38 @@ void Game::cameraFollow()
 
 	camera.transform->setPosition(playerPositionWithOffset);
 
-	camera.transform->setRotation(glm::vec3(0,currentPlayer->getMesh()->transform->getRotationAngleY(),0));
+	camera.transform->setRotation(cameraRot);
+}
+
+void Game::handleMouse(int mousex, int mousey)
+{
+	int xMouse = mousex - (WINDOW_WIDTH / 2);
+	int yMouse = mousey - (WINDOW_HEIGHT / 2);
+
+	//this is correct. dont ask me, idk
+	cameraRot.y -= xMouse / sensitivityx;
+	cameraRot.x -= yMouse / sensitivityy;
+	
+	if (cameraRot.x < -90.0f)
+	{
+		cameraRot.x = -90.0f;
+	}
+	if (cameraRot.x > 90.0f)
+	{
+		cameraRot.x = 90.0f;
+	}
+
+	if (cameraRot.y < -180.0f)
+	{
+		cameraRot.y += 360.0f;
+	}
+
+	if (cameraRot.y > 180.0f)
+	{
+		cameraRot.y -= 360.0f;
+	}
+	glutWarpPointer(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
+
 }
 
 void Game::drawBoundingBox(BoxCollider boundingbox, Mesh& mesh)
@@ -559,14 +568,17 @@ void Game::updatePlayers(const std::vector<std::string>& data, PacketTypes _pack
 
 		if (playerToMove == 0) {
 			player1->getMesh()->transform->setPosition(translate);
-			player1->getMesh()->transform->setRotation(rotation);
 			player1->getMesh()->transform->setScale(scale);
-
+			if (playerNum == 1) {
+				player1->getMesh()->transform->setRotation(rotation);
+			}
 		}
 		else {
 			player2->getMesh()->transform->setPosition(translate);
-			player2->getMesh()->transform->setRotation(rotation);
 			player2->getMesh()->transform->setScale(scale);
+			if (playerNum == 0) {
+				player2->getMesh()->transform->setRotation(rotation);
+			}
 
 		}
 

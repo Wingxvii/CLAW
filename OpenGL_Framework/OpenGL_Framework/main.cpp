@@ -71,6 +71,11 @@ void MouseMotionCallbackFunction(int x, int y)
 	glutPostRedisplay();
 }
 
+void MousePassiveMotionCallbackFunction(int x, int y) {
+	theGame->handleMouse(x, y);
+	glutPostRedisplay();
+}
+
 void CALLBACK OpenGLDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *msg, const void *data) 
 {
 	std::cout << "CALLBACK\n";
@@ -191,6 +196,7 @@ int main(int argc, char **argv)
 	glutKeyboardUpFunc(KeyboardUpCallbackFunction);
 	glutMouseFunc(MouseClickCallbackFunction);
 	glutMotionFunc(MouseMotionCallbackFunction);
+	glutPassiveMotionFunc(MousePassiveMotionCallbackFunction);
 	glutTimerFunc(1, TimerCallbackFunction, 0);
 
 	

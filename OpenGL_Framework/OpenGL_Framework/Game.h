@@ -32,6 +32,7 @@ using glm::vec2;
 #define WINDOW_HEIGHT			720
 #define FRAMES_PER_SECOND		60
 
+
 class Game
 {
 public:
@@ -53,6 +54,7 @@ public:
 	void keyboardUp(unsigned char key, int mouseX, int mouseY);
 	void mouseClicked(int button, int state, int x, int y);
 	void mouseMoved(int x, int y);
+	void handleMouse(int mousex, int mousey);
 
 	/* Data Members */
 	Timer *updateTimer	= nullptr;
@@ -60,7 +62,8 @@ public:
 
 	void cameraFollow();
 
-	
+	const float TO_RADS = 3.141592654f / 180.0f; // The value of 1 degree in radians
+
 
 private:
 	void handlePackets();
@@ -102,6 +105,12 @@ private:
 
 	glm::vec3 cameraVelocity = {0,0,0};
 	glm::vec3 cameraSteering = {0,0,0};
+	//new camera
+	glm::vec3 cameraRot = { 0.0f,0.0f,0.0f };
+	float sensitivityx = 10.0f;
+	float sensitivityy = 10.0f;
+
+
 
 	glm::vec4 boundingBoxColor = { 1.0f, 0.0f, 0.0f, 1.0f };
 
@@ -115,8 +124,6 @@ private:
 	bool sPushed = false;
 	bool aPushed = false;
 	bool dPushed = false;
-	bool qPushed = false;
-	bool ePushed = false;
 
 	bool sendBoundingInfo = true;
 
