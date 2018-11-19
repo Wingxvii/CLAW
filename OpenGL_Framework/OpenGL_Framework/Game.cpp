@@ -365,10 +365,15 @@ void Game::cameraFollow()
 	glm::vec3 playerPositionWithOffset;
 
 	glm::vec3 offset;
-	glm::vec2 offset2D = currentPlayer->getMesh()->transform->forward*8.0f;
+
+	float cameraDistance = 8.0f - glm::abs(glm::sin(cameraRot.x * TO_RADS))*7.0f;
+	float cameraY = 4.0f - (glm::sin(cameraRot.x* TO_RADS) *8.0f);
+
+	printf("%f\n", glm::sin(cameraRot.x* TO_RADS));
+	glm::vec2 offset2D = currentPlayer->getMesh()->transform->forward*cameraDistance;
 
 
-	offset = glm::vec3(offset2D.x, 4.0f, offset2D.y);
+	offset = glm::vec3(offset2D.x, cameraY, offset2D.y);
 
 	playerPositionWithOffset = currentPlayer->getMesh()->transform->getPosition() + offset;
 
@@ -377,7 +382,6 @@ void Game::cameraFollow()
 	//camera.transform->setPosition(camera.transform->getPosition() * (1.0f - t) + (playerPositionWithOffset) * t);
 
 	camera.transform->setPosition(playerPositionWithOffset);
-
 	camera.transform->setRotation(cameraRot);
 }
 
