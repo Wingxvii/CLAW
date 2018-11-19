@@ -27,6 +27,9 @@ enum PacketTypes {
 
 	//send data about rotation
 	ROTATION_DATA = 7,
+
+	//attack info
+	ATTACK = 8,
 };
 
 struct Packet {

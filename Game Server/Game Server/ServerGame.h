@@ -50,6 +50,7 @@ private:
 	void handleIncomingTransformation(const std::vector<std::string>&);
 	void handleIncomingCollider(const std::vector<std::string>&);
 	void handleIncomingRotation(const std::vector<std::string>&);
+	void handleAttack(const std::vector<std::string>&);
 
 	unsigned int currentClient;
 
@@ -57,6 +58,6 @@ private:
 
 
 	void handleJump( int player);
-	void handleAttack(int player);
+	void handleAttackBox(int player);
 	void restart();
 };
