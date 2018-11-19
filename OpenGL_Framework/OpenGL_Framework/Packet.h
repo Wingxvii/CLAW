@@ -24,6 +24,9 @@ enum PacketTypes {
 
 	LOAD_COLLISIONS = 6,
 
+	//sends this to server each frame
+	ROTATION_DATA = 7
+
 };
 
 struct Packet {

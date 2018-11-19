@@ -25,8 +25,8 @@ enum PacketTypes {
 	//sends all object collision boxes
 	LOAD_COLLISIONS = 6,
 
-	//send data about collisions
-	DEBUG_COLLISIONS = 7,
+	//send data about rotation
+	ROTATION_DATA = 7,
 };
 
 struct Packet {

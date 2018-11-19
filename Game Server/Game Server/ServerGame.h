@@ -49,6 +49,7 @@ private:
 	void handleIncomingKey(const std::vector<std::string>&);
 	void handleIncomingTransformation(const std::vector<std::string>&);
 	void handleIncomingCollider(const std::vector<std::string>&);
+	void handleIncomingRotation(const std::vector<std::string>&);
 
 	unsigned int currentClient;
 

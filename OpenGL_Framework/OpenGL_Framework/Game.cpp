@@ -164,6 +164,8 @@ void Game::update()
 
 	handlePackets();
 
+	MessageHandler::sendRotationinfo(network, playerNum,currentPlayer->getMesh()->transform->m_pRotation);
+
 	if (wPushed) {
 		MessageHandler::sendKeyInput(network, 'w', playerNum);
 	} 
@@ -376,10 +378,6 @@ void Game::cameraFollow()
 	offset = glm::vec3(offset2D.x, cameraY, offset2D.y);
 
 	playerPositionWithOffset = currentPlayer->getMesh()->transform->getPosition() + offset;
-
-
-
-	//camera.transform->setPosition(camera.transform->getPosition() * (1.0f - t) + (playerPositionWithOffset) * t);
 
 	camera.transform->setPosition(playerPositionWithOffset);
 	camera.transform->setRotation(cameraRot);

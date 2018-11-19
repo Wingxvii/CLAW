@@ -50,6 +50,13 @@ void MessageHandler::sendBoundingBoxInfo(ClientNetwork * network, std::vector<Ph
 	}
 }
 
+void MessageHandler::sendRotationinfo(ClientNetwork * network, int playerNum, glm::vec3 rotation)
+{
+	std::string message = std::to_string(playerNum) + "," + std::to_string(rotation.x) + "," + std::to_string(rotation.y) + "," + std::to_string(rotation.z) + ",";
+	sendToServer(network, ROTATION_DATA, message);
+
+}
+
 
 void MessageHandler::sendToServer(ClientNetwork* network, int packet_type, std::string message)
 {

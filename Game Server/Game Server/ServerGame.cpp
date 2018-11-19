@@ -187,6 +187,10 @@ void ServerGame::receiveFromClients()
 					}
 
 					break;
+				case ROTATION_DATA:
+					parsedData = Tokenizer::tokenize(',', packet.data);
+					handleIncomingRotation(parsedData);
+					break;
 
 				default:
 					printf(network_data, "\n");
@@ -374,6 +378,17 @@ void ServerGame::handleIncomingCollider(const std::vector<std::string>& data)
 
 
 	collisionBoxes.push_back(newCollider);
+
+}
+
+void ServerGame::handleIncomingRotation(const std::vector<std::string>& data)
+{
+	int playerNum = std::stoi(data[0]);
+	p[playerNum].transform.rotation.x = std::stof(data[1]);
+	p[playerNum].transform.rotation.y = std::stof(data[2]);
+	p[playerNum].transform.rotation.z = std::stof(data[3]);
+
+	printf("Recieved");
 
 }
 
