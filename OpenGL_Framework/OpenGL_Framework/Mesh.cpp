@@ -180,14 +180,6 @@ bool Mesh::LoadfromFile(const std::string & file)
 
 void Mesh::Unload()
 {
-	glDeleteBuffers(1, &VBO_Normals);
-	glDeleteBuffers(1, &VBO_UVs);
-	glDeleteBuffers(1, &VBO_Verticies);
-
-	VBO_Normals = 0;
-	VBO_UVs = 0;
-	VBO_Verticies = 0;
-	//VAO = 0;
 	_NumFaces = 0;
 	_NumVertices = 0;
 }

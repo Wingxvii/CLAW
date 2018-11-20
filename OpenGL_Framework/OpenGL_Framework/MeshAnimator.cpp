@@ -126,14 +126,14 @@ void MeshAnimator::drawMesh(int frameIndex1, int frameIndex2, int animationIndex
 
 void MeshAnimator::releaseCurrentMesh()
 {
-	//glDeleteBuffers(1, &VBO_Normals);
-	//glDeleteBuffers(1, &VBO_UVs);
-	//glDeleteBuffers(1, &VBO_Verticies);
+	glDeleteBuffers(1, &VBO_Normals);
+	glDeleteBuffers(1, &VBO_UVs);
+	glDeleteBuffers(1, &VBO_Verticies);
 	glDeleteVertexArrays(1, &VAO);
 
-	//VBO_Normals = 0;
-	//VBO_UVs = 0;
-	//VBO_Verticies = 0;
+	VBO_Normals = 0;
+	VBO_UVs = 0;
+	VBO_Verticies = 0;
 	VAO = 0;
 	
 	isInit = false;

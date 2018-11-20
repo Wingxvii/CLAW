@@ -22,12 +22,6 @@ public:
 	unsigned int GetNumFaces() const;
 	unsigned int GetNumVertices() const;
 
-	//buffers and objects
-	GLuint VBO_Verticies = GL_NONE;
-	GLuint VBO_UVs = GL_NONE;
-	GLuint VBO_Normals = GL_NONE;
-	//GLuint VAO = GL_NONE;
-
 	std::vector<float> unPackedVertexData;
 	std::vector<float> unPackedTextureData;
 	std::vector<float> unPackedNormalData;
