@@ -2,9 +2,49 @@
 #include <fstream>
 #include <iostream>
 
-#define CHAR_BUFFER_SIZE 128
 
 using namespace std;
+
+#define CHAR_BUFFER_SIZE 128
+#define BUFFER_OFFSET(i) ((char *)0 + (i))
+
+
+struct MeshFace {
+	MeshFace() {
+		vertices[0] = 0;
+		vertices[1] = 0;
+		vertices[2] = 0;
+
+		textureUVs[0] = 0;
+		textureUVs[1] = 0;
+		textureUVs[2] = 0;
+
+		normals[0] = 0;
+		normals[1] = 0;
+		normals[2] = 0;
+	}
+
+	MeshFace(unsigned v1, unsigned v2, unsigned v3,
+		unsigned t1, unsigned t2, unsigned t3,
+		unsigned n1, unsigned n2, unsigned n3)
+	{
+		vertices[0] = v1;
+		vertices[1] = v2;
+		vertices[2] = v3;
+
+		textureUVs[0] = t1;
+		textureUVs[1] = t2;
+		textureUVs[2] = t3;
+
+		normals[0] = n1;
+		normals[1] = n2;
+		normals[2] = n3;
+
+	}
+	unsigned vertices[3];
+	unsigned textureUVs[3];
+	unsigned normals[3];
+};
 
 Mesh::Mesh()
 {
@@ -31,11 +71,13 @@ bool Mesh::LoadfromFile(const std::string & file)
 	char inputString[CHAR_BUFFER_SIZE];
 
 	//unique data
-
+	vector<glm::vec3> vertexData;
+	vector<glm::vec2> textureData;
+	vector<glm::vec3> normalData;
 	//face data
-	
+	vector<MeshFace> faceData;
 	//unpacked data
-	
+
 
 	while (!input.eof()) {
 		input.getline(inputString, CHAR_BUFFER_SIZE);
@@ -88,25 +130,47 @@ bool Mesh::LoadfromFile(const std::string & file)
 			else if (temp.z < minSize.z) {
 				minSize.z = temp.z;
 			}
-			
+			vertices.push_back(temp);
 			vertexData.push_back(temp);
 		}
 		else if (strstr(inputString, "f") != nullptr) {
 			//face data
 
 			MeshFace temp;
-				sscanf_s(inputString, "f %u/%u/%u %u/%u/%u %u/%u/%u",
-					&temp.vertices[0], &temp.textureUVs[0], &temp.normals[0],
-					&temp.vertices[1], &temp.textureUVs[1], &temp.normals[1],
-					&temp.vertices[2], &temp.textureUVs[2], &temp.normals[2]);
+			sscanf_s(inputString, "f %u/%u/%u %u/%u/%u %u/%u/%u",
+				&temp.vertices[0], &temp.textureUVs[0], &temp.normals[0],
+				&temp.vertices[1], &temp.textureUVs[1], &temp.normals[1],
+				&temp.vertices[2], &temp.textureUVs[2], &temp.normals[2]);
 			faceData.push_back(temp);
 		}
 
 	}
 	input.close();
 
+	for (unsigned i = 0; i < faceData.size(); i++) {
+		for (unsigned j = 0; j < 3; j++) {
+			unPackedVertexData.push_back(vertexData[faceData[i].vertices[j] - 1].x);
+			unPackedVertexData.push_back(vertexData[faceData[i].vertices[j] - 1].y);
+			unPackedVertexData.push_back(vertexData[faceData[i].vertices[j] - 1].z);
+
+			unPackedTextureData.push_back(textureData[faceData[i].textureUVs[j] - 1].x);
+			unPackedTextureData.push_back(textureData[faceData[i].textureUVs[j] - 1].y);
+
+
+			unPackedNormalData.push_back(normalData[faceData[i].normals[j] - 1].x);
+			unPackedNormalData.push_back(normalData[faceData[i].normals[j] - 1].y);
+			unPackedNormalData.push_back(normalData[faceData[i].normals[j] - 1].z);
+
+		}
+	}
+
 	_NumFaces = faceData.size();
 	_NumVertices = _NumFaces * 3;
+
+	vertexData.clear();
+	textureData.clear();
+	normalData.clear();
+	faceData.clear();
 
 	BoundingBox.m_size = glm::vec3(maxSize.x - minSize.x, maxSize.y - minSize.y, maxSize.z - minSize.z);
 	BoundingBox.m_center = glm::vec3((minSize.x + maxSize.x) / 2, (minSize.y + maxSize.y) / 2, (minSize.z + maxSize.z) / 2);
@@ -114,3 +178,26 @@ bool Mesh::LoadfromFile(const std::string & file)
 	return true;
 }
 
+void Mesh::Unload()
+{
+	glDeleteBuffers(1, &VBO_Normals);
+	glDeleteBuffers(1, &VBO_UVs);
+	glDeleteBuffers(1, &VBO_Verticies);
+
+	VBO_Normals = 0;
+	VBO_UVs = 0;
+	VBO_Verticies = 0;
+	//VAO = 0;
+	_NumFaces = 0;
+	_NumVertices = 0;
+}
+
+unsigned int Mesh::GetNumFaces() const
+{
+	return _NumFaces;
+}
+
+unsigned int Mesh::GetNumVertices() const
+{
+	return _NumVertices;
+}

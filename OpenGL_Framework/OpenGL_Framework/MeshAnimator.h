@@ -8,21 +8,24 @@ public:
 	MeshAnimator();
 	~MeshAnimator();
 
+	GLuint VAO = GL_NONE;
 	GLuint VBO_Verticies = GL_NONE;
 	GLuint VBO_UVs = GL_NONE;
 	GLuint VBO_Normals = GL_NONE;
-	GLuint VAO = GL_NONE;
+	GLuint VBO_Verticies2 = GL_NONE;
+	GLuint VBO_UVs2 = GL_NONE;
+	GLuint VBO_Normals2 = GL_NONE;
 
 	std::vector<std::vector<Mesh>> animations;
 	std::vector<Mesh> frames;
-	Mesh interpolatedMesh;
 	int frameIndex = 0;
 	int targetframe = 0;
 	float frameDuration = 0.15f;
 	float timer = 0;
-	float t = 0.0f;
+	float interpParam = 0.0f;
 	bool loops = false;
 	bool bound = false;
+	bool isInit = false;
 
 	//The animations are held in 2d vector this index is for which animation you want to play 
 	//this is based on the order they are loades in. i.e. idle animations would be index 0 if they are loaded first 
@@ -32,7 +35,7 @@ public:
 
 private:
 
-	void bindCurrentMesh();
+	void drawMesh(int frameIndex1, int frameIndex2, int animationIndex);
 	void releaseCurrentMesh();
 
 	

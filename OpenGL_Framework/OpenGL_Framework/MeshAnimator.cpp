@@ -14,9 +14,9 @@ MeshAnimator::~MeshAnimator()
 
 void MeshAnimator::playAnimations(float dt, int animationIndex)
 {
-	if (bound && (animations[animationIndex].size() > 1)) {
-		releaseCurrentMesh();
-		bound = false;
+	if (animations[animationIndex].size() == 1) {
+		drawMesh(frameIndex, frameIndex, animationIndex);
+		return;
 	}
 
 	timer += dt;
@@ -33,22 +33,11 @@ void MeshAnimator::playAnimations(float dt, int animationIndex)
 		int here = 0;
 	}
 
-	if (animations[animationIndex].size() == 1) {
-		interpolatedMesh = animations[animationIndex][0];
-	}
 	else {
-		interpolatedMesh._NumVertices = animations[animationIndex][frameIndex].vertexData.size();
-		for (int i = 0; i < interpolatedMesh._NumVertices; i++) {
 
-			interpolatedMesh.vertexData[i] = animations[animationIndex][frameIndex].vertexData[i] * (1.0f - (timer/frameDuration)) + animations[animationIndex][frameIndex+1].vertexData[i] * (timer / frameDuration);
-			//interpolatedMesh.textureData[i] = animations[animationIndex][frameIndex].textureData[i] * (1.0f - (timer / frameDuration)) + animations[animationIndex][frameIndex + 1].textureData[i] * (timer / frameDuration);
-			interpolatedMesh.normalData[i] = animations[animationIndex][frameIndex].normalData[i] * (1.0f - (timer / frameDuration)) + animations[animationIndex][frameIndex + 1].normalData[i] * (timer / frameDuration);
-		}
-	}
+		drawMesh(frameIndex, frameIndex + 1, animationIndex);
 
-	if (!bound) {
-		bindCurrentMesh();
-		bound = true;
+		interpParam = timer / frameDuration;
 	}
 	
 }
@@ -65,90 +54,88 @@ bool MeshAnimator::loadMeshes(std::string meshPrefix, int numOfFrames)
 	if (worked) {
 		animations.push_back(frames);
 	}
-	interpolatedMesh = animations[0][0]; //set default
+	
 	frames.clear();
 	return worked;
 }
 
 
-void MeshAnimator::bindCurrentMesh()
+void MeshAnimator::drawMesh(int frameIndex1, int frameIndex2, int animationIndex)
 {
-	std::vector<float> unPackedVertexData;
-	std::vector<float> unPackedTextureData;
-	std::vector<float> unPackedNormalData;
-
-	for (unsigned i = 0; i < interpolatedMesh.faceData.size(); i++) {
-		for (unsigned j = 0; j < 3; j++) {
-			unPackedVertexData.push_back(interpolatedMesh.vertexData[interpolatedMesh.faceData[i].vertices[j] - 1].x);
-			unPackedVertexData.push_back(interpolatedMesh.vertexData[interpolatedMesh.faceData[i].vertices[j] - 1].y);
-			unPackedVertexData.push_back(interpolatedMesh.vertexData[interpolatedMesh.faceData[i].vertices[j] - 1].z);
-
-			unPackedTextureData.push_back(interpolatedMesh.textureData[interpolatedMesh.faceData[i].textureUVs[j] - 1].x);
-			unPackedTextureData.push_back(interpolatedMesh.textureData[interpolatedMesh.faceData[i].textureUVs[j] - 1].y);
-
-
-			unPackedNormalData.push_back(interpolatedMesh.normalData[interpolatedMesh.faceData[i].normals[j] - 1].x);
-			unPackedNormalData.push_back(interpolatedMesh.normalData[interpolatedMesh.faceData[i].normals[j] - 1].y);
-			unPackedNormalData.push_back(interpolatedMesh.normalData[interpolatedMesh.faceData[i].normals[j] - 1].z);
-
-		}
-	}
-
-	interpolatedMesh._NumFaces = interpolatedMesh.faceData.size();
-	interpolatedMesh._NumVertices = interpolatedMesh._NumFaces * 3;
-
 	//Vertex array object
-	glGenVertexArrays(1, &VAO);
+	if (!isInit) {
+		glGenVertexArrays(1, &VAO);	
+	}
 	//bind to opengl
 	glBindVertexArray(VAO);
 
-	//Vertex buffer objects
-	glGenBuffers(1, &VBO_Verticies);
+	if (!isInit) {
+		//Vertex buffer objects
+		glGenBuffers(1, &VBO_Verticies);
+		glGenBuffers(1, &VBO_UVs);
+		glGenBuffers(1, &VBO_Normals);
+		//Second Frame
+		glGenBuffers(1, &VBO_Verticies2);
+		glGenBuffers(1, &VBO_UVs2);
+		glGenBuffers(1, &VBO_Normals2);
 
-	glGenBuffers(1, &VBO_UVs);
+		//stream 0 - verts
+		//stream 1 - uvs
+		//stream 2 - normals
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
 
-	glGenBuffers(1, &VBO_Normals);
+		glEnableVertexAttribArray(3);
+		glEnableVertexAttribArray(4);
+		glEnableVertexAttribArray(5);
+		isInit = true;
+	}
 
-	//stream 0 - verts
-	//stream 1 - uvs
-	//stream 2 - normals
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-
-
+	//Bind and Update Buffers 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_Verticies);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*unPackedVertexData.size(), &unPackedVertexData[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*animations[animationIndex][frameIndex].unPackedVertexData.size(), &animations[animationIndex][frameIndex].unPackedVertexData[0], GL_DYNAMIC_DRAW);
 	glVertexAttribPointer((GLuint)0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, BUFFER_OFFSET(0));
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_UVs);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*unPackedTextureData.size(), &unPackedTextureData[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*animations[animationIndex][frameIndex].unPackedTextureData.size(), &animations[animationIndex][frameIndex].unPackedTextureData[0], GL_DYNAMIC_DRAW);
 	glVertexAttribPointer((GLuint)1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, BUFFER_OFFSET(0));
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_Normals);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*unPackedNormalData.size(), &unPackedNormalData[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*animations[animationIndex][frameIndex].unPackedNormalData.size(), &animations[animationIndex][frameIndex].unPackedNormalData[0], GL_DYNAMIC_DRAW);
 	glVertexAttribPointer((GLuint)2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, BUFFER_OFFSET(0));
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_Verticies2);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*animations[animationIndex][frameIndex2].unPackedVertexData.size(), &animations[animationIndex][frameIndex2].unPackedVertexData[0], GL_DYNAMIC_DRAW);
+	glVertexAttribPointer((GLuint)3, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, BUFFER_OFFSET(0));
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_UVs2);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*animations[animationIndex][frameIndex2].unPackedTextureData.size(), &animations[animationIndex][frameIndex2].unPackedTextureData[0], GL_DYNAMIC_DRAW);
+	glVertexAttribPointer((GLuint)4, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, BUFFER_OFFSET(0));
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_Normals2);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*animations[animationIndex][frameIndex2].unPackedNormalData.size(), &animations[animationIndex][frameIndex2].unPackedNormalData[0], GL_DYNAMIC_DRAW);
+	glVertexAttribPointer((GLuint)5, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, BUFFER_OFFSET(0));
 
 	//clean up
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-	unPackedNormalData.clear();
-	unPackedTextureData.clear();
-	unPackedVertexData.clear();
 
 	bound = true;
 }
 
 void MeshAnimator::releaseCurrentMesh()
 {
-	glDeleteBuffers(1, &VBO_Normals);
-	glDeleteBuffers(1, &VBO_UVs);
-	glDeleteBuffers(1, &VBO_Verticies);
+	//glDeleteBuffers(1, &VBO_Normals);
+	//glDeleteBuffers(1, &VBO_UVs);
+	//glDeleteBuffers(1, &VBO_Verticies);
 	glDeleteVertexArrays(1, &VAO);
 
-	VBO_Normals = 0;
-	VBO_UVs = 0;
-	VBO_Verticies = 0;
+	//VBO_Normals = 0;
+	//VBO_UVs = 0;
+	//VBO_Verticies = 0;
 	VAO = 0;
+	
+	isInit = false;
 	
 }

@@ -97,10 +97,10 @@ void Game::initializeGame()
 		exit(0);
 	}
 
-	player1->setMesh(&character1Anim.interpolatedMesh);
-	player2->setMesh(&character2Anim.interpolatedMesh);
+	player1->setMesh(&character1Anim.animations[0][0]);
+	player2->setMesh(&character2Anim.animations[0][0]);
 
-	skyBoxTransform->setMesh(&skyBoxAnim.interpolatedMesh);
+	skyBoxTransform->setMesh(&skyBoxAnim.animations[0][0]);
 
 	camera.perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 1000.0f);
 	camera.transform->m_pLocalPosition = glm::vec3(0.0f, 1.5f, 6.0f);
@@ -221,16 +221,17 @@ void Game::draw()
 
 	//cube 1
 	PassThrough.SendUniformMat4("uModel", glm::value_ptr(player1->getMesh()->transform->getLocalToWorldMatrix()), false);
-	
+	PassThrough.SendUniform("uInterpParam", character1Anim.interpParam);
 	glBindVertexArray(character1Anim.VAO);
-	glDrawArrays(GL_TRIANGLES, 0, character1Anim.interpolatedMesh._NumVertices);
+	glDrawArrays(GL_TRIANGLES, 0, character1Anim.animations[0][0]._NumVertices);
 	glBindVertexArray(0);
 
 	//cube 2
 	PassThrough.SendUniformMat4("uModel", glm::value_ptr(player2->getMesh()->transform->getLocalToWorldMatrix()), false);
 	
 	glBindVertexArray(character2Anim.VAO);
-	glDrawArrays(GL_TRIANGLES, 0, character2Anim.interpolatedMesh._NumVertices);
+	PassThrough.SendUniform("uInterpParam", character2Anim.interpParam);
+	glDrawArrays(GL_TRIANGLES, 0, character2Anim.animations[0][0]._NumVertices);
 	glBindVertexArray(0);
 	DevilTexture.unbind(0);
 
@@ -238,7 +239,8 @@ void Game::draw()
 	PassThrough.SendUniformMat4("uModel", glm::value_ptr(skyBoxTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
 
 	glBindVertexArray(skyBoxAnim.VAO);
-	glDrawArrays(GL_TRIANGLES, 0, skyBoxAnim.interpolatedMesh._NumVertices);
+	PassThrough.SendUniform("uInterpParam", skyBoxAnim.interpParam);
+	glDrawArrays(GL_TRIANGLES, 0, skyBoxAnim.animations[0][0]._NumVertices);
 	glBindVertexArray(0);
 	Sky.unbind(0);
 	
@@ -246,7 +248,8 @@ void Game::draw()
 	FlatBlueTexture.bind(0);
 	PassThrough.SendUniformMat4("uModel", glm::value_ptr(mapTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
 	glBindVertexArray(mapAnim.VAO);
-	glDrawArrays(GL_TRIANGLES, 0, mapAnim.interpolatedMesh._NumVertices);
+	PassThrough.SendUniform("uInterpParam", mapAnim.interpParam);
+	glDrawArrays(GL_TRIANGLES, 0, mapAnim.animations[0][0]._NumVertices);
 	
 	PassThrough.UnBind();
 	//unbinds
@@ -321,6 +324,9 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 		break;
 	case 32:
 		MessageHandler::sendKeyInput(network, 33, playerNum);
+		break;
+	case 27:
+		exit(0);
 		break;
 	default:
 		break;
@@ -416,90 +422,90 @@ void Game::handleMouse(int mousex, int mousey)
 
 void Game::drawBoundingBox(BoxCollider boundingbox, Mesh& mesh)
 {
-	if (mesh._NumVertices == 0)
-		return;
+	//if (mesh._NumVertices == 0)
+	//	return;
 
-	BoundingShader.Bind();
-	BoundingShader.SendUniformMat4("uView", glm::value_ptr(glm::inverse(camera.transform->getLocalToWorldMatrix())), false);
-	BoundingShader.SendUniformMat4("uProj", glm::value_ptr(camera.getProjection()), false);
-	BoundingShader.SendUniform("uColor", boundingBoxColor);
-	GLuint VAO = GL_NONE;
-	//Vertex array object
-	glGenVertexArrays(1, &VAO);
-	//bind to opengl
-	glBindVertexArray(VAO);
+	//BoundingShader.Bind();
+	//BoundingShader.SendUniformMat4("uView", glm::value_ptr(glm::inverse(camera.transform->getLocalToWorldMatrix())), false);
+	//BoundingShader.SendUniformMat4("uProj", glm::value_ptr(camera.getProjection()), false);
+	//BoundingShader.SendUniform("uColor", boundingBoxColor);
+	//GLuint VAO = GL_NONE;
+	////Vertex array object
+	//glGenVertexArrays(1, &VAO);
+	////bind to opengl
+	//glBindVertexArray(VAO);
 
 
-	// Cube 1x1x1, centered on origin
-	GLfloat vertices[] = {
-	//bottom
-	  -0.5, -0.5, -0.5, 1.0,
-	   0.5, -0.5, -0.5, 1.0,
-	   0.5, -0.5,  0.5, 1.0,
-	  -0.5, -0.5,  0.5, 1.0,
+	//// Cube 1x1x1, centered on origin
+	//GLfloat vertices[] = {
+	////bottom
+	//  -0.5, -0.5, -0.5, 1.0,
+	//   0.5, -0.5, -0.5, 1.0,
+	//   0.5, -0.5,  0.5, 1.0,
+	//  -0.5, -0.5,  0.5, 1.0,
 
-	 //top
-	  -0.5,  0.5, -0.5, 1.0,
-	   0.5,  0.5, -0.5, 1.0,
-	   0.5,  0.5,  0.5, 1.0,
-	  -0.5,  0.5, -0.5, 1.0,
-	};
+	// //top
+	//  -0.5,  0.5, -0.5, 1.0,
+	//   0.5,  0.5, -0.5, 1.0,
+	//   0.5,  0.5,  0.5, 1.0,
+	//  -0.5,  0.5, -0.5, 1.0,
+	//};
 
-	GLuint vbo_vertices;
-	glGenBuffers(1, &vbo_vertices);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//GLuint vbo_vertices;
+	//glGenBuffers(1, &vbo_vertices);
+	//glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	GLushort elements[] = {
-	  0, 1, 2, 3,
-	  4, 5, 6, 7,
-	  0, 4, 1, 5, 2, 6, 3, 7
-	};
-	GLuint ibo_elements;
-	glGenBuffers(1, &ibo_elements);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_elements);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	//GLushort elements[] = {
+	//  0, 1, 2, 3,
+	//  4, 5, 6, 7,
+	//  0, 4, 1, 5, 2, 6, 3, 7
+	//};
+	//GLuint ibo_elements;
+	//glGenBuffers(1, &ibo_elements);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_elements);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	glm::vec3 size = boundingbox.m_size;
-	glm::vec3 center = boundingbox.m_center;
-	
-	glm::mat4 transform = glm::mat4(1.0);
-	transform = glm::translate(glm::mat4(1), center);
-	transform = transform * glm::scale(glm::mat4(1), size);
-	glm::mat4 m = mesh.transform->getLocalToWorldMatrix() * transform;
+	//glm::vec3 size = boundingbox.m_size;
+	//glm::vec3 center = boundingbox.m_center;
+	//
+	//glm::mat4 transform = glm::mat4(1.0);
+	//transform = glm::translate(glm::mat4(1), center);
+	//transform = transform * glm::scale(glm::mat4(1), size);
+	//glm::mat4 m = mesh.transform->getLocalToWorldMatrix() * transform;
 
-	BoundingShader.SendUniformMat4("uModel", glm::value_ptr(m), false);
-	/* Apply object's transformation matrix */
-	
+	//BoundingShader.SendUniformMat4("uModel", glm::value_ptr(m), false);
+	///* Apply object's transformation matrix */
+	//
 
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(
-		0,                  // attribute
-		4,                  // number of elements per vertex
-		GL_FLOAT,           // the type of each element
-		GL_FALSE,           // take our values as-is
-		0,                  // no extra data between each position
-		0                   // offset of first element
-	);
+	//glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
+	//glEnableVertexAttribArray(0);
+	//glVertexAttribPointer(
+	//	0,                  // attribute
+	//	4,                  // number of elements per vertex
+	//	GL_FLOAT,           // the type of each element
+	//	GL_FALSE,           // take our values as-is
+	//	0,                  // no extra data between each position
+	//	0                   // offset of first element
+	//);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_elements);
-	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, 0);
-	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, (GLvoid*)(4 * sizeof(GLushort)));
-	glDrawElements(GL_LINES, 8, GL_UNSIGNED_SHORT, (GLvoid*)(8 * sizeof(GLushort)));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_elements);
+	//glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, 0);
+	//glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, (GLvoid*)(4 * sizeof(GLushort)));
+	//glDrawElements(GL_LINES, 8, GL_UNSIGNED_SHORT, (GLvoid*)(8 * sizeof(GLushort)));
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	glDisableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-	
+	//glDisableVertexAttribArray(1);
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//glBindVertexArray(0);
+	//
 
-	glDeleteBuffers(1, &vbo_vertices);
-	glDeleteBuffers(1, &ibo_elements);
+	//glDeleteBuffers(1, &vbo_vertices);
+	//glDeleteBuffers(1, &ibo_elements);
 
-	BoundingShader.UnBind();
+	//BoundingShader.UnBind();
 	
 }
 
