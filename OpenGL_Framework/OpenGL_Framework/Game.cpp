@@ -352,6 +352,13 @@ void Game::mouseClicked(int button, int state, int x, int y)
 		{
 		case GLUT_LEFT_BUTTON:
 
+			glm::vec3 lookDir;
+			//lookDir.x = camera.getView()[2];
+			//lookDir.y = camera.getView()[6];
+			//lookDir.z = camera.getView()[10];
+
+			//MessageHandler::sendAttackinfo(network, playerNum, 1, lookDir, 0);
+
 			break;
 		case GLUT_RIGHT_BUTTON:
 		
@@ -361,10 +368,21 @@ void Game::mouseClicked(int button, int state, int x, int y)
 			break;
 		}
 	}
-	else
-	{
+	else if (state == GLUT_UP) {
+		switch (button)
+		{
+		case GLUT_LEFT_BUTTON:
 
+			break;
+		case GLUT_RIGHT_BUTTON:
+
+			break;
+		case GLUT_MIDDLE_BUTTON:
+
+			break;
+		}
 	}
+
 }
 
 /*

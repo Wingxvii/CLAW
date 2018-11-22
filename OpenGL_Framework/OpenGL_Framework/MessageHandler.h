@@ -26,6 +26,8 @@ public:
 	static void sendBoundingBoxInfo(ClientNetwork* network, std::vector<PhysicalEntity* > e);
 
 	static void sendRotationinfo(ClientNetwork* network, int playerNum, glm::vec3 rotation);
+
+	static void sendAttackinfo(ClientNetwork* network, int playerNum, int attackNumber, glm::vec3 direction, int charge);
 private: 
 	static void sendToServer(ClientNetwork* network, int packet_type, std::string message);
 };

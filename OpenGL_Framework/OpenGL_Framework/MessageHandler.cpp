@@ -57,6 +57,13 @@ void MessageHandler::sendRotationinfo(ClientNetwork * network, int playerNum, gl
 
 }
 
+void MessageHandler::sendAttackinfo(ClientNetwork * network, int playerNum, int attackNumber, glm::vec3 direction, int charge)
+{
+	std::string message = std::to_string(playerNum) + "," + std::to_string(attackNumber) + "," + std::to_string(direction.x) + "," + std::to_string(direction.y) + "," + std::to_string(direction.z) + "," + std::to_string(charge) + ",";
+	sendToServer(network, ATTACK, message);
+
+}
+
 
 void MessageHandler::sendToServer(ClientNetwork* network, int packet_type, std::string message)
 {

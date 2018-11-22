@@ -70,8 +70,8 @@ void ServerGame::update()
 				p[1].transform.position = prevPosition2;
 			}
 
-			handleAttack(0);
-			handleAttack(1);
+			handleAttackBox(0);
+			handleAttackBox(1);
 		}
 
 
@@ -155,13 +155,12 @@ void ServerGame::receiveFromClients()
 			{
 				packet.deserialize(&(network_data[i]));
 				i += sizeof(Packet);
+				parsedData = Tokenizer::tokenize(',', packet.data);
 
 				switch (packet.packet_type) {
 
 				case INIT_CONNECTION:
 
-					printf("server received init packet from client\n");
-					parsedData = Tokenizer::tokenize(',', packet.data);
 					handleIncomingTransformation(parsedData);
 
 					break;
@@ -173,12 +172,10 @@ void ServerGame::receiveFromClients()
 			
 					break;
 				case KEY_INPUT:
-					parsedData = Tokenizer::tokenize(',', packet.data);
 					handleIncomingKey(parsedData);
 					break;
 
 				case LOAD_COLLISIONS:
-					parsedData = Tokenizer::tokenize(',', packet.data);
 					handleIncomingCollider(parsedData);
 
 					if (collisionBoxes.size() == 2) {
@@ -188,10 +185,12 @@ void ServerGame::receiveFromClients()
 
 					break;
 				case ROTATION_DATA:
-					parsedData = Tokenizer::tokenize(',', packet.data);
 					handleIncomingRotation(parsedData);
 					break;
 
+				case ATTACK:
+					handleAttack(parsedData);
+					break;
 				default:
 					printf(network_data, "\n");
 
@@ -392,6 +391,30 @@ void ServerGame::handleIncomingRotation(const std::vector<std::string>& data)
 
 }
 
+void ServerGame::handleAttack(const std::vector<std::string>& data)
+{
+	int playerNum = std::stoi(data[0]);
+	glm::vec3 attackDirection = { glm::sin(std::stof(data[1])), glm::sin(std::stof(data[2])), glm::sin(std::stof(data[3])) };
+	int charge = std::stoi(data[5]);
+
+
+	switch (std::stoi(data[1])) {
+	case 1:
+		if (p[playerNum].rigidbody.inAir) {
+			p[playerNum].rigidbody.addForce(8.0f, glm::abs(attackDirection));
+		}
+		else {
+			attackDirection.y = 0.0f;
+			p[playerNum].rigidbody.addForce(8.0f, glm::abs(attackDirection));
+		}
+		printf("Swung\n");
+
+		break;
+	}
+	
+
+}
+
 void ServerGame::handleJump( int player)
 {
 	//check if jumping
@@ -402,7 +425,7 @@ void ServerGame::handleJump( int player)
 	}
 }
 
-void ServerGame::handleAttack(int player)
+void ServerGame::handleAttackBox(int player)
 {
 	p[player].hitBox.center = p[player].collider->center + (p[player].transform.getBackward() * 2.0f);
 
