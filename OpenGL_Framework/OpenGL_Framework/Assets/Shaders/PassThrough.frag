@@ -6,12 +6,12 @@ uniform vec3 lightAmbient;
 uniform vec3 lightDiffuse;
 uniform vec3 lightSpecular;
 //scalar
-uniform float lightSpecularExponent;
-uniform float attenuation_Constant;
-uniform float attenuation_Linear;
-uniform float attenuation_Quadratic;
+uniform float lightSpecularExponent = 0.5f;
+uniform float attenuation_Constant = 1.0f;
+uniform float attenuation_Linear = 0.0f;                                                         
+uniform float attenuation_Quadratic = 0.0001f;
 
-uniform sampler2D uTex;
+uniform sampler2D uTex; 
 
 in vec2 texcoord;
 in vec3 norm;

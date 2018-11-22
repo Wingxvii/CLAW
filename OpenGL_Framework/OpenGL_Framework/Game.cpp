@@ -117,6 +117,9 @@ void Game::initializeGame()
 	player2->getMesh()->transform->setRotation(glm::vec3(0,180,0));
 	player2->m_entityType = (int)EntityTypes::PLAYER;
 
+	sunPosition.setPosition(glm::vec3(0.0f,10.0f,0.0f));
+	
+
 	MessageHandler::sendInitConnection(network, player1->getMesh()->transform->m_pLocalPosition, player1->getMesh()->transform->m_pRotation, player1->getMesh()->transform->m_pScale, 0);
 	MessageHandler::sendInitConnection(network, player2->getMesh()->transform->m_pLocalPosition, player2->getMesh()->transform->m_pRotation, player2->getMesh()->transform->m_pScale, 1);
 
@@ -140,6 +143,8 @@ void Game::update()
 	character2Anim.playAnimations(deltaTime, 0);
 	mapAnim.playAnimations(deltaTime, 0);
 	skyBoxAnim.playAnimations(deltaTime, 0);
+	sunPosition.update(deltaTime);
+
 	
 	currentPlayer->getMesh()->transform->m_pRotation.y = camera.transform->m_pRotation.y;
 	cameraFollow();
@@ -208,14 +213,11 @@ void Game::draw()
 	PassThrough.SendUniform("angle", glm::radians(testangle));
 
 	PassThrough.SendUniform("uTex", 0);
-	PassThrough.SendUniform("lightPosition", glm::inverse(camera.transform->getLocalToWorldMatrix()) * glm::vec4(2.0f, -4.0f, 3.0f, 0.0f));
+	PassThrough.SendUniform("lightPosition", glm::vec4(sunPosition.getPosition(), 1));
 	PassThrough.SendUniform("lightAmbient", glm::vec3(0.2f, 0.2f, 0.2f));
 	PassThrough.SendUniform("lightDiffuse", glm::vec3(0.5f, 0.5f, 0.5f));
 	PassThrough.SendUniform("lightSpecular", glm::vec3(0.9f, 0.9f, 0.9f));
-	PassThrough.SendUniform("lightSpecularExponent", 5.0f);
-	PassThrough.SendUniform("attenuation_Constant", 1.0f);
-	PassThrough.SendUniform("attenuation_Linear", 0.0001f);
-	PassThrough.SendUniform("attenuation_Quadratic", 0.00001f);
+	
 
 	DevilTexture.bind(0);
 
@@ -295,6 +297,15 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		break;
 	case 'm':
 		testangle++;
+		break;
+			case 'o':
+		sunAttenuation += 0.1f;
+		break;
+	case 'l':
+		sunAttenuation -= 0.1f;
+		if (sunAttenuation < 0) {
+			sunAttenuation = 0;
+		}
 		break;
 	default:
 		break;

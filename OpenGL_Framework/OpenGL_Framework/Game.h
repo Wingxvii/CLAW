@@ -32,7 +32,6 @@ using glm::vec2;
 #define WINDOW_HEIGHT			720
 #define FRAMES_PER_SECOND		60
 
-
 class Game
 {
 public:
@@ -62,7 +61,7 @@ public:
 
 	void cameraFollow();
 
-	const float TO_RADS = 3.141592654f / 180.0f; // The value of 1 degree in radians
+	const float TO_RADS = 3.141592654f / 180.0f;
 
 
 private:
@@ -71,8 +70,6 @@ private:
 	void updatePlayers(const std::vector<std::string>&, PacketTypes _packet);
 
 	int playerNum = 0;
-
-	float* getData(glm::mat4);
 
 	std::vector<PhysicalEntity * > collisionObjects;
 
@@ -94,12 +91,13 @@ private:
 	PhysicalEntity *mapTransform = new PhysicalEntity();
 	PhysicalEntity *skyBoxTransform = new PhysicalEntity();
 
-
 	Player *player1 = new Player();
 	Player *player2 = new Player();
 
 	Player *currentPlayer = new Player();
 
+	//Lights 
+	Transform sunPosition;
 
 	std::vector<PhysicalEntity* > entities;
 
@@ -110,15 +108,11 @@ private:
 	float sensitivityx = 10.0f;
 	float sensitivityy = 10.0f;
 
-
-
 	glm::vec4 boundingBoxColor = { 1.0f, 0.0f, 0.0f, 1.0f };
 
 	float t = 0;
 
 	void drawBoundingBox(BoxCollider boundingbox, Mesh& mesh);
-
-	void checkCollisions();
 
 	bool wPushed = false;
 	bool sPushed = false;
@@ -131,4 +125,6 @@ private:
 	bool playWalk1;
 
 	float testangle = 0.0f;
+
+	float sunAttenuation = 0.000001f;
 };
