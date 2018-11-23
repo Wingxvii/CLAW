@@ -254,23 +254,20 @@ void Game::draw()
 	//unbinds
 
 	MapShader.Bind();
+
 	MapShader.SendUniformMat4("uView", glm::value_ptr(glm::inverse(camera.transform->getLocalToWorldMatrix())), false);
 	MapShader.SendUniformMat4("uProj", glm::value_ptr(camera.getProjection()), false);
-	
 	MapShader.SendUniform("uTex", 0);
-	MapShader.SendUniform("lightPosition", glm::vec4(player1->getMesh()->transform->m_pLocalPosition, 1));
-	MapShader.SendUniform("lightPosition2", glm::vec4(player2->getMesh()->transform->m_pLocalPosition, 1));
+	glm::vec4 lightPos = glm::inverse(camera.getView()) * glm::vec4(player1->getMesh()->transform->m_pLocalPosition, 1.0f);
+	MapShader.SendUniform("lightPosition", lightPos);
+	glm::vec4 lightPos2 = glm::inverse(camera.getView()) * glm::vec4(player2->getMesh()->transform->m_pLocalPosition, 1.0f);
+	MapShader.SendUniform("lightPosition2", lightPos);
 	MapShader.SendUniform("lightAmbient", glm::vec3(0.2f, 0.2f, 0.2f));
-	MapShader.SendUniform("lightDiffuse", glm::vec3(0.0f, 0.6f, 0.0f));
-	MapShader.SendUniform("lightDiffuse2", glm::vec3(0.0f, 0.0f, 0.5f));
+	MapShader.SendUniform("lightDiffuse", glm::vec3(0.5f, 0.5f, 0.5f));
 	MapShader.SendUniform("lightSpecular", glm::vec3(0.9f, 0.9f, 0.9f));
 
-	MapShader.Bind();
 	// Ask for the handles identfying the uniform variables in our shader.
-	MapShader.SendUniformMat4("uView", glm::value_ptr(glm::inverse(camera.transform->getLocalToWorldMatrix())), false);
-	MapShader.SendUniformMat4("uProj", glm::value_ptr(camera.getProjection()), false);
-	glm::vec4 lightPos = camera.getView() * glm::vec4(player1->getMesh()->transform->m_pLocalPosition, 1.0f);
-	MapShader.SendUniform("uLightPosition", glm::vec3(lightPos));
+;
 	
 	//map
 	FlatBlueTexture.bind(0);

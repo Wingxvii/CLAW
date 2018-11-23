@@ -1,50 +1,95 @@
 #version 420
 
-uniform mat4 uModel;
+struct DirLight {
+    vec3 direction;
+  
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};  
+uniform DirLight dirLight;
 
-uniform vec3 uSceneAmbient = vec3(0.2, 0.2, 0.2);
-uniform vec3 uLightPosition = vec3(3.0, 0.0, 0.0);
-uniform vec3 uLightColor = vec3(1.0, 0.9, 0.8);
-uniform float uLightSpecularExponent = 16.0;
+struct PointLight {    
+    vec3 position;
+    
+    float constant;
+    float linear;
+    float quadratic;  
+
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};  
+#define NR_POINT_LIGHTS 2 
+uniform PointLight pointLights[NR_POINT_LIGHTS];
+
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);  
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);  
+
+uniform sampler2D uTex; 
 
 in vec2 texcoord;
 in vec3 norm;
-in vec3 pos;
+in vec3 pos;//position in view space
 
 out vec4 outColor;
 
+ 
+
 void main()
 {
-	outColor.rgb = uSceneAmbient; 
+ // properties
+    vec3 normal = normalize(norm);
+    vec3 viewDir = normalize(viewPos - FragPos);
 
-	// Fix length after rasterizer interpolates
-	vec3 normal = normalize(norm);
-
-	vec3 lightVec = uLightPosition - pos;
-	float dist = length(lightVec);
-	vec3 lightDir = lightVec / dist;
-
-	float NdotL = dot(normal, lightDir);
-
-	// If the normal is facing the light
-	if (NdotL > 0.0)
-	{
-		// Normalized vector pointing towards the camera
-		vec3 eye = normalize(-pos);
-		
-		// Calculate attenuation (falloff)
-		// Add a small number to avoid divide by zero.
-		float attenuation = 1.0 / (1.0 + dist * dist * 0.1);
-
-		// Calculate the diffuse contribution
-		outColor.rgb += uLightColor * NdotL * attenuation;
-		
-		vec3 reflection = reflect(-lightDir, normal);
-		
-		float specularStrength = dot(reflection, eye);
-		specularStrength = max(specularStrength, 0.0f); // don't let it fall before zero
-
-		// Calculate the specular contribution
-		outColor.rgb += uLightColor * pow(specularStrength, uLightSpecularExponent) * attenuation;
-	}
+    // phase 1: Directional lighting
+    vec3 result = CalcDirLight(dirLight, norm, viewDir);
+    // phase 2: Point lights
+    for(int i = 0; i < NR_POINT_LIGHTS; i++)
+        result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);    
+    
+    
+     outColor = vec4(result, 1.0);
+	vec4 textureColor = texture(uTex, texcoord);
+	outColor.rgb *= textureColor.rgb;
+	outColor.a = textureColor.a;
+	
+	
 }
+
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
+{
+    vec3 lightDir = normalize(-light.direction);
+    // diffuse shading
+    float diff = max(dot(normal, lightDir), 0.0);
+    // specular shading
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    // combine results
+    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, TexCoords));
+    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, TexCoords));
+    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
+    return (ambient + diffuse + specular);
+} 
+
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+{
+    vec3 lightDir = normalize(light.position - fragPos);
+    // diffuse shading
+    float diff = max(dot(normal, lightDir), 0.0);
+    // specular shading
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    // attenuation
+    float distance    = length(light.position - fragPos);
+    float attenuation = 1.0 / (light.constant + light.linear * distance + 
+  			     light.quadratic * (distance * distance));    
+    // combine results
+    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, TexCoords));
+    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, TexCoords));
+    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
+    ambient  *= attenuation;
+    diffuse  *= attenuation;
+    specular *= attenuation;
+    return (ambient + diffuse + specular);
+} 

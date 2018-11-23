@@ -3,6 +3,7 @@
 uniform mat4 uModel;
 uniform mat4 uView;
 uniform mat4 uProj;
+uniform float angle;
 uniform float uInterpParam;
 
 layout(location = 0) in vec3 in_vert;    
@@ -18,16 +19,17 @@ out vec3 pos;
 
 void main()
 {
-    texcoord = in_uv;
-	texcoord.y = 1 - texcoord.y;
+	texcoord = in_uv;
+    texcoord.y = 1 - texcoord.y;
     
     vec3 interp_vert = in_vert * (1.0f - uInterpParam) + in_vert2 * (uInterpParam);
     vec3 interp_normal = in_normal * (1.0f - uInterpParam) + in_normal2 * (uInterpParam);
     
-	norm = in_normal;
-
-	pos = interp_vert;
-
-	gl_Position = uProj * vec4(pos, 1.0f);
-    
+	norm = mat3(uView) * mat3(uModel) * interp_normal;
+	
+	vec4 viewSpace = uView * uModel * vec4(interp_vert, 1.0f);
+	
+	gl_Position = uProj * viewSpace;
+	
+	pos = viewSpace.xyz;
 }
