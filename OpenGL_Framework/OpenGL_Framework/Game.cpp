@@ -41,35 +41,35 @@ void Game::initializeGame()
 	}
 
 	//load character 1 idle 
-	if (!character1Anim.loadMeshes("./Assets/Models/Devil_Idle", 4)) {
+	if (!character1Anim.loadMeshes("./Assets/Models/devil idle_", 11)) {
 		std::cout << "Model failed to load.\n";
 
 	}
 	//load character 1 walk
-	if (!character1Anim.loadMeshes("./Assets/Models/DevilWalk", 8)) {
+	if (!character1Anim.loadMeshes("./Assets/Models/devil walk cycle_", 13)) {
 		std::cout << "Model failed to load.\n";
 	
 	}
 	character1Anim.loops = true;
 	//load character 2 idle 
-	if (!character2Anim.loadMeshes("./Assets/Models/Devil_Idle", 4)) {
+	if (!character2Anim.loadMeshes("./Assets/Models/devil idle_", 11)) {
 		std::cout << "Model failed to load.\n";
 		
 	}
 	//load character 2 walk
-	if (!character2Anim.loadMeshes("./Assets/Models/DevilWalk", 8)) {
+	if (!character2Anim.loadMeshes("./Assets/Models/devil walk cycle_", 13)) {
 		std::cout << "Model failed to load.\n";
 		
 	}
 	character2Anim.loops = true;
 	//load map mesh - for static objects load animation with only one frame
-	if (!mapAnim.loadMeshes("./Assets/Models/map_lava", 1)) {
+	if (!mapAnim.loadMeshes("./Assets/Models/map_lava_", 1)) {
 		std::cout << "Model failed to load.\n";
 		
 	}
 
 	//load sky box mesh
-	if (!skyBoxAnim.loadMeshes("./Assets/Models/skybox", 1)) {
+	if (!skyBoxAnim.loadMeshes("./Assets/Models/skybox_", 1)) {
 		std::cout << "Model failed to load.\n";
 	
 	}
@@ -143,13 +143,15 @@ void Game::update()
 	
 	t = pow(0.1, 60.0f * deltaTime);
 
-
-
 	light1.setPosition(player1->getMesh()->transform->getPosition());
 	light2.setPosition(player2->getMesh()->transform->getPosition());
 
+	//***********************************************************************************************************************************************************************************************************
+	//How to make basic animations 
 	character1Anim.playAnimations(deltaTime, 1);
 	character2Anim.playAnimations(deltaTime, 0);
+
+
 	mapAnim.playAnimations(deltaTime, 0);
 	skyBoxAnim.playAnimations(deltaTime, 0);
 	light1.update(deltaTime);

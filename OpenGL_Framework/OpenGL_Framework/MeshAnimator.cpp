@@ -47,7 +47,12 @@ bool MeshAnimator::loadMeshes(std::string meshPrefix, int numOfFrames)
 	bool worked;
 	for (int i = 0; i < numOfFrames; i++) {
 		Mesh temp;
-		worked = temp.LoadfromFile(meshPrefix + std::to_string(i+1) + ".obj");
+		std::string base = "000000";
+		std::string num = std::to_string(i);
+		base.resize(base.size() - num.size());
+		base.append(num);
+
+		worked = temp.LoadfromFile(meshPrefix + base + ".obj");
 
 		frames.push_back(temp);
 	}
