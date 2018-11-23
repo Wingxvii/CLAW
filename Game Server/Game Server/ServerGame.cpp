@@ -304,19 +304,27 @@ void ServerGame::handleIncomingKey(const std::vector<std::string>& data)
 	switch (keycode)
 	{
 	case 'a':
-		p[playerNum].rigidbody.addForce(0.1f * p[playerNum].transform.getLeft());
+		if (p[playerNum].state == PlayerState::IDLE) {
+			p[playerNum].rigidbody.addForce(0.1f * p[playerNum].transform.getLeft());
+		}
 		
 		break;
 	case 's':
-		p[playerNum].rigidbody.addForce(0.1f * p[playerNum].transform.getBackward());
+		if (p[playerNum].state == PlayerState::IDLE) {
+			p[playerNum].rigidbody.addForce(0.1f * p[playerNum].transform.getBackward());
+		}
 
 		break;
 	case 'w':
-		p[playerNum].rigidbody.addForce(-0.1f * p[playerNum].transform.getBackward());
+		if (p[playerNum].state == PlayerState::IDLE) {
+			p[playerNum].rigidbody.addForce(-0.1f * p[playerNum].transform.getBackward());
+		}
 
 		break;
 	case 'd':
-		p[playerNum].rigidbody.addForce(-0.1f * p[playerNum].transform.getLeft());
+		if (p[playerNum].state == PlayerState::IDLE) {
+			p[playerNum].rigidbody.addForce(-0.1f * p[playerNum].transform.getLeft());
+		}
 
 		break;
 
@@ -425,8 +433,6 @@ void ServerGame::handleAttack(const std::vector<std::string>& data)
 	if (p[playerNum].CanLightAttack > 0) {
 		return;
 	}
-	p[playerNum].CanLightAttack = 30;
-	p[playerNum].lightAttackFrames = 10;
 
 	int attackNum = std::stoi(data[1]);
 	glm::vec3 attackDirection = { glm::sin(std::stof(data[2])), glm::sin(std::stof(data[3])), glm::sin(std::stof(data[4])) };
@@ -434,6 +440,18 @@ void ServerGame::handleAttack(const std::vector<std::string>& data)
 
 	printf("(%f,%f,%f)", attackDirection.x, attackDirection.y, attackDirection.z);
 
+	if (attackNum == 1) {
+		p[playerNum].CanLightAttack = 30;
+		p[playerNum].lightAttackFrames = 10;
+	}
+	else if (attackNum == 2) {
+		if (p[playerNum].state == PlayerState::PARRY && charge == 1) {
+			p[playerNum].state = PlayerState::IDLE;
+		}
+		else if (p[playerNum].state != PlayerState::PARRY && charge == 0) {
+			p[playerNum].state = PlayerState::PARRY;
+		}
+	}
 	p[playerNum].goingDirection = -attackDirection;
 
 }
@@ -473,10 +491,16 @@ void ServerGame::handleAttackBox(int player, int attack)
 
 			//check collision
 			if (p1AttackBox.checkCollision(*p[1].collider)) {
-				p[1].rigidbody.addForce(6.0f, p[0].goingDirection);
-				p[1].health -= 50;
-				printf("Attacked0\n");
-				p[0].lightAttackFrames = 0;
+				if (p[1].state == PlayerState::PARRY) {
+					p[1].rigidbody.addForce(6.0f, p[0].goingDirection);
+					p[1].health -= 50;
+					printf("Attacked0\n");
+					p[0].lightAttackFrames = 0;
+				}
+				else {
+					p[0].rigidbody.addForce(6.0f, -p[0].goingDirection);
+					p[0].lightAttackFrames = 0;
+				}
 
 			}
 		}
@@ -488,10 +512,18 @@ void ServerGame::handleAttackBox(int player, int attack)
 
 			//check collision
 			if (p2AttackBox.checkCollision(*p[1].collider)) {
-				p[0].rigidbody.addForce(6.0f, p[0].goingDirection);
-				p[0].health -= 50;
-				printf("Attacked1\n");
-				p[1].lightAttackFrames = 0;
+				if (p[0].state == PlayerState::PARRY) {
+
+					p[0].rigidbody.addForce(6.0f, p[1].goingDirection);
+					p[0].health -= 50;
+					printf("Attacked1\n");
+					p[1].lightAttackFrames = 0;
+				}
+				else {
+					p[1].rigidbody.addForce(6.0f, -p[1].goingDirection);
+					p[1].lightAttackFrames = 0;
+
+				}
 
 			}
 		}

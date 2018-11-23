@@ -387,7 +387,10 @@ void Game::mouseClicked(int button, int state, int x, int y)
 
 			break;
 		case GLUT_RIGHT_BUTTON:
-		
+
+			MessageHandler::sendAttackinfo(network, playerNum, 2, glm::vec3{0,0,0}, 0);
+
+
 			break;
 		case GLUT_MIDDLE_BUTTON:
 
@@ -401,6 +404,7 @@ void Game::mouseClicked(int button, int state, int x, int y)
 
 			break;
 		case GLUT_RIGHT_BUTTON:
+			MessageHandler::sendAttackinfo(network, playerNum, 2, glm::vec3{ 0,0,0 }, 1);
 
 			break;
 		case GLUT_MIDDLE_BUTTON:
