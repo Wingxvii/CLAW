@@ -3,6 +3,7 @@
 
 #include "GL/glut.h"
 
+
 /*
  * timer class
  * - this lets us keep track of the elapsed time

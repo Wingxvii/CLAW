@@ -9,6 +9,7 @@
 
 #include "include/glm/glm.hpp"
 #include "include/glm/ext.hpp"
+#include "Timer.h"
 
 class ServerGame
 {
@@ -55,6 +56,10 @@ private:
 	unsigned int currentClient;
 
 	bool start = false;
+
+	/* Data Members */
+	Timer *updateTimer = nullptr;
+	float TotalGameTime = 0.0f;
 
 
 	void handleJump( int player);
