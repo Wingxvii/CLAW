@@ -98,7 +98,9 @@ private:
 	Player *currentPlayer = new Player();
 
 	//Lights 
-	Transform sunPosition;
+	Transform light1;
+	Transform light2;
+
 
 	std::vector<PhysicalEntity* > entities;
 

@@ -118,8 +118,8 @@ void ServerGame::update()
 
 
 	//here goes hardcoded collisions
-	if (p[0].transform.position.y < 1) {
-		p[0].transform.position.y = 1;
+	if (p[0].transform.position.y < 0) {
+		p[0].transform.position.y = 0;
 
 		if (p[0].state == PlayerState::JUMP) {
 			p[0].state = PlayerState::IDLE;
@@ -129,8 +129,8 @@ void ServerGame::update()
 		}
 			
 	}
-	if (p[1].transform.position.y < 1) {
-		p[1].transform.position.y = 1;
+	if (p[1].transform.position.y < 0) {
+		p[1].transform.position.y = 0;
 		if (p[1].state == PlayerState::JUMP) {
 			p[1].state = PlayerState::IDLE;
 			p[1].rigidbody.inAir = false;

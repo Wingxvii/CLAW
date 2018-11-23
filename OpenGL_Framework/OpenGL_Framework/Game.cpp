@@ -121,8 +121,8 @@ void Game::initializeGame()
 	player2->getMesh()->transform->setRotation(glm::vec3(0,180,0));
 	player2->m_entityType = (int)EntityTypes::PLAYER;
 
-	sunPosition.setPosition(glm::vec3(0.0f,10.0f,0.0f));
-	
+	light1.setPosition(glm::vec3(0.0f,10.0f,0.0f));
+	light2.setPosition(glm::vec3(0.0f, 10.0f, 0.0f));
 
 	MessageHandler::sendInitConnection(network, player1->getMesh()->transform->m_pLocalPosition, player1->getMesh()->transform->m_pRotation, player1->getMesh()->transform->m_pScale, 0);
 	MessageHandler::sendInitConnection(network, player2->getMesh()->transform->m_pLocalPosition, player2->getMesh()->transform->m_pRotation, player2->getMesh()->transform->m_pScale, 1);
@@ -143,11 +143,17 @@ void Game::update()
 	
 	t = pow(0.1, 60.0f * deltaTime);
 
+
+
+	light1.setPosition(player1->getMesh()->transform->getPosition());
+	light2.setPosition(player2->getMesh()->transform->getPosition());
+
 	character1Anim.playAnimations(deltaTime, 1);
 	character2Anim.playAnimations(deltaTime, 0);
 	mapAnim.playAnimations(deltaTime, 0);
 	skyBoxAnim.playAnimations(deltaTime, 0);
-	sunPosition.update(deltaTime);
+	light1.update(deltaTime);
+	light2.update(deltaTime);
 
 	
 	currentPlayer->getMesh()->transform->m_pRotation.y = camera.transform->m_pRotation.y;
@@ -215,14 +221,12 @@ void Game::draw()
 	PassThrough.SendUniformMat4("uView", glm::value_ptr(glm::inverse(camera.transform->getLocalToWorldMatrix())), false);
 	PassThrough.SendUniformMat4("uProj", glm::value_ptr(camera.getProjection()), false);
 	
-
 	PassThrough.SendUniform("uTex", 0);
-	PassThrough.SendUniform("lightPosition", glm::vec4(sunPosition.getPosition(), 1));
+	PassThrough.SendUniform("lightPosition", glm::vec4(glm::vec3{0.0f, 5.0f, 5.0f}, 1));
 	PassThrough.SendUniform("lightAmbient", glm::vec3(0.2f, 0.2f, 0.2f));
 	PassThrough.SendUniform("lightDiffuse", glm::vec3(0.5f, 0.5f, 0.5f));
 	PassThrough.SendUniform("lightSpecular", glm::vec3(0.9f, 0.9f, 0.9f));
 	
-
 	DevilTexture.bind(0);
 
 	//cube 1
@@ -250,36 +254,52 @@ void Game::draw()
 	glBindVertexArray(0);
 	Sky.unbind(0);
 	
+	PassThrough.UnBind();
 	//unbinds
 
-	//MapShader.Bind();
+	MapShader.Bind();
 
-	//MapShader.SendUniformMat4("uView", glm::value_ptr(glm::inverse(camera.transform->getLocalToWorldMatrix())), false);
-	//MapShader.SendUniformMat4("uProj", glm::value_ptr(camera.getProjection()), false);
-	//MapShader.SendUniform("uTex", 0);
-	//glm::vec4 lightPos = glm::inverse(camera.getView()) * glm::vec4(player1->getMesh()->transform->m_pLocalPosition, 1.0f);
-	//MapShader.SendUniform("lightPosition", lightPos);
-	//glm::vec4 lightPos2 = glm::inverse(camera.getView()) * glm::vec4(player2->getMesh()->transform->m_pLocalPosition, 1.0f);
-	//MapShader.SendUniform("lightPosition2", lightPos);
-	//MapShader.SendUniform("lightAmbient", glm::vec3(0.2f, 0.2f, 0.2f));
-	//MapShader.SendUniform("lightDiffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-	//MapShader.SendUniform("lightSpecular", glm::vec3(0.9f, 0.9f, 0.9f));
-
-	// Ask for the handles identfying the uniform variables in our shader.
-;
+	MapShader.SendUniformMat4("uView", glm::value_ptr(glm::inverse(camera.transform->getLocalToWorldMatrix())), false);
+	MapShader.SendUniform("viewPosition", camera.transform->m_pLocalPosition);
+	MapShader.SendUniformMat4("uProj", glm::value_ptr(camera.getProjection()), false);
+	MapShader.SendUniform("uTex", 0);
 	
+	MapShader.SendUniform("material.shininess", 2.0f);
+	MapShader.SendUniform("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+	MapShader.SendUniform("dirLight.ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+	MapShader.SendUniform("dirLight.diffuse", glm::vec3(0.4f, 0.4f, 0.4f));
+	MapShader.SendUniform("dirLight.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+
+	glm::vec4 lightPos = glm::inverse(camera.getView()) * glm::vec4(light1.getPosition(), 1.0f);
+
+	MapShader.SendUniform("pointLights[0].position", glm::vec3(lightPos.x, lightPos.y, lightPos.z));
+	MapShader.SendUniform("pointLights[0].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+	MapShader.SendUniform("pointLights[0].diffuse", glm::vec3(0.0f, 1.0f, 0.0f));
+	MapShader.SendUniform("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	MapShader.SendUniform("pointLights[0].constant", 1.0f);
+	MapShader.SendUniform("pointLights[0].linear", 0.09f);
+	MapShader.SendUniform("pointLights[0].quadratic", 0.032f);
+
+	lightPos = glm::inverse(camera.getView()) * glm::vec4(light2.getPosition(), 1.0f);
+
+	MapShader.SendUniform("pointLights[0].position", glm::vec3(lightPos.x, lightPos.y, lightPos.z));
+	MapShader.SendUniform("pointLights[1].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+	MapShader.SendUniform("pointLights[1].diffuse", glm::vec3(0.0f, 0.0f, 1.0f));
+	MapShader.SendUniform("pointLights[1].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	MapShader.SendUniform("pointLights[1].constant", 1.0f);
+	MapShader.SendUniform("pointLights[1].linear", 0.09f);
+	MapShader.SendUniform("pointLights[1].quadratic", 0.032f);
+		
 	//map
 	FlatBlueTexture.bind(0);
 	MapShader.SendUniformMat4("uModel", glm::value_ptr(mapTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
 	glBindVertexArray(mapAnim.VAO);
-	MapShader.SendUniform("uInterpParam", mapAnim.interpParam);
 	glDrawArrays(GL_TRIANGLES, 0, mapAnim.animations[0][0]._NumVertices);
 
 	FlatBlueTexture.unbind(0);
 	
 
-	PassThrough.UnBind();
-	//MapShader.UnBind();
+	MapShader.UnBind();
 	//drawBoundingBox(player1->getMesh()->BoundingBox, *player1->getMesh());
 	//drawBoundingBox(player2->getMesh()->BoundingBox, *player2->getMesh());
 
