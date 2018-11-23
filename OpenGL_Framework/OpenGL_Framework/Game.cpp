@@ -26,11 +26,15 @@ void Game::initializeGame()
 
 	ShaderProgram::initDefault();
 
-	//load crate shaders
+	//load player shaders
 	if (!PassThrough.Load("./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag")) {
 		std::cout << "Shaders failed to init.\n";
 	}
-	//load crate shaders
+	//load map shaders
+	if (!MapShader.Load("./Assets/Shaders/Map.vert", "./Assets/Shaders/Map.frag")) {
+		std::cout << "Shaders failed to init.\n";
+	}
+	//load bounding box
 	if (!BoundingShader.Load("./Assets/Shaders/BoundingBox.vert", "./Assets/Shaders/BoundingBox.frag")) {
 		std::cout << "Shaders failed to init.\n";
 		
@@ -210,7 +214,7 @@ void Game::draw()
 	PassThrough.Bind();
 	PassThrough.SendUniformMat4("uView", glm::value_ptr(glm::inverse(camera.transform->getLocalToWorldMatrix())), false);
 	PassThrough.SendUniformMat4("uProj", glm::value_ptr(camera.getProjection()), false);
-	PassThrough.SendUniform("angle", glm::radians(testangle));
+	
 
 	PassThrough.SendUniform("uTex", 0);
 	PassThrough.SendUniform("lightPosition", glm::vec4(sunPosition.getPosition(), 1));
@@ -246,18 +250,37 @@ void Game::draw()
 	glBindVertexArray(0);
 	Sky.unbind(0);
 	
-	//map
-	FlatBlueTexture.bind(0);
-	PassThrough.SendUniformMat4("uModel", glm::value_ptr(mapTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
-	glBindVertexArray(mapAnim.VAO);
-	PassThrough.SendUniform("uInterpParam", mapAnim.interpParam);
-	glDrawArrays(GL_TRIANGLES, 0, mapAnim.animations[0][0]._NumVertices);
-	
 	PassThrough.UnBind();
 	//unbinds
+
+	MapShader.Bind();
+
+	MapShader.SendUniformMat4("uView", glm::value_ptr(glm::inverse(camera.transform->getLocalToWorldMatrix())), false);
+	MapShader.SendUniformMat4("uProj", glm::value_ptr(camera.getProjection()), false);
+	MapShader.SendUniform("uTex", 0);
+	glm::vec4 lightPos = glm::inverse(camera.getView()) * glm::vec4(player1->getMesh()->transform->m_pLocalPosition, 1.0f);
+	MapShader.SendUniform("lightPosition", lightPos);
+	glm::vec4 lightPos2 = glm::inverse(camera.getView()) * glm::vec4(player2->getMesh()->transform->m_pLocalPosition, 1.0f);
+	MapShader.SendUniform("lightPosition2", lightPos);
+	MapShader.SendUniform("lightAmbient", glm::vec3(0.2f, 0.2f, 0.2f));
+	MapShader.SendUniform("lightDiffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+	MapShader.SendUniform("lightSpecular", glm::vec3(0.9f, 0.9f, 0.9f));
+
+	// Ask for the handles identfying the uniform variables in our shader.
+;
+	
+	//map
+	FlatBlueTexture.bind(0);
+	MapShader.SendUniformMat4("uModel", glm::value_ptr(mapTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
+	glBindVertexArray(mapAnim.VAO);
+	MapShader.SendUniform("uInterpParam", mapAnim.interpParam);
+	glDrawArrays(GL_TRIANGLES, 0, mapAnim.animations[0][0]._NumVertices);
+
 	FlatBlueTexture.unbind(0);
 	
-	drawBoundingBox(player1->getMesh()->BoundingBox, *player1->getMesh());
+
+	MapShader.UnBind();
+	//drawBoundingBox(player1->getMesh()->BoundingBox, *player1->getMesh());
 	//drawBoundingBox(player2->getMesh()->BoundingBox, *player2->getMesh());
 
 

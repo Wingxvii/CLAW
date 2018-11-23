@@ -86,6 +86,7 @@ private:
 	Texture DevilTexture;
 
 	ShaderProgram PassThrough;
+	ShaderProgram MapShader;
 	ShaderProgram BoundingShader;
 
 	PhysicalEntity *mapTransform = new PhysicalEntity();

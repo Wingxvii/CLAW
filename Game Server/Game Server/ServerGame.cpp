@@ -15,6 +15,8 @@ ServerGame::ServerGame(void)
 	// id's to assign clients for our table
 	client_id = 0;
 
+	updateTimer = new Timer();
+
 	// set up the server network to listen 
 	network = new ServerNetwork();
 }
@@ -22,6 +24,13 @@ ServerGame::ServerGame(void)
 //fixed update
 void ServerGame::update()
 {
+
+	// update our clock so we have the delta time since the last update
+	updateTimer->tick();
+
+	float deltaTime = updateTimer->getElapsedTimeSeconds();
+	TotalGameTime += deltaTime;
+
 	// get new clients
 	if (network->acceptNewClient(client_id))
 	{
