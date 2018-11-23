@@ -250,21 +250,20 @@ void Game::draw()
 	glBindVertexArray(0);
 	Sky.unbind(0);
 	
-	PassThrough.UnBind();
 	//unbinds
 
-	MapShader.Bind();
+	//MapShader.Bind();
 
-	MapShader.SendUniformMat4("uView", glm::value_ptr(glm::inverse(camera.transform->getLocalToWorldMatrix())), false);
-	MapShader.SendUniformMat4("uProj", glm::value_ptr(camera.getProjection()), false);
-	MapShader.SendUniform("uTex", 0);
-	glm::vec4 lightPos = glm::inverse(camera.getView()) * glm::vec4(player1->getMesh()->transform->m_pLocalPosition, 1.0f);
-	MapShader.SendUniform("lightPosition", lightPos);
-	glm::vec4 lightPos2 = glm::inverse(camera.getView()) * glm::vec4(player2->getMesh()->transform->m_pLocalPosition, 1.0f);
-	MapShader.SendUniform("lightPosition2", lightPos);
-	MapShader.SendUniform("lightAmbient", glm::vec3(0.2f, 0.2f, 0.2f));
-	MapShader.SendUniform("lightDiffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-	MapShader.SendUniform("lightSpecular", glm::vec3(0.9f, 0.9f, 0.9f));
+	//MapShader.SendUniformMat4("uView", glm::value_ptr(glm::inverse(camera.transform->getLocalToWorldMatrix())), false);
+	//MapShader.SendUniformMat4("uProj", glm::value_ptr(camera.getProjection()), false);
+	//MapShader.SendUniform("uTex", 0);
+	//glm::vec4 lightPos = glm::inverse(camera.getView()) * glm::vec4(player1->getMesh()->transform->m_pLocalPosition, 1.0f);
+	//MapShader.SendUniform("lightPosition", lightPos);
+	//glm::vec4 lightPos2 = glm::inverse(camera.getView()) * glm::vec4(player2->getMesh()->transform->m_pLocalPosition, 1.0f);
+	//MapShader.SendUniform("lightPosition2", lightPos);
+	//MapShader.SendUniform("lightAmbient", glm::vec3(0.2f, 0.2f, 0.2f));
+	//MapShader.SendUniform("lightDiffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+	//MapShader.SendUniform("lightSpecular", glm::vec3(0.9f, 0.9f, 0.9f));
 
 	// Ask for the handles identfying the uniform variables in our shader.
 ;
@@ -279,7 +278,8 @@ void Game::draw()
 	FlatBlueTexture.unbind(0);
 	
 
-	MapShader.UnBind();
+	PassThrough.UnBind();
+	//MapShader.UnBind();
 	//drawBoundingBox(player1->getMesh()->BoundingBox, *player1->getMesh());
 	//drawBoundingBox(player2->getMesh()->BoundingBox, *player2->getMesh());
 
