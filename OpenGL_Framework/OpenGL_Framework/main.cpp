@@ -67,9 +67,10 @@ void MouseClickCallbackFunction(int button, int state, int x, int y)
  */
 void MouseMotionCallbackFunction(int x, int y)
 {
-	theGame->mouseMoved(x, y);
+	theGame->handleMouse(x, y);
 	glutPostRedisplay();
 }
+
 
 void MousePassiveMotionCallbackFunction(int x, int y) {
 	theGame->handleMouse(x, y);

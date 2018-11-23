@@ -9,7 +9,7 @@ Player::Player()
 	collider = nullptr;
 	state = PlayerState::IDLE;
 	jumpPower = 30;
-	hitBox = BoxCollider(ColliderTag::TRIGGER, glm::vec3(8.0f, 4.0f, 8.0f), glm::vec3(0.0f, 0.0f, 0.0f),-1);
+	health = 100;
 }
 
 Player::Player(int num)
@@ -21,10 +21,24 @@ Player::Player(int num)
 	collider = nullptr;
 	state = PlayerState::IDLE;
 	jumpPower = 30;
-	hitBox = BoxCollider(ColliderTag::TRIGGER, glm::vec3(8.0f, 4.0f, 8.0f), glm::vec3(0.0f, 0.0f, 0.0f), -1);
+	health = 100;
 }
 
 Player::~Player()
 {
 	//delete collider;
+}
+
+void Player::TickCoolDowns()
+{
+	if (CanLightAttack > 0) { CanLightAttack--; } // ticks light attack
+	if (lightAttackFrames > 0) { lightAttackFrames--; } // ticks light attack
+
+}
+
+void Player::resetCooldowns()
+{
+	CanLightAttack = 0;
+	lightAttackFrames = 0;
+	jumpPower = 30;
 }

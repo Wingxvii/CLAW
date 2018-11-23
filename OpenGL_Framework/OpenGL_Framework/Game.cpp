@@ -169,7 +169,7 @@ void Game::update()
 
 	handlePackets();
 
-	MessageHandler::sendRotationinfo(network, playerNum,currentPlayer->getMesh()->transform->m_pRotation);
+	MessageHandler::sendRotationinfo(network, playerNum, currentPlayer->getMesh()->transform->m_pRotation);
 
 	if (wPushed) {
 		MessageHandler::sendKeyInput(network, 'w', playerNum);
@@ -353,11 +353,14 @@ void Game::mouseClicked(int button, int state, int x, int y)
 		case GLUT_LEFT_BUTTON:
 
 			glm::vec3 lookDir;
-			//lookDir.x = camera.getView()[2];
-			//lookDir.y = camera.getView()[6];
-			//lookDir.z = camera.getView()[10];
+			lookDir.x = glm::inverse(camera.getView())[0][2];
+			lookDir.y = glm::inverse(camera.getView())[1][2];
+			lookDir.z = glm::inverse(camera.getView())[2][2];
 
-			//MessageHandler::sendAttackinfo(network, playerNum, 1, lookDir, 0);
+			printf("(%f,%f,%f)", lookDir.x,lookDir.y, lookDir.z);
+
+			MessageHandler::sendAttackinfo(network, playerNum, 1, lookDir, 0);
+
 
 			break;
 		case GLUT_RIGHT_BUTTON:
@@ -406,7 +409,7 @@ void Game::cameraFollow()
 	float cameraDistance = 8.0f - glm::abs(glm::sin(cameraRot.x * TO_RADS))*7.0f;
 	float cameraY = 4.0f - (glm::sin(cameraRot.x* TO_RADS) *8.0f);
 
-	printf("%f\n", glm::sin(cameraRot.x* TO_RADS));
+	//printf("%f\n", glm::sin(cameraRot.x* TO_RADS));
 	glm::vec2 offset2D = currentPlayer->getMesh()->transform->forward*cameraDistance;
 
 

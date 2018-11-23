@@ -42,6 +42,9 @@ private:
 	glm::vec3 prevPosition1 = {0.0f,0.0f,0.0f};
 	glm::vec3 prevPosition2 = {0.0f, 0.0f, 0.0f};
 
+	BoxCollider p1AttackBox;
+	BoxCollider p2AttackBox;
+
 	void pairClients(int);
 	void sendMessage(int clientid, int message_type, std::string message);
 	bool collisionCheck(Player);
@@ -56,8 +59,9 @@ private:
 
 	bool start = false;
 
-
+	void continueAttack();
 	void handleJump( int player);
-	void handleAttackBox(int player);
+	void handleAttackBox(int player, int attack);
 	void restart();
+
 };
