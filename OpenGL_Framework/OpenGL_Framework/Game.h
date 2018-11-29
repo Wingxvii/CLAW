@@ -79,11 +79,19 @@ private:
 	MeshAnimator character2Anim;
 	MeshAnimator mapAnim;
 	MeshAnimator skyBoxAnim;
+	MeshAnimator brokenAFBridge;
+	MeshAnimator brazier;
+	MeshAnimator wall;
+	std::vector<MeshAnimator> trees;
 
 	Texture GrassTexture;
 	Texture FlatBlueTexture;
 	Texture Sky;
 	Texture DevilTexture;
+	Texture BridgeTex;
+	Texture WallTex;
+	Texture BrazierText;
+	Texture TreeTex;
 
 	ShaderProgram PassThrough;
 	ShaderProgram MapShader;
@@ -91,6 +99,9 @@ private:
 
 	PhysicalEntity *mapTransform = new PhysicalEntity();
 	PhysicalEntity *skyBoxTransform = new PhysicalEntity();
+	PhysicalEntity *bridgeTransform = new PhysicalEntity();
+	PhysicalEntity *wallTranform = new PhysicalEntity();
+	std::vector <PhysicalEntity*> treeTransforms;
 
 	Player *player1 = new Player();
 	Player *player2 = new Player();

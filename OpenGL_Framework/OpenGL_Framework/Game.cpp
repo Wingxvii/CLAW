@@ -67,11 +67,28 @@ void Game::initializeGame()
 		std::cout << "Model failed to load.\n";
 		
 	}
+	for (int i = 0; i < 3; i++) {
+		MeshAnimator temp;
+		if (!temp.loadMeshes("./Assets/Models/dedTree_", 1)) {
+			std::cout << "Model failed to load.\n";
+		}
+		trees.push_back(temp);
+	}
+
+
 
 	//load sky box mesh
 	if (!skyBoxAnim.loadMeshes("./Assets/Models/skybox_", 1)) {
 		std::cout << "Model failed to load.\n";
 	
+	}
+
+	if (!brokenAFBridge.loadMeshes("./Assets/Models/bridge_", 1)) {
+
+	}
+
+	if (!wall.loadMeshes("./Assets/Models/wall_", 1)) {
+
 	}
 
 	//load texture
@@ -101,17 +118,37 @@ void Game::initializeGame()
 		exit(0);
 	}
 
+	if (!BridgeTex.load("./Assets/Textures/bridgeTex.png"))
+	{
+		system("Pause");
+		exit(0);
+	}
+
+	if (!WallTex.load("./Assets/Textures/wallTex.png"))
+	{
+		system("Pause");
+		exit(0);
+	}
+
+	if (!TreeTex.load("./Assets/Textures/dedTreeTex.png"))
+	{
+		system("Pause");
+		exit(0);
+	}
+
 	player1->setMesh(&character1Anim.animations[0][0]);
 	player2->setMesh(&character2Anim.animations[0][0]);
 
 	skyBoxTransform->setMesh(&skyBoxAnim.animations[0][0]);
 
-	camera.perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 1000.0f);
+	camera.perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 2000.0f);
 	camera.transform->m_pLocalPosition = glm::vec3(0.0f, 1.5f, 6.0f);
 
 
-	mapTransform->getMesh()->transform->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+	mapTransform->getMesh()->transform->setPosition(glm::vec3(0.0f, 2.0f, 0.0f));
 	skyBoxTransform->getMesh()->transform->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+	bridgeTransform->getMesh()->transform->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+	wallTranform->getMesh()->transform->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 
 	player1->getMesh()->transform->setPosition(glm::vec3(-1.0f, 0.0f, 0.0f));
 	player1->getMesh()->transform->setRotation(glm::vec3(0, 0, 0));
@@ -154,6 +191,8 @@ void Game::update()
 
 	mapAnim.playAnimations(deltaTime, 0);
 	skyBoxAnim.playAnimations(deltaTime, 0);
+	brokenAFBridge.playAnimations(deltaTime, 0);
+	wall.playAnimations(deltaTime, 0);
 	light1.update(deltaTime);
 	light2.update(deltaTime);
 
@@ -268,7 +307,7 @@ void Game::draw()
 	
 	MapShader.SendUniform("material.shininess", 2.0f);
 	MapShader.SendUniform("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
-	MapShader.SendUniform("dirLight.ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+	MapShader.SendUniform("dirLight.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
 	MapShader.SendUniform("dirLight.diffuse", glm::vec3(0.4f, 0.4f, 0.4f));
 	MapShader.SendUniform("dirLight.specular", glm::vec3(0.5f, 0.5f, 0.5f));
 
@@ -299,6 +338,20 @@ void Game::draw()
 	glDrawArrays(GL_TRIANGLES, 0, mapAnim.animations[0][0]._NumVertices);
 
 	FlatBlueTexture.unbind(0);
+
+	BridgeTex.bind(0);
+	MapShader.SendUniformMat4("uModel", glm::value_ptr(bridgeTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
+	glBindVertexArray(brokenAFBridge.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, brokenAFBridge.animations[0][0]._NumVertices);
+
+	BridgeTex.unbind(0);
+
+	WallTex.bind(0);
+	MapShader.SendUniformMat4("uModel", glm::value_ptr(wallTranform->getMesh()->transform->getLocalToWorldMatrix()), false);
+	glBindVertexArray(wall.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, wall.animations[0][0]._NumVertices);
+
+	BridgeTex.unbind(0);
 	
 
 	MapShader.UnBind();
