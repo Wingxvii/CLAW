@@ -428,30 +428,6 @@ void Game::draw()
 	glBindVertexArray(0);
 	WallTex.unbind(0);
 
-	MapShader.UnBind();
-
-	healthShader.Bind();
-
-	healthShader.SendUniformMat4("uView", glm::value_ptr(glm::inverse(orthoCamera.transform->getLocalToWorldMatrix())), false);
-	healthShader.SendUniformMat4("uProj", glm::value_ptr(orthoCamera.getProjection()), false);
-	healthShader.SendUniform("healthAmount", playerHealth);
-
-
-	healthShader.SendUniformMat4("uModel", glm::value_ptr(healthBarTransform.getLocalToWorldMatrix()), false);
-	glBindVertexArray(healthBar.VAO);
-	glDrawArrays(GL_TRIANGLES, 0, healthBar.animations[0][0]._NumVertices);
-	healthShader.UnBind();
-
-
-	coolDownShader.Bind();
-
-	coolDownShader.SendUniformMat4("uView", glm::value_ptr(glm::inverse(orthoCamera.transform->getLocalToWorldMatrix())), false);
-	coolDownShader.SendUniformMat4("uProj", glm::value_ptr(orthoCamera.getProjection()), false);
-	
-	coolDownShader.SendUniformMat4("uModel", glm::value_ptr(coolDownTransform.getLocalToWorldMatrix()), false);
-	glBindVertexArray(coolDown.VAO);
-	glDrawArrays(GL_TRIANGLES, 0, coolDown.animations[0][0]._NumVertices);
-	coolDownShader.UnBind();
 	BrazierTex.bind(0);
 
 	MapShader.SendUniformMat4("uModel", glm::value_ptr(brazierTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
@@ -492,8 +468,31 @@ void Game::draw()
 	glBindVertexArray(0);
 	TorchTex.unbind(0);
 
-
 	MapShader.UnBind();
+
+	healthShader.Bind();
+
+	healthShader.SendUniformMat4("uView", glm::value_ptr(glm::inverse(orthoCamera.transform->getLocalToWorldMatrix())), false);
+	healthShader.SendUniformMat4("uProj", glm::value_ptr(orthoCamera.getProjection()), false);
+	healthShader.SendUniform("healthAmount", playerHealth);
+
+
+	healthShader.SendUniformMat4("uModel", glm::value_ptr(healthBarTransform.getLocalToWorldMatrix()), false);
+	glBindVertexArray(healthBar.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, healthBar.animations[0][0]._NumVertices);
+	healthShader.UnBind();
+
+
+	coolDownShader.Bind();
+
+	coolDownShader.SendUniformMat4("uView", glm::value_ptr(glm::inverse(orthoCamera.transform->getLocalToWorldMatrix())), false);
+	coolDownShader.SendUniformMat4("uProj", glm::value_ptr(orthoCamera.getProjection()), false);
+	
+	coolDownShader.SendUniformMat4("uModel", glm::value_ptr(coolDownTransform.getLocalToWorldMatrix()), false);
+	glBindVertexArray(coolDown.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, coolDown.animations[0][0]._NumVertices);
+	coolDownShader.UnBind();
+	
 	//drawBoundingBox(player1->getMesh()->BoundingBox, *player1->getMesh());
 	//drawBoundingBox(player2->getMesh()->BoundingBox, *player2->getMesh());
 
