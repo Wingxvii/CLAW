@@ -81,7 +81,7 @@ void ServerGame::update()
 		if (p[0].CanLightAttack == 0) {
 			sendUI(0);
 		}
-		if (p[1].CanLightAttack == 0) {
+		if (p[1].CanLightAttack == 0){
 			sendUI(1);
 		}
 
@@ -517,7 +517,7 @@ void ServerGame::handleAttackBox(int player, int attack)
 					p[0].lightAttackFrames = 0;
 				}
 				else {
-					p[1].rigidbody.addForce(6.0f, -p[0].goingDirection);
+					p[1].rigidbody.addForce(6.0f, p[0].goingDirection);
 					p[1].health -= 0.5f;
 					p[0].lightAttackFrames = 0;
 					sendUI(1);
@@ -538,7 +538,7 @@ void ServerGame::handleAttackBox(int player, int attack)
 					p[1].lightAttackFrames = 0;
 				}
 				else {
-					p[0].rigidbody.addForce(6.0f, -p[1].goingDirection);
+					p[0].rigidbody.addForce(6.0f, p[1].goingDirection);
 					p[0].health -= 0.5f;
 					p[1].lightAttackFrames = 0;
 					sendUI(0);
@@ -559,8 +559,8 @@ void ServerGame::sendUI(int player)
 		attackReady = true;
 	}
 
-
-	sendMessage(player, UI_INFO, std::to_string(p[player].health) + "," + to_string(attackReady) + ",");
+	if(player != 1 || network->sessions.size() > 1)
+	sendMessage(player, UI_INFO, std::to_string(p[player].health) + "," + std::to_string(attackReady) + ",");
 }
 
 void ServerGame::restart()
