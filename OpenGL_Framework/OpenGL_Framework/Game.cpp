@@ -108,15 +108,19 @@ void Game::initializeGame()
 	if (!trees.loadMeshes("./Assets/Models/dedTree_", 1)) {
 		std::cout << "Trees failed to load.\n";
 	}
+	
+
 	if (!health.loadMeshes("./Assets/Models/healthPickup_", 1)) {
 		std::cout << "Health failed to load.\n";
 	}
 	if (!stump.loadMeshes("./Assets/Models/tree_stump_", 1)) {
 		std::cout << "Stump failed to load.\n";
 	}
+
 	if (!torch.loadMeshes("./Assets/Models/torch_", 1)) {
 		std::cout << "Torch failed to load.\n";
 	}
+
 
 
 
@@ -199,39 +203,54 @@ void Game::initializeGame()
 	bridgeTransform->getMesh()->transform->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 	wallTranform->getMesh()->transform->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 
-	treeTransform->getMesh()->transform->setPosition(glm::vec3(5.0f,-1.8f, -5.0f));
-	brazierTransform->getMesh()->transform->setPosition(glm::vec3(10.0f, -1.8f, -5.0f));
+	treeTransform->getMesh()->transform->setPosition(glm::vec3(-100.0f,-1.8f, -20.0f));
+	treeTransform2->getMesh()->transform->setPosition(glm::vec3(50.0f, -1.8f, -10.0f));
+	treeTransform3->getMesh()->transform->setPosition(glm::vec3(-10.0f, -1.8f, -70.0f));
+	brazierTransform->getMesh()->transform->setPosition(glm::vec3(-50.0f, -1.8f, 30.0f));
 	HealthTransfrom->getMesh()->transform->setPosition(glm::vec3(15.0f, -1.8f, -5.0f));
-	StumpTransfrom->getMesh()->transform->setPosition(glm::vec3(20.0f, -1.8f, -5.0f));
-	TorchTransfrom->getMesh()->transform->setPosition(glm::vec3(25.0f, -1.8f, -5.0f));
+	StumpTransfrom->getMesh()->transform->setPosition(glm::vec3(-60.0f, -1.8f, -30.0f));
+	TorchTransfrom->getMesh()->transform->setPosition(glm::vec3(40.0f, -1.8f, 10.0f));
+	TorchTransfrom2->getMesh()->transform->setPosition(glm::vec3(-120.0f, -1.8f, 10.0f));
+	TorchTransfrom3->getMesh()->transform->setPosition(glm::vec3(40.0f, -1.8f, -90.0f));
+	TorchTransfrom4->getMesh()->transform->setPosition(glm::vec3(-120.0f, -1.8f, -90.0f));
 
 
 	treeTransform->getMesh()->transform->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
+	treeTransform2->getMesh()->transform->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
+	treeTransform3->getMesh()->transform->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
 	brazierTransform->getMesh()->transform->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
 	HealthTransfrom->getMesh()->transform->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
 	StumpTransfrom->getMesh()->transform->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
 	TorchTransfrom->getMesh()->transform->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
+	TorchTransfrom->getMesh()->transform->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
+	TorchTransfrom2->getMesh()->transform->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
+	TorchTransfrom3->getMesh()->transform->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
+	TorchTransfrom4->getMesh()->transform->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
 
 
 	//call updates
 	treeTransform->getMesh()->transform->update(0.0f);
+	treeTransform2->getMesh()->transform->update(0.0f);
+	treeTransform3->getMesh()->transform->update(0.0f);
 	brazierTransform->getMesh()->transform->update(0.0f);
 	HealthTransfrom->getMesh()->transform->update(0.0f);
 	StumpTransfrom->getMesh()->transform->update(0.0f);
 	TorchTransfrom->getMesh()->transform->update(0.0f);
+	TorchTransfrom2->getMesh()->transform->update(0.0f);
+	TorchTransfrom3->getMesh()->transform->update(0.0f);
+	TorchTransfrom4->getMesh()->transform->update(0.0f);
 
 
 
-	player1->getMesh()->transform->setPosition(glm::vec3(-1.0f, -1.8f, 0.0f));
+	player1->getMesh()->transform->setPosition(glm::vec3(-60.0f, -1.8f, 20.0f));
 	player1->getMesh()->transform->setRotation(glm::vec3(0, 0, 0));
 	player1->m_entityType = (int)EntityTypes::PLAYER;
 
-	player2->getMesh()->transform->setPosition(glm::vec3(1.0f, -1.8f, -10.0f));
+	player2->getMesh()->transform->setPosition(glm::vec3(-60.0f, -1.8f, -80.0f));
 	player2->getMesh()->transform->setRotation(glm::vec3(0,180,0));
 	player2->m_entityType = (int)EntityTypes::PLAYER;
 
-	light1.setPosition(glm::vec3(0.0f,10.0f,0.0f));
-	light2.setPosition(glm::vec3(0.0f, 10.0f, 0.0f));
+	
 	healthBarTransform.setPosition(glm::vec3(25.0f, 50.0f, 0.0f));
 	coolDownTransform.setPosition(glm::vec3(1200.0f, 60.0f, 0.0f));
 
@@ -256,7 +275,11 @@ void Game::update()
 
 	light1.setPosition(player1->getMesh()->transform->getPosition());
 	light2.setPosition(player2->getMesh()->transform->getPosition());
-
+	light3.setPosition(TorchTransfrom->getMesh()->transform->getPosition());
+	light4.setPosition(brazierTransform->getMesh()->transform->getPosition());
+	light5.setPosition(TorchTransfrom2->getMesh()->transform->getPosition());
+	light6.setPosition(TorchTransfrom3->getMesh()->transform->getPosition());
+	light7.setPosition(TorchTransfrom4->getMesh()->transform->getPosition());
 	//***********************************************************************************************************************************************************************************************************
 	//How to make basic animations 
 	character1Anim.playAnimations(deltaTime, 1);
@@ -331,6 +354,9 @@ void Game::draw()
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glCullFace(GL_BACK);
+	glEnable(GL_CULL_FACE);
+
 	//binds
 	PassThrough.Bind();
 	PassThrough.SendUniformMat4("uView", glm::value_ptr(glm::inverse(camera.transform->getLocalToWorldMatrix())), false);
@@ -397,13 +423,63 @@ void Game::draw()
 
 	lightPos = glm::inverse(camera.getView()) * glm::vec4(light2.getPosition(), 1.0f);
 
-	MapShader.SendUniform("pointLights[0].position", glm::vec3(lightPos.x, lightPos.y + 5.0f, lightPos.z));
+	MapShader.SendUniform("pointLights[1].position", glm::vec3(lightPos.x, lightPos.y + 5.0f, lightPos.z));
 	MapShader.SendUniform("pointLights[1].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
 	MapShader.SendUniform("pointLights[1].diffuse", glm::vec3(0.0f, 0.0f, 1.0f));
 	MapShader.SendUniform("pointLights[1].specular", glm::vec3(1.0f, 1.0f, 1.0f));
 	MapShader.SendUniform("pointLights[1].constant", 1.0f);
 	MapShader.SendUniform("pointLights[1].linear", 0.09f);
 	MapShader.SendUniform("pointLights[1].quadratic", 0.032f);
+
+	lightPos = glm::inverse(camera.getView()) * glm::vec4(light3.getPosition(), 1.0f);
+
+	MapShader.SendUniform("pointLights[2].position", glm::vec3(lightPos.x, lightPos.y + 5.0f, lightPos.z));
+	MapShader.SendUniform("pointLights[2].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+	MapShader.SendUniform("pointLights[2].diffuse", glm::vec3(0.8f, 0.8f, 0.0f));
+	MapShader.SendUniform("pointLights[2].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	MapShader.SendUniform("pointLights[2].constant", 1.0f);
+	MapShader.SendUniform("pointLights[2].linear", 0.09f);
+	MapShader.SendUniform("pointLights[2].quadratic", 0.032f);
+
+	lightPos = glm::inverse(camera.getView()) * glm::vec4(light4.getPosition(), 1.0f);
+
+	MapShader.SendUniform("pointLights[3].position", glm::vec3(lightPos.x, lightPos.y + 5.0f, lightPos.z));
+	MapShader.SendUniform("pointLights[3].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+	MapShader.SendUniform("pointLights[3].diffuse", glm::vec3(0.8f, 0.8f, 0.0f));
+	MapShader.SendUniform("pointLights[3].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	MapShader.SendUniform("pointLights[3].constant", 1.0f);
+	MapShader.SendUniform("pointLights[3].linear", 0.09f);
+	MapShader.SendUniform("pointLights[3].quadratic", 0.032f);
+
+	lightPos = glm::inverse(camera.getView()) * glm::vec4(light5.getPosition(), 1.0f);
+
+	MapShader.SendUniform("pointLights[4].position", glm::vec3(lightPos.x, lightPos.y + 5.0f, lightPos.z));
+	MapShader.SendUniform("pointLights[4].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+	MapShader.SendUniform("pointLights[4].diffuse", glm::vec3(0.8f, 0.8f, 0.0f));
+	MapShader.SendUniform("pointLights[4].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	MapShader.SendUniform("pointLights[4].constant", 1.0f);
+	MapShader.SendUniform("pointLights[4].linear", 0.09f);
+	MapShader.SendUniform("pointLights[4].quadratic", 0.032f);
+
+	lightPos = glm::inverse(camera.getView()) * glm::vec4(light6.getPosition(), 1.0f);
+
+	MapShader.SendUniform("pointLights[5].position", glm::vec3(lightPos.x, lightPos.y + 5.0f, lightPos.z));
+	MapShader.SendUniform("pointLights[5].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+	MapShader.SendUniform("pointLights[5].diffuse", glm::vec3(0.8f, 0.8f, 0.0f));
+	MapShader.SendUniform("pointLights[5].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	MapShader.SendUniform("pointLights[5].constant", 1.0f);
+	MapShader.SendUniform("pointLights[5].linear", 0.09f);
+	MapShader.SendUniform("pointLights[5].quadratic", 0.032f);
+
+	lightPos = glm::inverse(camera.getView()) * glm::vec4(light7.getPosition(), 1.0f);
+
+	MapShader.SendUniform("pointLights[6].position", glm::vec3(lightPos.x, lightPos.y + 5.0f, lightPos.z));
+	MapShader.SendUniform("pointLights[6].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+	MapShader.SendUniform("pointLights[6].diffuse", glm::vec3(0.8f, 0.8f, 0.0f));
+	MapShader.SendUniform("pointLights[6].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	MapShader.SendUniform("pointLights[6].constant", 1.0f);
+	MapShader.SendUniform("pointLights[6].linear", 0.09f);
+	MapShader.SendUniform("pointLights[6].quadratic", 0.032f);
 		
 	//map
 	FlatBlueTexture.bind(0);
@@ -442,6 +518,16 @@ void Game::draw()
 	glBindVertexArray(trees.VAO);
 	glDrawArrays(GL_TRIANGLES, 0, trees.animations[0][0]._NumVertices);
 	glBindVertexArray(0);
+
+	MapShader.SendUniformMat4("uModel", glm::value_ptr(treeTransform2->getMesh()->transform->getLocalToWorldMatrix()), false);
+	glBindVertexArray(trees.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, trees.animations[0][0]._NumVertices);
+	glBindVertexArray(0);
+
+	MapShader.SendUniformMat4("uModel", glm::value_ptr(treeTransform3->getMesh()->transform->getLocalToWorldMatrix()), false);
+	glBindVertexArray(trees.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, trees.animations[0][0]._NumVertices);
+	glBindVertexArray(0);
 	TreeTex.unbind(0);
 
 	HealthTex.bind(0);
@@ -466,9 +552,26 @@ void Game::draw()
 	glBindVertexArray(torch.VAO);
 	glDrawArrays(GL_TRIANGLES, 0, torch.animations[0][0]._NumVertices);
 	glBindVertexArray(0);
+
+	MapShader.SendUniformMat4("uModel", glm::value_ptr(TorchTransfrom2->getMesh()->transform->getLocalToWorldMatrix()), false);
+	glBindVertexArray(torch.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, torch.animations[0][0]._NumVertices);
+	glBindVertexArray(0);
+
+	MapShader.SendUniformMat4("uModel", glm::value_ptr(TorchTransfrom3->getMesh()->transform->getLocalToWorldMatrix()), false);
+	glBindVertexArray(torch.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, torch.animations[0][0]._NumVertices);
+	glBindVertexArray(0);
+
+	MapShader.SendUniformMat4("uModel", glm::value_ptr(TorchTransfrom4->getMesh()->transform->getLocalToWorldMatrix()), false);
+	glBindVertexArray(torch.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, torch.animations[0][0]._NumVertices);
+	glBindVertexArray(0);
 	TorchTex.unbind(0);
 
 	MapShader.UnBind();
+
+	glDisable(GL_CULL_FACE);
 
 	healthShader.Bind();
 

@@ -89,9 +89,14 @@ private:
 
 	MeshAnimator brazier;
 	MeshAnimator trees;
+	MeshAnimator trees2;
+	MeshAnimator trees3;
 	MeshAnimator health;
 	MeshAnimator stump;
 	MeshAnimator torch;
+	MeshAnimator torch2;
+	MeshAnimator torch3;
+	MeshAnimator torch4;
 	
 
 	Texture GrassTexture;
@@ -120,9 +125,14 @@ private:
 
 	PhysicalEntity *brazierTransform = new PhysicalEntity();
 	PhysicalEntity *treeTransform = new PhysicalEntity();
+	PhysicalEntity *treeTransform2 = new PhysicalEntity();
+	PhysicalEntity *treeTransform3 = new PhysicalEntity();
 	PhysicalEntity *HealthTransfrom = new PhysicalEntity();
 	PhysicalEntity *StumpTransfrom = new PhysicalEntity();
 	PhysicalEntity *TorchTransfrom = new PhysicalEntity();
+	PhysicalEntity *TorchTransfrom2 = new PhysicalEntity();
+	PhysicalEntity *TorchTransfrom3 = new PhysicalEntity();
+	PhysicalEntity *TorchTransfrom4 = new PhysicalEntity();
 
 
 	Player *player1 = new Player();
@@ -133,6 +143,11 @@ private:
 	//Lights 
 	Transform light1;
 	Transform light2;
+	Transform light3;
+	Transform light4;
+	Transform light5;
+	Transform light6;
+	Transform light7;
 
 	Transform healthBarTransform;
 	Transform coolDownTransform;
