@@ -121,6 +121,10 @@ void Game::initializeGame()
 		std::cout << "Torch failed to load.\n";
 	}
 
+	if (!angelSword.loadMeshes("./Assets/Models/angelSword_", 1)) {
+		std::cout << "Angel Sword failed to load.\n";
+	}
+
 
 
 
@@ -186,6 +190,12 @@ void Game::initializeGame()
 		exit(0);
 	}
 
+	if (!angelSwordTex.load("./Assets/Textures/angel_sword_tex.png"))
+	{
+		std::cout << "Angel Sword failed to load.\n";
+		system("Pause");
+		exit(0);
+	}	
 	player1->setMesh(&character1Anim.animations[0][0]);
 	player2->setMesh(&character2Anim.animations[0][0]);
 
@@ -214,6 +224,9 @@ void Game::initializeGame()
 	TorchTransfrom3->getMesh()->transform->setPosition(glm::vec3(40.0f, -1.8f, -90.0f));
 	TorchTransfrom4->getMesh()->transform->setPosition(glm::vec3(-120.0f, -1.8f, -90.0f));
 
+	angelSwordTransform->getMesh()->transform->setPosition(glm::vec3(65.0f, 4.8f, 10.0f));
+	angelSwordTransform->getMesh()->transform->setRotation(glm::vec3(0.0f, 90.0f, 0.0f));
+
 
 	treeTransform->getMesh()->transform->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
 	treeTransform2->getMesh()->transform->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -239,8 +252,7 @@ void Game::initializeGame()
 	TorchTransfrom2->getMesh()->transform->update(0.0f);
 	TorchTransfrom3->getMesh()->transform->update(0.0f);
 	TorchTransfrom4->getMesh()->transform->update(0.0f);
-
-
+	angelSwordTransform->getMesh()->transform->update(0.0f);
 
 	player1->getMesh()->transform->setPosition(glm::vec3(-60.0f, -1.8f, 20.0f));
 	player1->getMesh()->transform->setRotation(glm::vec3(0, 0, 0));
@@ -301,6 +313,8 @@ void Game::update()
 	health.playAnimations(deltaTime, 0);
 	stump.playAnimations(deltaTime, 0);
 	torch.playAnimations(deltaTime, 0);
+	angelSword.playAnimations(deltaTime, 0);
+
 
 	currentPlayer->getMesh()->transform->m_pRotation.y = camera.transform->m_pRotation.y;
 	cameraFollow();
@@ -510,6 +524,17 @@ void Game::draw()
 	glDrawArrays(GL_TRIANGLES, 0, brazier.animations[0][0]._NumVertices);
 	glBindVertexArray(0);
 	BrazierTex.unbind(0);
+
+
+	angelSwordTex.bind(0);
+
+	MapShader.SendUniformMat4("uModel", glm::value_ptr(angelSwordTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
+	glBindVertexArray(angelSword.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, angelSword.animations[0][0]._NumVertices);
+	glBindVertexArray(0);
+	angelSwordTex.unbind(0);
+
+
 
 	TreeTex.bind(0);
 
@@ -763,6 +788,14 @@ void Game::cameraFollow()
 
 	camera.transform->setPosition(playerPositionWithOffset);
 	camera.transform->setRotation(cameraRot);
+
+	//West Wall collision
+	if (camera.transform->getPosition().z > 47) {
+
+		glm::vec3 limit(camera.transform->getPosition().x, camera.transform->getPosition().y, 47);
+		camera.transform->setPosition(limit);
+	}
+
 }
 
 void Game::handleMouse(int mousex, int mousey)

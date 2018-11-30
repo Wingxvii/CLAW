@@ -95,6 +95,8 @@ private:
 	MeshAnimator stump;
 	MeshAnimator torch;
 
+	MeshAnimator angelSword;
+
 	Texture GrassTexture;
 	Texture FlatBlueTexture;
 	Texture Sky;
@@ -107,6 +109,8 @@ private:
 	Texture HealthTex;
 	Texture StumpTex;
 	Texture TorchTex;
+
+	Texture angelSwordTex;
 
 	ShaderProgram PassThrough;
 	ShaderProgram MapShader;
@@ -131,6 +135,7 @@ private:
 	PhysicalEntity *TorchTransfrom3 = new PhysicalEntity();
 	PhysicalEntity *TorchTransfrom4 = new PhysicalEntity();
 
+	PhysicalEntity *angelSwordTransform = new PhysicalEntity();
 
 	Player *player1 = new Player();
 	Player *player2 = new Player();

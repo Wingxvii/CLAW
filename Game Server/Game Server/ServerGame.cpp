@@ -172,6 +172,7 @@ void ServerGame::update()
 
 	}
 
+	printf("%i\n", (int)p[0].rigidbody.inAir);
 
 	//printf("Linear Velocity:(%f,%f,%f)\n", p[0].rigidbody.lVelocity.x, p[0].rigidbody.lVelocity.y, p[0].rigidbody.lVelocity.z);
 
@@ -482,7 +483,7 @@ void ServerGame::handleAttack(const std::vector<std::string>& data)
 		if (p[playerNum].state == PlayerState::PARRY && charge == 1) {
 			p[playerNum].state = PlayerState::IDLE;
 		}
-		else if (p[playerNum].state != PlayerState::PARRY && charge == 0) {
+		else if (p[playerNum].state != PlayerState::PARRY && charge == 0 && !p[playerNum].rigidbody.inAir) {
 			p[playerNum].state = PlayerState::PARRY;
 		}
 	}
