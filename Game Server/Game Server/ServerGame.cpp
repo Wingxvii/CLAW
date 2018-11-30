@@ -53,14 +53,16 @@ void ServerGame::update()
 
 	if (start) {
 
-		if (p[0].health < 0) {
-			printf("Player died");
+		if (p[0].health <= 0) {
+			printf("Player 1 died");
+			restart();
 			p[0].health = 1;
 		}
-		if (p[1].health < 0)
+		if (p[1].health <= 0)
 		{
-			printf("Player died");
+			printf("Player 2 died");
 			p[1].health = 1;
+			restart();
 
 		}
 
@@ -75,8 +77,8 @@ void ServerGame::update()
 		p[1].rigidbody.update();
 
 		//update cooldowns
-		p[1].TickCoolDowns();
 		p[0].TickCoolDowns();
+		p[1].TickCoolDowns();
 		//update UI
 		if (p[0].CanLightAttack == 0) {
 			sendUI(0);
@@ -93,34 +95,37 @@ void ServerGame::update()
 		//move cube collider & checks collisions 
 		if (p[0].collider && p[1].collider) {
 
-			p[0].collider->center += p[0].transform.position - prevPosition1;
-			p[1].collider->center += p[1].transform.position - prevPosition2;
+			p[0].collider->center = p[0].transform.position;
+			p[1].collider->center = p[1].transform.position;
 
-			if (collisionCheck(p[0])) {
-				//revert movement if collide		
-				p[0].collider->center -= p[0].transform.position - prevPosition1;
-				p[0].transform.position = prevPosition1;
-			}
-			if (collisionCheck(p[1])) {
-				//revert movement if collide 
-				p[1].collider->center -= p[1].transform.position - prevPosition2;
-				p[1].transform.position = prevPosition2;
-			}
+			//p[0].collider->center += p[0].transform.position - prevPosition1;
+			//p[1].collider->center += p[1].transform.position - prevPosition2;
+
+			//if (collisionCheck(p[0])) {
+			//	//revert movement if collide		
+			//	p[0].collider->center -= p[0].transform.position - prevPosition1;
+			//	p[0].transform.position = prevPosition1;
+			//}
+			//if (collisionCheck(p[1])) {
+			//	//revert movement if collide 
+			//	p[1].collider->center -= p[1].transform.position - prevPosition2;
+			//	p[1].transform.position = prevPosition2;
+			//}
 
 			//check collisions for players
 			if (p[0].collider->checkCollision(*p[1].collider)) {
 				p[0].rigidbody.lVelocity = glm::length((p[0].rigidbody.lVelocity)) * glm::normalize(p[0].transform.position - p[1].transform.position);
 			}
 			if (p[1].collider->checkCollision(*p[0].collider)) {
-				p[1].rigidbody.lVelocity = glm::length((p[0].rigidbody.lVelocity)) * glm::normalize(p[1].transform.position - p[0].transform.position);
+				p[1].rigidbody.lVelocity = glm::length((p[1].rigidbody.lVelocity)) * glm::normalize(p[1].transform.position - p[0].transform.position);
 			}
 
 		}
 
 
 		//update last frame position
-		prevPosition1 = p[0].transform.position;
-		prevPosition2 = p[1].transform.position;
+		//prevPosition1 = p[0].transform.position;
+		//prevPosition2 = p[1].transform.position;
 
 
 	}
@@ -229,10 +234,17 @@ void ServerGame::receiveFromClients()
 					break;
 				case KEY_INPUT:
 					handleIncomingKey(parsedData);
+
 					break;
 
 				case LOAD_COLLISIONS:
 					handleIncomingCollider(parsedData);
+					if (collisionBoxes.size() == 1) {
+						p[0].startCollisionData = parsedData;
+					}
+					else if (collisionBoxes.size() == 2) {
+						p[1].startCollisionData = parsedData;
+					}
 
 					if (collisionBoxes.size() == 2) {
 						p[0].collider = &collisionBoxes[0];
@@ -459,7 +471,7 @@ void ServerGame::handleAttack(const std::vector<std::string>& data)
 	glm::vec3 attackDirection = { glm::sin(std::stof(data[2])), glm::sin(std::stof(data[3])), glm::sin(std::stof(data[4])) };
 	int charge = std::stoi(data[5]);
 
-	printf("(%f,%f,%f)", attackDirection.x, attackDirection.y, attackDirection.z);
+	//printf("(%f,%f,%f)", attackDirection.x, attackDirection.y, attackDirection.z);
 
 	if (attackNum == 1) {
 		p[playerNum].CanLightAttack = 30;
@@ -484,7 +496,7 @@ void ServerGame::continueAttack()
 		handleAttackBox(0, 1);
 	}
 	if (p[1].lightAttackFrames > 0) {
-		p[1].rigidbody.addForce(1.5f, glm::vec3(p[0].goingDirection.x, 0.0f, p[0].goingDirection.z));
+		p[1].rigidbody.addForce(1.5f, glm::vec3(p[1].goingDirection.x, 0.0f, p[1].goingDirection.z));
 		handleAttackBox(1, 1);
 	}
 
@@ -518,7 +530,7 @@ void ServerGame::handleAttackBox(int player, int attack)
 				}
 				else {
 					p[1].rigidbody.addForce(6.0f, p[0].goingDirection);
-					p[1].health -= 0.5f;
+					p[1].health -= 0.25f;
 					p[0].lightAttackFrames = 0;
 					sendUI(1);
 				}
@@ -532,14 +544,14 @@ void ServerGame::handleAttackBox(int player, int attack)
 			p2AttackBox.center = p[player].collider->center + (p[player].transform.getBackward() * 2.0f);
 
 			//check collision
-			if (p2AttackBox.checkCollision(*p[1].collider)) {
+			if (p2AttackBox.checkCollision(*p[0].collider)) {
 				if (p[0].state == PlayerState::PARRY) {
 					p[1].rigidbody.addForce(6.0f, p[1].goingDirection);
 					p[1].lightAttackFrames = 0;
 				}
 				else {
 					p[0].rigidbody.addForce(6.0f, p[1].goingDirection);
-					p[0].health -= 0.5f;
+					p[0].health -= 0.25f;
 					p[1].lightAttackFrames = 0;
 					sendUI(0);
 
@@ -567,10 +579,11 @@ void ServerGame::restart()
 {
 	handleIncomingTransformation(p[0].startData);
 	handleIncomingTransformation(p[1].startData);
+
 	p[1].health = 1;
 	p[1].resetCooldowns();
 	p[0].health = 1;
-	p[1].resetCooldowns();
+	p[0].resetCooldowns();
 
 }
 

@@ -42,4 +42,6 @@ public:
 	glm::vec3 goingDirection{0.0f, 0.0f, 0.0f};
 
 	std::vector<std::string> startData;
+	std::vector<std::string> startCollisionData;
+
 };

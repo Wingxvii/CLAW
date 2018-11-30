@@ -21,7 +21,7 @@ Player::Player(int num)
 	collider = nullptr;
 	state = PlayerState::IDLE;
 	jumpPower = 30;
-	health = 100;
+	health = 1;
 }
 
 Player::~Player()
