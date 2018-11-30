@@ -1108,13 +1108,15 @@ void Game::updateAnimation(const std::vector<std::string>& data, PacketTypes _pa
 		player2Idle = true;
 	}
 
-	if (std::stoi(data[0]) != 3 || std::stoi(data[0]) != 4) {
+	if (std::stoi(data[0]) == 3 || std::stoi(data[0]) == 4) {
+		
+		player1CurrentAnimation = 1;
+		player2CurrentAnimation = 1;
+	}
+	else {
 		player1Idle = false;
 		player1CurrentAnimation = std::stoi(data[0]);
 		player2CurrentAnimation = std::stoi(data[1]);
-	}
-	else {
-		player1Idle = true;
 	}
 	
 }
