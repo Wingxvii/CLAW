@@ -67,6 +67,9 @@ private:
 	void continueAttack();
 	void handleJump( int player);
 	void handleAttackBox(int player, int attack);
+	void sendUI(int player);
+
 	void restart();
+
 
 };

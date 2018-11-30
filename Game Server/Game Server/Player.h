@@ -27,7 +27,7 @@ public:
 	int playerNumber;
 	bool active;
 
-	int health;
+	float health;
 
 	//jump
 	int jumpPower;

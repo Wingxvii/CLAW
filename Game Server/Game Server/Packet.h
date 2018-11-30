@@ -30,6 +30,10 @@ enum PacketTypes {
 
 	//attack info
 	ATTACK = 8,
+
+	//health and cooldowns
+	UI_INFO = 9,
+
 };
 
 struct Packet {
