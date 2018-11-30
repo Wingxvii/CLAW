@@ -476,6 +476,7 @@ void ServerGame::handleAttack(const std::vector<std::string>& data)
 	if (attackNum == 1) {
 		p[playerNum].CanLightAttack = 30;
 		p[playerNum].lightAttackFrames = 10;
+		sendUI(playerNum);
 	}
 	else if (attackNum == 2) {
 		if (p[playerNum].state == PlayerState::PARRY && charge == 1) {

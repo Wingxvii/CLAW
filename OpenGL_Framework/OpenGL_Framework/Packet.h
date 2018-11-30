@@ -28,7 +28,8 @@ enum PacketTypes {
 	ROTATION_DATA = 7,
 	//attack info
 	ATTACK = 8,
-
+	//health and cooldowns
+	UI_INFO = 9,
 
 };
 
