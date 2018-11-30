@@ -70,6 +70,12 @@ void Game::initializeGame()
 		std::cout << "Model failed to load.\n";
 	
 	}
+	if (!character1Anim.loadMeshes("./Assets/Models/devil light atk_", 12)) {
+		std::cout << "Model failed to load.\n";
+
+	}
+
+	
 	character1Anim.loops = true;
 	//load character 2 idle 
 	if (!character2Anim.loadMeshes("./Assets/Models/devil idle_", 11)) {
@@ -81,12 +87,33 @@ void Game::initializeGame()
 		std::cout << "Model failed to load.\n";
 		
 	}
+	if (!character2Anim.loadMeshes("./Assets/Models/devil light atk_", 13)) {
+		std::cout << "Model failed to load.\n";
+	}
+
 	character2Anim.loops = true;
 	//load map mesh - for static objects load animation with only one frame
 	if (!mapAnim.loadMeshes("./Assets/Models/map_lava_", 1)) {
 		std::cout << "Model failed to load.\n";
 		
 	}
+	if (!sword.loadMeshes("./Assets/Models/devilSword1_", 1)) {
+		std::cout << "Model failed to load.\n";
+
+	}
+	if (!sword.loadMeshes("./Assets/Models/devilSword1_", 1)) {
+		std::cout << "Model failed to load.\n";
+
+	}
+	if (!sword2.loadMeshes("./Assets/Models/devilSword1_", 1)) {
+		std::cout << "Model failed to load.\n";
+
+	}
+	if (!sword2.loadMeshes("./Assets/Models/devilSword1_", 1)) {
+		std::cout << "Model failed to load.\n";
+
+	}
+
 
 	//load sky box mesh
 	if (!skyBoxAnim.loadMeshes("./Assets/Models/skybox_", 1)) {
@@ -185,11 +212,25 @@ void Game::initializeGame()
 		system("Pause");
 		exit(0);
 	}
+	if (!swordTex.load("./Assets/Textures/devil_sword_tex.png"))
+	{
+		std::cout << "Torch Texture failed to load.\n";
+		system("Pause");
+		exit(0);
+	}
+	if (!swordTex2.load("./Assets/Textures/devil_sword_tex.png"))
+	{
+		std::cout << "Torch Texture failed to load.\n";
+		system("Pause");
+		exit(0);
+	}
 
 	player1->setMesh(&character1Anim.animations[0][0]);
 	player2->setMesh(&character2Anim.animations[0][0]);
 
 	skyBoxTransform->setMesh(&skyBoxAnim.animations[0][0]);
+	SwordTransform->setMesh(&sword.animations[0][0]);
+	SwordTransform2->setMesh(&sword2.animations[0][0]);
 
 	camera.perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 2000.0f);
 	camera.transform->m_pLocalPosition = glm::vec3(0.0f, 1.5f, 6.0f);
@@ -250,6 +291,9 @@ void Game::initializeGame()
 	player2->getMesh()->transform->setRotation(glm::vec3(0,180,0));
 	player2->m_entityType = (int)EntityTypes::PLAYER;
 
+	SwordTransform->getMesh()->transform->setPosition(player1->getMesh()->transform->getPosition());
+	SwordTransform2->getMesh()->transform->setPosition(player2->getMesh()->transform->getPosition());
+
 	
 	healthBarTransform.setPosition(glm::vec3(25.0f, 50.0f, 0.0f));
 	coolDownTransform.setPosition(glm::vec3(1200.0f, 60.0f, 0.0f));
@@ -280,10 +324,27 @@ void Game::update()
 	light6.setPosition(TorchTransfrom3->getMesh()->transform->getPosition());
 	light7.setPosition(TorchTransfrom4->getMesh()->transform->getPosition());
 
+
+	if (player1Idle) {
+		player1CurrentAnimation = 0;
+		if (wPushed || aPushed || sPushed || dPushed) {
+			player1CurrentAnimation = 1;
+		}
+	}
+
+	if (player2Idle) {
+		player2CurrentAnimation = 0;
+		if (wPushed || aPushed || sPushed || dPushed) {
+			player2CurrentAnimation = 1;
+		}
+	}
 	//***********************************************************************************************************************************************************************************************************
 	//How to make basic animations 
 	character1Anim.playAnimations(deltaTime, player1CurrentAnimation);
 	character2Anim.playAnimations(deltaTime, player2CurrentAnimation);
+	sword.playAnimations(deltaTime, player1CurrentAnimation);
+	sword2.playAnimations(deltaTime, player2CurrentAnimation);
+
 
 	mapAnim.playAnimations(deltaTime, 0);
 	skyBoxAnim.playAnimations(deltaTime, 0);
@@ -313,6 +374,12 @@ void Game::update()
 
 	player1->getMesh()->transform->update(deltaTime);
 	player2->getMesh()->transform->update(deltaTime);
+
+	SwordTransform->getMesh()->transform->setPosition(player1->getMesh()->transform->getPosition());
+	SwordTransform2->getMesh()->transform->setPosition(player2->getMesh()->transform->getPosition());
+
+	SwordTransform->getMesh()->transform->update(deltaTime);
+	SwordTransform2->getMesh()->transform->update(deltaTime);
 
 	handlePackets();
 
@@ -384,6 +451,25 @@ void Game::draw()
 	glDrawArrays(GL_TRIANGLES, 0, character2Anim.animations[0][0]._NumVertices);
 	glBindVertexArray(0);
 	DevilTexture.unbind(0);
+	swordTex.bind(0);
+
+	PassThrough.SendUniformMat4("uModel", glm::value_ptr(SwordTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
+
+	glBindVertexArray(sword.VAO);
+	PassThrough.SendUniform("uInterpParam", sword.interpParam);
+	glDrawArrays(GL_TRIANGLES, 0, sword.animations[0][0]._NumVertices);
+	glBindVertexArray(0);
+	swordTex.unbind(0);
+
+	swordTex2.bind(0);
+	PassThrough.SendUniformMat4("uModel", glm::value_ptr(SwordTransform2->getMesh()->transform->getLocalToWorldMatrix()), false);
+
+	glBindVertexArray(sword2.VAO);
+	PassThrough.SendUniform("uInterpParam", sword2.interpParam);
+	glDrawArrays(GL_TRIANGLES, 0, sword2.animations[0][0]._NumVertices);
+	glBindVertexArray(0);
+	swordTex2.unbind(0);
+	
 
 	Sky.bind(0);
 	PassThrough.SendUniformMat4("uModel", glm::value_ptr(skyBoxTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
@@ -981,8 +1067,17 @@ void Game::updateUI(const std::vector<std::string>& data, PacketTypes _packet)
 
 void Game::updateAnimation(const std::vector<std::string>& data, PacketTypes _packet)
 {
+	
+	if (std::stoi(data[0]) == 0 || std::stoi(data[0]) == 1) {
+		player1Idle = true;
+	}
+
+	if (std::stoi(data[1]) == 0 || std::stoi(data[1]) == 1) {
+		player2Idle = true;
+	}
+
 	player1CurrentAnimation = std::stoi(data[0]);
-	player2CurrentAnimation = std::stoi(data[0]);
+	player2CurrentAnimation = std::stoi(data[1]);
 }
 
 

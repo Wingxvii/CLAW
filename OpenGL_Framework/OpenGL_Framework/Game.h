@@ -94,6 +94,8 @@ private:
 	MeshAnimator health;
 	MeshAnimator stump;
 	MeshAnimator torch;
+	MeshAnimator sword;
+	MeshAnimator sword2;
 
 	Texture GrassTexture;
 	Texture FlatBlueTexture;
@@ -107,6 +109,8 @@ private:
 	Texture HealthTex;
 	Texture StumpTex;
 	Texture TorchTex;
+	Texture swordTex;
+	Texture swordTex2;
 
 	ShaderProgram PassThrough;
 	ShaderProgram MapShader;
@@ -130,6 +134,9 @@ private:
 	PhysicalEntity *TorchTransfrom2 = new PhysicalEntity();
 	PhysicalEntity *TorchTransfrom3 = new PhysicalEntity();
 	PhysicalEntity *TorchTransfrom4 = new PhysicalEntity();
+
+	PhysicalEntity *SwordTransform = new PhysicalEntity();
+	PhysicalEntity *SwordTransform2 = new PhysicalEntity();
 
 
 	Player *player1 = new Player();
@@ -183,4 +190,7 @@ private:
 
 	int player1CurrentAnimation = 0;
 	int player2CurrentAnimation = 0;
+
+	bool player1Idle = true;
+	bool player2Idle = true;
 };
