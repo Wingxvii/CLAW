@@ -342,7 +342,7 @@ void Game::draw()
 
 	glm::vec4 lightPos = glm::inverse(camera.getView()) * glm::vec4(light1.getPosition(), 1.0f);
 
-	MapShader.SendUniform("pointLights[0].position", glm::vec3(lightPos.x, lightPos.y, lightPos.z));
+	MapShader.SendUniform("pointLights[0].position", glm::vec3(lightPos.x, lightPos.y + 5.0f, lightPos.z));
 	MapShader.SendUniform("pointLights[0].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
 	MapShader.SendUniform("pointLights[0].diffuse", glm::vec3(0.0f, 1.0f, 0.0f));
 	MapShader.SendUniform("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
@@ -352,7 +352,7 @@ void Game::draw()
 
 	lightPos = glm::inverse(camera.getView()) * glm::vec4(light2.getPosition(), 1.0f);
 
-	MapShader.SendUniform("pointLights[0].position", glm::vec3(lightPos.x, lightPos.y, lightPos.z));
+	MapShader.SendUniform("pointLights[0].position", glm::vec3(lightPos.x, lightPos.y + 5.0f, lightPos.z));
 	MapShader.SendUniform("pointLights[1].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
 	MapShader.SendUniform("pointLights[1].diffuse", glm::vec3(0.0f, 0.0f, 1.0f));
 	MapShader.SendUniform("pointLights[1].specular", glm::vec3(1.0f, 1.0f, 1.0f));
