@@ -490,6 +490,10 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 			sunAttenuation = 0;
 		}
 		break;
+
+	case 'b':
+		printf("X:%f,Z:%f\n", player1->getMesh()->transform->getPosition().x, player1->getMesh()->transform->getPosition().z);
+		break;
 	default:
 		break;
 	}
@@ -540,7 +544,7 @@ void Game::mouseClicked(int button, int state, int x, int y)
 			lookDir.y = glm::inverse(camera.getView())[1][2];
 			lookDir.z = glm::inverse(camera.getView())[2][2];
 
-			printf("(%f,%f,%f)", lookDir.x,lookDir.y, lookDir.z);
+			//printf("(%f,%f,%f)", lookDir.x,lookDir.y, lookDir.z);
 
 			MessageHandler::sendAttackinfo(network, playerNum, 1, lookDir, 0);
 

@@ -118,25 +118,38 @@ void ServerGame::update()
 
 
 	//here goes hardcoded collisions
-	if (p[0].transform.position.y < -1.8) {
-		p[0].transform.position.y = -1.8;
+	for (int counter = 0; counter < 2; counter++) {
 
-		if (p[0].state == PlayerState::JUMP) {
-			p[0].state = PlayerState::IDLE;
-			p[0].rigidbody.inAir = false;
-			p[0].jumpPower = 30;
+		//floor collision
+		if (p[counter].transform.position.y < -1.8) {
+			p[counter].transform.position.y = -1.8;
 
+			if (p[counter].state == PlayerState::JUMP) {
+				p[counter].state = PlayerState::IDLE;
+				p[counter].rigidbody.inAir = false;
+				p[counter].jumpPower = 30;
+
+			}
 		}
-			
-	}
-	if (p[1].transform.position.y < -1.8) {
-		p[1].transform.position.y = -1.8;
-		if (p[1].state == PlayerState::JUMP) {
-			p[1].state = PlayerState::IDLE;
-			p[1].rigidbody.inAir = false;
-			p[1].jumpPower = 30;
 
+		//North Cliff collision
+		if (p[counter].transform.position.x < -144) {
+			p[counter].transform.position.x = -144;
 		}
+		//West Wall collision
+		if (p[counter].transform.position.z > 47) {
+			p[counter].transform.position.z = 47;
+		}
+		//East cliff collision
+		if (p[counter].transform.position.z < -104) {
+			p[counter].transform.position.z = -104;
+		}
+		//South cliff collision
+		if (p[counter].transform.position.x > 60) {
+			p[counter].transform.position.x = 60;
+		}
+
+
 	}
 
 
