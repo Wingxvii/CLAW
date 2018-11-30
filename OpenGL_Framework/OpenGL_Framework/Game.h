@@ -193,4 +193,6 @@ private:
 
 	bool player1Idle = true;
 	bool player2Idle = true;
+	bool attack = false;
+	bool jump = false;
 };

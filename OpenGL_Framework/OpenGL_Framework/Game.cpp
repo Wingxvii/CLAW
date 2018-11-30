@@ -332,6 +332,20 @@ void Game::update()
 		}
 	}
 
+	if (attack) {
+		if (character1Anim.finished == false) {
+			character1Anim.playAnimationOnce(deltaTime, 2);
+		} else
+		{
+			attack = false;
+			character1Anim.finished = false;
+		}
+	}
+	else {
+		character1Anim.playAnimations(deltaTime, player1CurrentAnimation);
+		sword.playAnimations(deltaTime, player1CurrentAnimation);
+	}
+
 	if (player2Idle) {
 		player2CurrentAnimation = 0;
 		if (wPushed || aPushed || sPushed || dPushed) {
@@ -340,9 +354,9 @@ void Game::update()
 	}
 	//***********************************************************************************************************************************************************************************************************
 	//How to make basic animations 
-	character1Anim.playAnimations(deltaTime, player1CurrentAnimation);
+	
 	character2Anim.playAnimations(deltaTime, player2CurrentAnimation);
-	sword.playAnimations(deltaTime, player1CurrentAnimation);
+	
 	sword2.playAnimations(deltaTime, player2CurrentAnimation);
 
 
@@ -786,7 +800,9 @@ void Game::mouseClicked(int button, int state, int x, int y)
 			//printf("(%f,%f,%f)", lookDir.x,lookDir.y, lookDir.z);
 
 			MessageHandler::sendAttackinfo(network, playerNum, 1, lookDir, 0);
-
+			if (coolDownShow) {
+				attack = true;
+			}
 
 			break;
 		case GLUT_RIGHT_BUTTON:

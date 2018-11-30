@@ -42,6 +42,30 @@ void MeshAnimator::playAnimations(float dt, int animationIndex)
 	
 }
 
+void MeshAnimator::playAnimationOnce(float dt, int animationIndex)
+{
+	finished = false;
+	if (animations[animationIndex].size() == 1) {
+		drawMesh(frameIndex, frameIndex, animationIndex);
+		return;
+	}
+
+	timer += dt;
+	if (timer >= frameDuration) {
+		timer = 0;
+		frameIndex++;
+	}
+
+	if (frameIndex + 1 >= animations[animationIndex].size()) {
+		finished = true;
+	}	else {
+
+		drawMesh(frameIndex, frameIndex + 1, animationIndex);
+
+		interpParam = timer / frameDuration;
+	}
+}
+
 void MeshAnimator::runHealthAnimation()
 {
 	//health bar only has one animation with two frames 
