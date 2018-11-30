@@ -100,10 +100,10 @@ void ServerGame::update()
 
 			//check collisions for players
 			if (p[0].collider->checkCollision(*p[1].collider)) {
-				p[0].rigidbody.lVelocity = glm::length(p[0].rigidbody.lVelocity) * (p[0].transform.position - p[1].transform.position);
+				p[0].rigidbody.lVelocity = glm::length((p[0].rigidbody.lVelocity)) * glm::normalize(p[0].transform.position - p[1].transform.position);
 			}
 			if (p[1].collider->checkCollision(*p[0].collider)) {
-				p[1].rigidbody.lVelocity = glm::length(p[0].rigidbody.lVelocity) * (p[1].transform.position - p[0].transform.position);
+				p[1].rigidbody.lVelocity = glm::length((p[0].rigidbody.lVelocity)) * glm::normalize(p[1].transform.position - p[0].transform.position);
 			}
 
 		}
@@ -379,7 +379,7 @@ void ServerGame::handleIncomingTransformation(const std::vector<std::string>& da
 	p[playerNum].rigidbody.inAir = false;
 
 	if (p[playerNum].collider) {
-		p[playerNum].collider->center = p[playerNum].transform.position + glm::vec3(0.0f, 2.0f, 0.0f);
+		p[playerNum].collider->center = p[playerNum].transform.position + glm::vec3(0.0f, 1.0f, 0.0f);
 	}
 
 	if (playerNum == 1) {

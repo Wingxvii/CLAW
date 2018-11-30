@@ -67,71 +67,98 @@ void Game::initializeGame()
 		std::cout << "Model failed to load.\n";
 		
 	}
-	for (int i = 0; i < 3; i++) {
-		MeshAnimator temp;
-		if (!temp.loadMeshes("./Assets/Models/dedTree_", 1)) {
-			std::cout << "Model failed to load.\n";
-		}
-		trees.push_back(temp);
-	}
-
 
 
 	//load sky box mesh
 	if (!skyBoxAnim.loadMeshes("./Assets/Models/skybox_", 1)) {
-		std::cout << "Model failed to load.\n";
+		std::cout << "Skybox failed to load.\n";
 	
 	}
 
 	if (!brokenAFBridge.loadMeshes("./Assets/Models/bridge_", 1)) {
-
+		std::cout << "Bridge failed to load.\n";
 	}
 
 	if (!wall.loadMeshes("./Assets/Models/wall_", 1)) {
+		std::cout << "Wall failed to load.\n";
 
 	}
+	if (!brazier.loadMeshes("./Assets/Models/brazier_", 1)) {
+		std::cout << "Brazier failed to load.\n";
+	}
+	if (!trees.loadMeshes("./Assets/Models/dedTree_", 1)) {
+		std::cout << "Trees failed to load.\n";
+	}
+	if (!health.loadMeshes("./Assets/Models/healthPickup_", 1)) {
+		std::cout << "Health failed to load.\n";
+	}
+	if (!stump.loadMeshes("./Assets/Models/tree_stump_", 1)) {
+		std::cout << "Stump failed to load.\n";
+	}
+	if (!torch.loadMeshes("./Assets/Models/torch_", 1)) {
+		std::cout << "Torch failed to load.\n";
+	}
 
-	//load texture
+
+
+	//load textures
 	if (!GrassTexture.load("./Assets/Textures/Grass.png"))
 	{
 		system("Pause");
 		exit(0);
 	}
-
-	//load texture
 	if (!FlatBlueTexture.load("./Assets/Textures/LavaMapTexture.png"))
 	{
 		system("Pause");
 		exit(0);
 	}
-
 	if (!DevilTexture.load("./Assets/Textures/Devil.png"))
 	{
 		system("Pause");
 		exit(0);
 	}
-
-	//load texture
 	if (!Sky.load("./Assets/Textures/skybox.png"))
 	{
 		system("Pause");
 		exit(0);
 	}
-
 	if (!BridgeTex.load("./Assets/Textures/bridgeTex.png"))
 	{
 		system("Pause");
 		exit(0);
 	}
-
 	if (!WallTex.load("./Assets/Textures/wallTex.png"))
 	{
 		system("Pause");
 		exit(0);
 	}
-
-	if (!TreeTex.load("./Assets/Textures/dedTreeTex.png"))
+	if (!TreeTex.load("./Assets/Textures/dedTree.png"))
 	{
+		std::cout << "Tree Texture failed to load.\n";
+		system("Pause");
+		exit(0);
+	}
+	if (!BrazierTex.load("./Assets/Textures/brazier.png"))
+	{
+		std::cout << "Brazier Texture failed to load.\n";
+		system("Pause");
+		exit(0);
+	}
+	if (!HealthTex.load("./Assets/Textures/health_pickup.png"))
+	{
+		std::cout << "Health Texture failed to load.\n";
+		system("Pause");
+		exit(0);
+	}
+	if (!StumpTex.load("./Assets/Textures/treeStump.png"))
+	{
+		std::cout << "Tree Stump Texture failed to load.\n";
+		system("Pause");
+		exit(0);
+	}
+	if (!TorchTex.load("./Assets/Textures/torch.png"))
+	{
+		std::cout << "Torch Texture failed to load.\n";
 		system("Pause");
 		exit(0);
 	}
@@ -150,11 +177,34 @@ void Game::initializeGame()
 	bridgeTransform->getMesh()->transform->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 	wallTranform->getMesh()->transform->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 
-	player1->getMesh()->transform->setPosition(glm::vec3(-1.0f, 0.0f, 0.0f));
+	treeTransform->getMesh()->transform->setPosition(glm::vec3(5.0f,-1.8f, -5.0f));
+	brazierTransform->getMesh()->transform->setPosition(glm::vec3(10.0f, -1.8f, -5.0f));
+	HealthTransfrom->getMesh()->transform->setPosition(glm::vec3(15.0f, -1.8f, -5.0f));
+	StumpTransfrom->getMesh()->transform->setPosition(glm::vec3(20.0f, -1.8f, -5.0f));
+	TorchTransfrom->getMesh()->transform->setPosition(glm::vec3(25.0f, -1.8f, -5.0f));
+
+
+	treeTransform->getMesh()->transform->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
+	brazierTransform->getMesh()->transform->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
+	HealthTransfrom->getMesh()->transform->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
+	StumpTransfrom->getMesh()->transform->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
+	TorchTransfrom->getMesh()->transform->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
+
+
+	//call updates
+	treeTransform->getMesh()->transform->update(0.0f);
+	brazierTransform->getMesh()->transform->update(0.0f);
+	HealthTransfrom->getMesh()->transform->update(0.0f);
+	StumpTransfrom->getMesh()->transform->update(0.0f);
+	TorchTransfrom->getMesh()->transform->update(0.0f);
+
+
+
+	player1->getMesh()->transform->setPosition(glm::vec3(-1.0f, -1.8f, 0.0f));
 	player1->getMesh()->transform->setRotation(glm::vec3(0, 0, 0));
 	player1->m_entityType = (int)EntityTypes::PLAYER;
 
-	player2->getMesh()->transform->setPosition(glm::vec3(1.0f, 0.0f, -10.0f));
+	player2->getMesh()->transform->setPosition(glm::vec3(1.0f, -1.8f, -10.0f));
 	player2->getMesh()->transform->setRotation(glm::vec3(0,180,0));
 	player2->m_entityType = (int)EntityTypes::PLAYER;
 
@@ -195,6 +245,11 @@ void Game::update()
 	wall.playAnimations(deltaTime, 0);
 	light1.update(deltaTime);
 	light2.update(deltaTime);
+	brazier.playAnimations(deltaTime,0);
+	trees.playAnimations(deltaTime, 0);
+	health.playAnimations(deltaTime, 0);
+	stump.playAnimations(deltaTime, 0);
+	torch.playAnimations(deltaTime, 0);
 
 	
 	currentPlayer->getMesh()->transform->m_pRotation.y = camera.transform->m_pRotation.y;
@@ -204,19 +259,8 @@ void Game::update()
 
 	camera.transform->update(deltaTime);
 
-	if (playWalk1) {
-		
-	}
-	else {
-		
-	}
-	//player1->setMesh(&character1Anim.interpolatedMesh);
-	//player2->setMesh(&character2Anim.interpolatedMesh);
-
 	player1->getMesh()->transform->update(deltaTime);
 	player2->getMesh()->transform->update(deltaTime);
-
-	//checkCollisions();
 
 	handlePackets();
 
@@ -347,12 +391,53 @@ void Game::draw()
 	BridgeTex.unbind(0);
 
 	WallTex.bind(0);
+
 	MapShader.SendUniformMat4("uModel", glm::value_ptr(wallTranform->getMesh()->transform->getLocalToWorldMatrix()), false);
 	glBindVertexArray(wall.VAO);
 	glDrawArrays(GL_TRIANGLES, 0, wall.animations[0][0]._NumVertices);
+	glBindVertexArray(0);
+	WallTex.unbind(0);
 
-	BridgeTex.unbind(0);
-	
+	BrazierTex.bind(0);
+
+	MapShader.SendUniformMat4("uModel", glm::value_ptr(brazierTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
+	glBindVertexArray(brazier.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, brazier.animations[0][0]._NumVertices);
+	glBindVertexArray(0);
+	BrazierTex.unbind(0);
+
+	TreeTex.bind(0);
+
+	MapShader.SendUniformMat4("uModel", glm::value_ptr(treeTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
+	glBindVertexArray(trees.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, trees.animations[0][0]._NumVertices);
+	glBindVertexArray(0);
+	TreeTex.unbind(0);
+
+	HealthTex.bind(0);
+
+	MapShader.SendUniformMat4("uModel", glm::value_ptr(HealthTransfrom->getMesh()->transform->getLocalToWorldMatrix()), false);
+	glBindVertexArray(health.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, health.animations[0][0]._NumVertices);
+	glBindVertexArray(0);
+	HealthTex.unbind(0);
+
+	StumpTex.bind(0);
+
+	MapShader.SendUniformMat4("uModel", glm::value_ptr(StumpTransfrom->getMesh()->transform->getLocalToWorldMatrix()), false);
+	glBindVertexArray(stump.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, stump.animations[0][0]._NumVertices);
+	glBindVertexArray(0);
+	StumpTex.unbind(0);
+
+	TorchTex.bind(0);
+
+	MapShader.SendUniformMat4("uModel", glm::value_ptr(TorchTransfrom->getMesh()->transform->getLocalToWorldMatrix()), false);
+	glBindVertexArray(torch.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, torch.animations[0][0]._NumVertices);
+	glBindVertexArray(0);
+	TorchTex.unbind(0);
+
 
 	MapShader.UnBind();
 	//drawBoundingBox(player1->getMesh()->BoundingBox, *player1->getMesh());
