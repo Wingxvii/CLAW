@@ -10,9 +10,9 @@ enum class PlayerState {
 
 	IDLE = 0,
 	WALK = 1,
-	JUMP = 2,
+	ATTACKING = 2,
 	PARRY = 3,
-	ATTACKING = 4,
+	JUMP = 4,
 
 };
 

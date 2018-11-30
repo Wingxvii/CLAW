@@ -120,6 +120,7 @@ void ServerGame::update()
 
 		}
 
+		printf("%i\n",(int)p[0].state);
 
 		//update last frame position
 		//prevPosition1 = p[0].transform.position;
@@ -482,7 +483,7 @@ void ServerGame::handleAttack(const std::vector<std::string>& data)
 		if (p[playerNum].state == PlayerState::PARRY && charge == 1) {
 			p[playerNum].state = PlayerState::IDLE;
 		}
-		else if (p[playerNum].state != PlayerState::PARRY && charge == 0) {
+		else if (p[playerNum].state != PlayerState::PARRY && charge == 0 && !p[playerNum].rigidbody.inAir) {
 			p[playerNum].state = PlayerState::PARRY;
 		}
 	}
@@ -567,7 +568,6 @@ void ServerGame::handleAttackBox(int player, int attack)
 					p[1].lightAttackFrames = 0;
 					p[1].state == PlayerState::IDLE;
 					sendUI(0);
-
 				}
 
 			}

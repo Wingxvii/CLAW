@@ -66,7 +66,7 @@ void Game::initializeGame()
 
 	}
 	//load character 1 walk
-	if (!character1Anim.loadMeshes("./Assets/Models/devil walk cycle_", 13)) {
+	if (!character1Anim.loadMeshes("./Assets/Models/devil walk_", 11)) {
 		std::cout << "Model failed to load.\n";
 	
 	}
@@ -83,7 +83,7 @@ void Game::initializeGame()
 		
 	}
 	//load character 2 walk
-	if (!character2Anim.loadMeshes("./Assets/Models/devil walk cycle_", 13)) {
+	if (!character2Anim.loadMeshes("./Assets/Models/devil walk_", 11)) {
 		std::cout << "Model failed to load.\n";
 		
 	}
@@ -97,19 +97,28 @@ void Game::initializeGame()
 		std::cout << "Model failed to load.\n";
 		
 	}
-	if (!sword.loadMeshes("./Assets/Models/devilSword1_", 1)) {
+	if (!sword.loadMeshes("./Assets/Models/sword idle_", 11)) {
 		std::cout << "Model failed to load.\n";
 
 	}
-	if (!sword.loadMeshes("./Assets/Models/devilSword1_", 1)) {
+	if (!sword.loadMeshes("./Assets/Models/sword walk_", 11)) {
 		std::cout << "Model failed to load.\n";
 
 	}
-	if (!sword2.loadMeshes("./Assets/Models/devilSword1_", 1)) {
+	if (!sword.loadMeshes("./Assets/Models/sword light atk_", 12)) {
 		std::cout << "Model failed to load.\n";
 
 	}
-	if (!sword2.loadMeshes("./Assets/Models/devilSword1_", 1)) {
+	
+	if (!sword2.loadMeshes("./Assets/Models/sword idle_", 11)) {
+		std::cout << "Model failed to load.\n";
+
+	}
+	if (!sword2.loadMeshes("./Assets/Models/sword walk_", 11)) {
+		std::cout << "Model failed to load.\n";
+
+	}
+	if (!sword2.loadMeshes("./Assets/Models/sword light atk_", 12)) {
 		std::cout << "Model failed to load.\n";
 
 	}
@@ -316,8 +325,8 @@ void Game::update()
 
 	t = pow(0.1, 60.0f * deltaTime);
 
-	light1.setPosition(player1->getMesh()->transform->getPosition());
-	light2.setPosition(player2->getMesh()->transform->getPosition());
+	light1.setPosition(SwordTransform->getMesh()->transform->getPosition());
+	light2.setPosition(SwordTransform2->getMesh()->transform->getPosition());
 	light3.setPosition(TorchTransfrom->getMesh()->transform->getPosition());
 	light4.setPosition(brazierTransform->getMesh()->transform->getPosition());
 	light5.setPosition(TorchTransfrom2->getMesh()->transform->getPosition());
@@ -332,19 +341,19 @@ void Game::update()
 		}
 	}
 
-	if (attack) {
-		if (character1Anim.finished == false) {
-			character1Anim.playAnimationOnce(deltaTime, 2);
-		} else
-		{
-			attack = false;
-			character1Anim.finished = false;
-		}
-	}
-	else {
+	//if (attack) {
+	//	if (character1Anim.finished == false) {
+	//		character1Anim.playAnimationOnce(deltaTime, 2);
+	//	} else
+	//	{
+	//		attack = false;
+	//		character1Anim.finished = false;
+	//	}
+	//}
+	/*else {*/
 		character1Anim.playAnimations(deltaTime, player1CurrentAnimation);
 		sword.playAnimations(deltaTime, player1CurrentAnimation);
-	}
+	/*}*/
 
 	if (player2Idle) {
 		player2CurrentAnimation = 0;
@@ -389,11 +398,9 @@ void Game::update()
 	player1->getMesh()->transform->update(deltaTime);
 	player2->getMesh()->transform->update(deltaTime);
 
-	SwordTransform->getMesh()->transform->setPosition(player1->getMesh()->transform->getPosition());
-	SwordTransform2->getMesh()->transform->setPosition(player2->getMesh()->transform->getPosition());
-
-	SwordTransform->getMesh()->transform->update(deltaTime);
-	SwordTransform2->getMesh()->transform->update(deltaTime);
+	SwordTransform->getMesh()->transform = player1->getMesh()->transform;
+	SwordTransform2->getMesh()->transform = player2->getMesh()->transform;
+	
 
 	handlePackets();
 
@@ -865,6 +872,10 @@ void Game::cameraFollow()
 
 	camera.transform->setPosition(playerPositionWithOffset);
 	camera.transform->setRotation(cameraRot);
+	if (camera.transform->getPosition().z > 47) {
+		glm::vec3 limit(camera.transform->getPosition().x, camera.transform->getPosition().y , 47);
+		camera.transform->setPosition(limit);
+	}
 }
 
 void Game::handleMouse(int mousex, int mousey)
@@ -1039,6 +1050,11 @@ void Game::handlePackets()
 			parsedData = Tokenizer::tokenize(',', packet.data);
 			updateUI(parsedData, (PacketTypes)packet.packet_type);
 			break;
+
+		case STATE_DATA:
+			parsedData = Tokenizer::tokenize(',', packet.data);
+			updateAnimation(parsedData, (PacketTypes)packet.packet_type);
+			break;
 		default:
 
 			printf("error in packet types\n");
@@ -1092,8 +1108,15 @@ void Game::updateAnimation(const std::vector<std::string>& data, PacketTypes _pa
 		player2Idle = true;
 	}
 
-	player1CurrentAnimation = std::stoi(data[0]);
-	player2CurrentAnimation = std::stoi(data[1]);
+	if (std::stoi(data[0]) != 3 || std::stoi(data[0]) != 4) {
+		player1Idle = false;
+		player1CurrentAnimation = std::stoi(data[0]);
+		player2CurrentAnimation = std::stoi(data[1]);
+	}
+	else {
+		player1Idle = true;
+	}
+	
 }
 
 

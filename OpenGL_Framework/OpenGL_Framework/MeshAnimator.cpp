@@ -18,7 +18,7 @@ void MeshAnimator::playAnimations(float dt, int animationIndex)
 		drawMesh(frameIndex, frameIndex, animationIndex);
 		return;
 	}
-
+	
 	timer += dt;
 	if (timer >= frameDuration) {
 		timer = 0;
