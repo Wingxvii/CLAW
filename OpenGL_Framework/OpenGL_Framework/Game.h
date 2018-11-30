@@ -133,6 +133,7 @@ private:
 	//Lights 
 	Transform light1;
 	Transform light2;
+	Transform light3;
 
 	Transform healthBarTransform;
 	Transform coolDownTransform;

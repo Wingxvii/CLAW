@@ -230,8 +230,8 @@ void Game::initializeGame()
 	player2->getMesh()->transform->setRotation(glm::vec3(0,180,0));
 	player2->m_entityType = (int)EntityTypes::PLAYER;
 
-	light1.setPosition(glm::vec3(0.0f,10.0f,0.0f));
-	light2.setPosition(glm::vec3(0.0f, 10.0f, 0.0f));
+	//light1.setPosition(glm::vec3(0.0f,10.0f,0.0f));
+	//light2.setPosition(glm::vec3(0.0f, 10.0f, 0.0f));
 	healthBarTransform.setPosition(glm::vec3(25.0f, 50.0f, 0.0f));
 	coolDownTransform.setPosition(glm::vec3(1200.0f, 60.0f, 0.0f));
 
@@ -254,8 +254,7 @@ void Game::update()
 	
 	t = pow(0.1, 60.0f * deltaTime);
 
-	light1.setPosition(player1->getMesh()->transform->getPosition());
-	light2.setPosition(player2->getMesh()->transform->getPosition());
+	
 
 	//***********************************************************************************************************************************************************************************************************
 	//How to make basic animations 
@@ -291,6 +290,10 @@ void Game::update()
 
 	player1->getMesh()->transform->update(deltaTime);
 	player2->getMesh()->transform->update(deltaTime);
+
+	light1.setPosition(player1->getMesh()->transform->getPosition());
+	light2.setPosition(player2->getMesh()->transform->getPosition());
+	light3.setPosition(TorchTransfrom->getMesh()->transform->getPosition());
 
 	handlePackets();
 
@@ -389,7 +392,7 @@ void Game::draw()
 
 	MapShader.SendUniform("pointLights[0].position", glm::vec3(lightPos.x, lightPos.y + 5.0f, lightPos.z));
 	MapShader.SendUniform("pointLights[0].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
-	MapShader.SendUniform("pointLights[0].diffuse", glm::vec3(0.0f, 1.0f, 0.0f));
+	MapShader.SendUniform("pointLights[0].diffuse", glm::vec3(0.0f, 0.0f, 1.0f));
 	MapShader.SendUniform("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
 	MapShader.SendUniform("pointLights[0].constant", 1.0f);
 	MapShader.SendUniform("pointLights[0].linear", 0.09f);
@@ -397,13 +400,23 @@ void Game::draw()
 
 	lightPos = glm::inverse(camera.getView()) * glm::vec4(light2.getPosition(), 1.0f);
 
-	MapShader.SendUniform("pointLights[0].position", glm::vec3(lightPos.x, lightPos.y + 5.0f, lightPos.z));
+	MapShader.SendUniform("pointLights[1].position", glm::vec3(lightPos.x, lightPos.y + 5.0f, lightPos.z));
 	MapShader.SendUniform("pointLights[1].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
-	MapShader.SendUniform("pointLights[1].diffuse", glm::vec3(0.0f, 0.0f, 1.0f));
+	MapShader.SendUniform("pointLights[1].diffuse", glm::vec3(1.0f, 0.0f, 0.0f));
 	MapShader.SendUniform("pointLights[1].specular", glm::vec3(1.0f, 1.0f, 1.0f));
 	MapShader.SendUniform("pointLights[1].constant", 1.0f);
 	MapShader.SendUniform("pointLights[1].linear", 0.09f);
 	MapShader.SendUniform("pointLights[1].quadratic", 0.032f);
+
+	lightPos = glm::inverse(camera.getView()) * glm::vec4(light3.getPosition(), 1.0f);
+
+	MapShader.SendUniform("pointLights[2].position", glm::vec3(lightPos.x, lightPos.y + 5.0f, lightPos.z));
+	MapShader.SendUniform("pointLights[2].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+	MapShader.SendUniform("pointLights[2].diffuse", glm::vec3(0.8f, 0.8f, 0.0f));
+	MapShader.SendUniform("pointLights[2].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	MapShader.SendUniform("pointLights[2].constant", 1.0f);
+	MapShader.SendUniform("pointLights[2].linear", 0.09f);
+	MapShader.SendUniform("pointLights[2].quadratic", 0.032f);
 		
 	//map
 	FlatBlueTexture.bind(0);
@@ -541,6 +554,9 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 			sunAttenuation = 0;
 		}
 		break;
+	case 'k':
+		playerHealth -= 0.25;
+	break;
 
 	case 'b':
 		printf("X:%f,Z:%f\n", player1->getMesh()->transform->getPosition().x, player1->getMesh()->transform->getPosition().z);
@@ -873,7 +889,7 @@ void Game::updatePlayers(const std::vector<std::string>& data, PacketTypes _pack
 
 void Game::updateUI(const std::vector<std::string>& data, PacketTypes _packet)
 {
-	playerHealth = std::stof(data[0]);
+	//playerHealth = std::stof(data[0]);
 	coolDownShow = std::stoi(data[1]);
 }
 
