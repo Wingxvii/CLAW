@@ -486,8 +486,8 @@ void ServerGame::handleJump( int player)
 {
 	//check if jumping
 	if (p[player].state == PlayerState::JUMP && p[player].jumpPower >= 0) {
-		p[player].rigidbody.addForce(-0.3f, p[player].transform.getBackward());
-		p[player].rigidbody.addForce(1.0f, glm::vec3(0, 1, 0));
+		p[player].rigidbody.addForce(-0.2f, p[player].transform.getBackward());
+		p[player].rigidbody.addForce(0.6f, glm::vec3(0, 1, 0));
 		p[player].jumpPower -= 8;
 	}
 }
