@@ -69,6 +69,7 @@ private:
 
 	void updatePlayers(const std::vector<std::string>&, PacketTypes _packet);
 	void updateUI(const std::vector<std::string>&, PacketTypes _packet);
+	void updateAnimation(const std::vector<std::string>&, PacketTypes _packet);
 
 	int playerNum = 0;
 
@@ -87,17 +88,12 @@ private:
 	MeshAnimator brokenAFBridge;
 	MeshAnimator wall;
 
+	//Only need single mesh for each object you can reuse these for repeated meshes 
 	MeshAnimator brazier;
 	MeshAnimator trees;
-	MeshAnimator trees2;
-	MeshAnimator trees3;
 	MeshAnimator health;
 	MeshAnimator stump;
 	MeshAnimator torch;
-	MeshAnimator torch2;
-	MeshAnimator torch3;
-	MeshAnimator torch4;
-	
 
 	Texture GrassTexture;
 	Texture FlatBlueTexture;
@@ -118,6 +114,7 @@ private:
 	ShaderProgram healthShader;
 	ShaderProgram coolDownShader;
 
+	//These are the actual in game objects you need one for each object in game 
 	PhysicalEntity *mapTransform = new PhysicalEntity();
 	PhysicalEntity *skyBoxTransform = new PhysicalEntity();
 	PhysicalEntity *bridgeTransform = new PhysicalEntity();
@@ -183,4 +180,7 @@ private:
 
 	float playerHealth = 1.0f;
 	int coolDownShow = 0;
+
+	int player1CurrentAnimation = 0;
+	int player2CurrentAnimation = 0;
 };

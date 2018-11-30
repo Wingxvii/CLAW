@@ -270,7 +270,6 @@ void Game::update()
 	float deltaTime = updateTimer->getElapsedTimeSeconds();
 	TotalGameTime += deltaTime;
 
-	
 	t = pow(0.1, 60.0f * deltaTime);
 
 	light1.setPosition(player1->getMesh()->transform->getPosition());
@@ -280,11 +279,11 @@ void Game::update()
 	light5.setPosition(TorchTransfrom2->getMesh()->transform->getPosition());
 	light6.setPosition(TorchTransfrom3->getMesh()->transform->getPosition());
 	light7.setPosition(TorchTransfrom4->getMesh()->transform->getPosition());
+
 	//***********************************************************************************************************************************************************************************************************
 	//How to make basic animations 
-	character1Anim.playAnimations(deltaTime, 1);
-	character2Anim.playAnimations(deltaTime, 0);
-
+	character1Anim.playAnimations(deltaTime, player1CurrentAnimation);
+	character2Anim.playAnimations(deltaTime, player2CurrentAnimation);
 
 	mapAnim.playAnimations(deltaTime, 0);
 	skyBoxAnim.playAnimations(deltaTime, 0);
@@ -979,6 +978,13 @@ void Game::updateUI(const std::vector<std::string>& data, PacketTypes _packet)
 	playerHealth = std::stof(data[0]);
 	coolDownShow = std::stoi(data[1]);
 }
+
+void Game::updateAnimation(const std::vector<std::string>& data, PacketTypes _packet)
+{
+	player1CurrentAnimation = std::stoi(data[0]);
+	player2CurrentAnimation = std::stoi(data[0]);
+}
+
 
 
 
