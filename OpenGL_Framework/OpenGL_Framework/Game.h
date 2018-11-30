@@ -74,6 +74,10 @@ private:
 	std::vector<PhysicalEntity * > collisionObjects;
 
 	Camera camera;
+	Camera orthoCamera; // for UI elements
+
+	MeshAnimator healthBar;
+	MeshAnimator coolDown;
 
 	MeshAnimator character1Anim;
 	MeshAnimator character2Anim;
@@ -96,6 +100,8 @@ private:
 	ShaderProgram PassThrough;
 	ShaderProgram MapShader;
 	ShaderProgram BoundingShader;
+	ShaderProgram healthShader;
+	ShaderProgram coolDownShader;
 
 	PhysicalEntity *mapTransform = new PhysicalEntity();
 	PhysicalEntity *skyBoxTransform = new PhysicalEntity();
@@ -112,6 +118,8 @@ private:
 	Transform light1;
 	Transform light2;
 
+	Transform healthBarTransform;
+	Transform coolDownTransform;
 
 	std::vector<PhysicalEntity* > entities;
 
@@ -141,4 +149,6 @@ private:
 	float testangle = 0.0f;
 
 	float sunAttenuation = 0.000001f;
+
+	float playerHealth = 1.0f;
 };

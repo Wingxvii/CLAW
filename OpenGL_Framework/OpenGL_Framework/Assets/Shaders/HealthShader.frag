@@ -6,8 +6,8 @@ out vec4 outColor;
 
 void main()
 {
-    vec4 red = {1.0f, 0.0f. 0.0f, 1.0f};
-    vec4 green = {1.0f, 0.0f. 0.0f, 1.0f};
+    vec4 red = vec4(1,0,0,1);
+    vec4 green = vec4(0,1,0,1);;
     
 	outColor = mix(red, green, healthAmount);
 	

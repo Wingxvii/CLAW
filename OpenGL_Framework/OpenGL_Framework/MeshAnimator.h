@@ -30,6 +30,8 @@ public:
 	//The animations are held in 2d vector this index is for which animation you want to play 
 	//this is based on the order they are loades in. i.e. idle animations would be index 0 if they are loaded first 
 	void playAnimations(float dt, int index);
+	//only use this for the health bar anything else will break
+	void runHealthAnimation();
 	bool loadMeshes(std::string meshPrefix, int numOfFrames);
 
 
