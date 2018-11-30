@@ -68,6 +68,7 @@ private:
 	void handlePackets();
 
 	void updatePlayers(const std::vector<std::string>&, PacketTypes _packet);
+	void updateUI(const std::vector<std::string>&, PacketTypes _packet);
 
 	int playerNum = 0;
 
@@ -166,4 +167,5 @@ private:
 	float sunAttenuation = 0.000001f;
 
 	float playerHealth = 1.0f;
+	int coolDownShow = 0;
 };

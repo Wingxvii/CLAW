@@ -482,16 +482,18 @@ void Game::draw()
 	glDrawArrays(GL_TRIANGLES, 0, healthBar.animations[0][0]._NumVertices);
 	healthShader.UnBind();
 
+	if (coolDownShow == 0) {
+		coolDownShader.Bind();
 
-	coolDownShader.Bind();
+		coolDownShader.SendUniformMat4("uView", glm::value_ptr(glm::inverse(orthoCamera.transform->getLocalToWorldMatrix())), false);
+		coolDownShader.SendUniformMat4("uProj", glm::value_ptr(orthoCamera.getProjection()), false);
 
-	coolDownShader.SendUniformMat4("uView", glm::value_ptr(glm::inverse(orthoCamera.transform->getLocalToWorldMatrix())), false);
-	coolDownShader.SendUniformMat4("uProj", glm::value_ptr(orthoCamera.getProjection()), false);
-	
-	coolDownShader.SendUniformMat4("uModel", glm::value_ptr(coolDownTransform.getLocalToWorldMatrix()), false);
-	glBindVertexArray(coolDown.VAO);
-	glDrawArrays(GL_TRIANGLES, 0, coolDown.animations[0][0]._NumVertices);
-	coolDownShader.UnBind();
+		coolDownShader.SendUniformMat4("uModel", glm::value_ptr(coolDownTransform.getLocalToWorldMatrix()), false);
+		glBindVertexArray(coolDown.VAO);
+		glDrawArrays(GL_TRIANGLES, 0, coolDown.animations[0][0]._NumVertices);
+		coolDownShader.UnBind();
+	}
+
 	
 	//drawBoundingBox(player1->getMesh()->BoundingBox, *player1->getMesh());
 	//drawBoundingBox(player2->getMesh()->BoundingBox, *player2->getMesh());
@@ -828,6 +830,11 @@ void Game::handlePackets()
 			updatePlayers(parsedData, (PacketTypes)packet.packet_type);
 
 			break;
+
+		case UI_INFO:
+			parsedData = Tokenizer::tokenize(',', packet.data);
+			updateUI(parsedData, (PacketTypes)packet.packet_type);
+			break;
 		default:
 
 			printf("error in packet types\n");
@@ -862,6 +869,12 @@ void Game::updatePlayers(const std::vector<std::string>& data, PacketTypes _pack
 
 		}
 
+}
+
+void Game::updateUI(const std::vector<std::string>& data, PacketTypes _packet)
+{
+	playerHealth = std::stof(data[0]);
+	coolDownShow = std::stoi(data[1]);
 }
 
 
