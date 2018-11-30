@@ -39,6 +39,26 @@ void Game::initializeGame()
 		std::cout << "Shaders failed to init.\n";
 		
 	}
+	//load health shader
+	if (!healthShader.Load("./Assets/Shaders/HealthShader.vert", "./Assets/Shaders/HealthShader.frag")) {
+		std::cout << "Shaders failed to init.\n";
+	}
+
+	if (!coolDownShader.Load("./Assets/Shaders/CoolDownShader.vert", "./Assets/Shaders/CoolDownShader.frag")) {
+		std::cout << "Shaders failed to init.\n";
+	}
+
+	//load healthbar
+	if (!healthBar.loadMeshes("./Assets/Models/Health_", 2)) {
+		std::cout << "Model failed to load.\n";
+
+	}
+
+	//load cooldown
+	if (!coolDown.loadMeshes("./Assets/Models/CoolDown_", 1)) {
+		std::cout << "Model failed to load.\n";
+
+	}
 
 	//load character 1 idle 
 	if (!character1Anim.loadMeshes("./Assets/Models/devil idle_", 11)) {
@@ -67,7 +87,6 @@ void Game::initializeGame()
 		std::cout << "Model failed to load.\n";
 		
 	}
-
 
 	//load sky box mesh
 	if (!skyBoxAnim.loadMeshes("./Assets/Models/skybox_", 1)) {
@@ -171,6 +190,9 @@ void Game::initializeGame()
 	camera.perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 2000.0f);
 	camera.transform->m_pLocalPosition = glm::vec3(0.0f, 1.5f, 6.0f);
 
+	//************************************************************************//
+	orthoCamera.orthographic(0.0f, WINDOW_WIDTH, 0.0f, WINDOW_HEIGHT, 0.1f, 100.0f);
+	orthoCamera.transform->m_pLocalPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	mapTransform->getMesh()->transform->setPosition(glm::vec3(0.0f, 2.0f, 0.0f));
 	skyBoxTransform->getMesh()->transform->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -210,6 +232,8 @@ void Game::initializeGame()
 
 	light1.setPosition(glm::vec3(0.0f,10.0f,0.0f));
 	light2.setPosition(glm::vec3(0.0f, 10.0f, 0.0f));
+	healthBarTransform.setPosition(glm::vec3(25.0f, 50.0f, 0.0f));
+	coolDownTransform.setPosition(glm::vec3(1200.0f, 60.0f, 0.0f));
 
 	MessageHandler::sendInitConnection(network, player1->getMesh()->transform->m_pLocalPosition, player1->getMesh()->transform->m_pRotation, player1->getMesh()->transform->m_pScale, 0);
 	MessageHandler::sendInitConnection(network, player2->getMesh()->transform->m_pLocalPosition, player2->getMesh()->transform->m_pRotation, player2->getMesh()->transform->m_pScale, 1);
@@ -242,22 +266,28 @@ void Game::update()
 	mapAnim.playAnimations(deltaTime, 0);
 	skyBoxAnim.playAnimations(deltaTime, 0);
 	brokenAFBridge.playAnimations(deltaTime, 0);
+	healthBar.playAnimations(deltaTime, 0);
+	coolDown.playAnimations(deltaTime, 0);
 	wall.playAnimations(deltaTime, 0);
 	light1.update(deltaTime);
 	light2.update(deltaTime);
+	healthBarTransform.update(deltaTime);
+	coolDownTransform.update(deltaTime);
+	
 	brazier.playAnimations(deltaTime,0);
 	trees.playAnimations(deltaTime, 0);
 	health.playAnimations(deltaTime, 0);
 	stump.playAnimations(deltaTime, 0);
 	torch.playAnimations(deltaTime, 0);
 
-	
 	currentPlayer->getMesh()->transform->m_pRotation.y = camera.transform->m_pRotation.y;
 	cameraFollow();
 
 	//printf("Player Position: (%f,%f,%f), Camera Position: (%f,%f,%f)\n", player1->getMesh()->transform->getPosition().x, player1->getMesh()->transform->getPosition().y, player1->getMesh()->transform->getPosition().z, camera.transform->getPosition().x, camera.transform->getPosition().y, camera.transform->getPosition().z);
 
 	camera.transform->update(deltaTime);
+	//orthoCamera.transform = camera.transform;
+	//orthoCamera.transform->update(deltaTime);
 
 	player1->getMesh()->transform->update(deltaTime);
 	player2->getMesh()->transform->update(deltaTime);
@@ -357,7 +387,7 @@ void Game::draw()
 
 	glm::vec4 lightPos = glm::inverse(camera.getView()) * glm::vec4(light1.getPosition(), 1.0f);
 
-	MapShader.SendUniform("pointLights[0].position", glm::vec3(lightPos.x, lightPos.y, lightPos.z));
+	MapShader.SendUniform("pointLights[0].position", glm::vec3(lightPos.x, lightPos.y + 5.0f, lightPos.z));
 	MapShader.SendUniform("pointLights[0].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
 	MapShader.SendUniform("pointLights[0].diffuse", glm::vec3(0.0f, 1.0f, 0.0f));
 	MapShader.SendUniform("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
@@ -367,7 +397,7 @@ void Game::draw()
 
 	lightPos = glm::inverse(camera.getView()) * glm::vec4(light2.getPosition(), 1.0f);
 
-	MapShader.SendUniform("pointLights[0].position", glm::vec3(lightPos.x, lightPos.y, lightPos.z));
+	MapShader.SendUniform("pointLights[0].position", glm::vec3(lightPos.x, lightPos.y + 5.0f, lightPos.z));
 	MapShader.SendUniform("pointLights[1].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
 	MapShader.SendUniform("pointLights[1].diffuse", glm::vec3(0.0f, 0.0f, 1.0f));
 	MapShader.SendUniform("pointLights[1].specular", glm::vec3(1.0f, 1.0f, 1.0f));
@@ -398,6 +428,30 @@ void Game::draw()
 	glBindVertexArray(0);
 	WallTex.unbind(0);
 
+	MapShader.UnBind();
+
+	healthShader.Bind();
+
+	healthShader.SendUniformMat4("uView", glm::value_ptr(glm::inverse(orthoCamera.transform->getLocalToWorldMatrix())), false);
+	healthShader.SendUniformMat4("uProj", glm::value_ptr(orthoCamera.getProjection()), false);
+	healthShader.SendUniform("healthAmount", playerHealth);
+
+
+	healthShader.SendUniformMat4("uModel", glm::value_ptr(healthBarTransform.getLocalToWorldMatrix()), false);
+	glBindVertexArray(healthBar.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, healthBar.animations[0][0]._NumVertices);
+	healthShader.UnBind();
+
+
+	coolDownShader.Bind();
+
+	coolDownShader.SendUniformMat4("uView", glm::value_ptr(glm::inverse(orthoCamera.transform->getLocalToWorldMatrix())), false);
+	coolDownShader.SendUniformMat4("uProj", glm::value_ptr(orthoCamera.getProjection()), false);
+	
+	coolDownShader.SendUniformMat4("uModel", glm::value_ptr(coolDownTransform.getLocalToWorldMatrix()), false);
+	glBindVertexArray(coolDown.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, coolDown.animations[0][0]._NumVertices);
+	coolDownShader.UnBind();
 	BrazierTex.bind(0);
 
 	MapShader.SendUniformMat4("uModel", glm::value_ptr(brazierTransform->getMesh()->transform->getLocalToWorldMatrix()), false);
@@ -443,11 +497,7 @@ void Game::draw()
 	//drawBoundingBox(player1->getMesh()->BoundingBox, *player1->getMesh());
 	//drawBoundingBox(player2->getMesh()->BoundingBox, *player2->getMesh());
 
-
-
-
 	glutSwapBuffers();
-
 
 }
 

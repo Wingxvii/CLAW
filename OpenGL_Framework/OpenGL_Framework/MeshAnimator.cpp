@@ -42,6 +42,13 @@ void MeshAnimator::playAnimations(float dt, int animationIndex)
 	
 }
 
+void MeshAnimator::runHealthAnimation()
+{
+	//health bar only has one animation with two frames 
+	//that will be interpolated between
+	drawMesh(frameIndex, frameIndex + 1, 0);
+}
+
 bool MeshAnimator::loadMeshes(std::string meshPrefix, int numOfFrames)
 {
 	bool worked;
