@@ -34,6 +34,8 @@ enum PacketTypes {
 	//health and cooldowns
 	UI_INFO = 9,
 
+	STATE_DATA = 10,
+
 };
 
 struct Packet {

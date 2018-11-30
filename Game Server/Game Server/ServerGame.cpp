@@ -55,17 +55,15 @@ void ServerGame::update()
 
 		if (p[0].health <= 0) {
 			printf("Player 1 died");
-			restart();
 			p[0].health = 1;
+			restart();
 		}
 		if (p[1].health <= 0)
 		{
 			printf("Player 2 died");
 			p[1].health = 1;
 			restart();
-
 		}
-
 
 		//checks to see if jumping
 		handleJump(0);
@@ -141,9 +139,17 @@ void ServerGame::update()
 			if (p[counter].state == PlayerState::JUMP) {
 				p[counter].state = PlayerState::IDLE;
 				p[counter].rigidbody.inAir = false;
-				p[counter].jumpPower = 30;
+				p[counter].jumpPower = 40;
 
 			}
+			//check states
+			if (p[counter].state == PlayerState::ATTACKING && p[counter].lightAttackFrames <= 0) {
+				p[counter].state = PlayerState::IDLE;
+			}
+			if (p[counter].state == PlayerState::IDLE && glm::length(p[counter].rigidbody.lVelocity) > 0.1f) {
+				p[counter].state == PlayerState::WALK;
+			}
+				
 		}
 
 		//North Cliff collision
@@ -179,6 +185,7 @@ void ServerGame::update()
 			+ "," + to_string(p[1].transform.position.z) + "," + to_string(p[1].transform.rotation.x) + "," + to_string(p[1].transform.rotation.y)
 			+ "," + to_string(p[1].transform.rotation.z) + "," + to_string(p[1].transform.scale.x) + "," + to_string(p[1].transform.scale.y)
 			+ "," + to_string(p[1].transform.scale.z) + ",");
+		sendMessage(0, STATE_DATA, std::to_string((int)p[0].state) + "," + std::to_string((int)p[1].state) + ",");
 	}
 	if (network->sessions.size() > 1) {
 		sendMessage(1, TRANSFORMATION_DATA, std::to_string(1) + "," + to_string(p[1].transform.position.x) + "," + to_string(p[1].transform.position.y)
@@ -189,8 +196,9 @@ void ServerGame::update()
 			+ "," + to_string(p[0].transform.position.z) + "," + to_string(p[0].transform.rotation.x) + "," + to_string(p[0].transform.rotation.y)
 			+ "," + to_string(p[0].transform.rotation.z) + "," + to_string(p[0].transform.scale.x) + "," + to_string(p[0].transform.scale.y)
 			+ "," + to_string(p[0].transform.scale.z) + ",");
-	}
+		sendMessage(1, STATE_DATA, std::to_string((int)p[0].state) + "," + std::to_string((int)p[1].state) + ",");
 
+	}
 
 
 
@@ -337,39 +345,31 @@ void ServerGame::handleIncomingKey(const std::vector<std::string>& data)
 	switch (keycode)
 	{
 	case 'a':
-		if (p[playerNum].state == PlayerState::IDLE) {
 			p[playerNum].rigidbody.addForce(0.1f * p[playerNum].transform.getLeft());
-		}
 		
 		break;
 	case 's':
-		if (p[playerNum].state == PlayerState::IDLE) {
 			p[playerNum].rigidbody.addForce(0.1f * p[playerNum].transform.getBackward());
-		}
 
 		break;
 	case 'w':
-		if (p[playerNum].state == PlayerState::IDLE) {
 			p[playerNum].rigidbody.addForce(-0.1f * p[playerNum].transform.getBackward());
-		}
 
 		break;
 	case 'd':
-		if (p[playerNum].state == PlayerState::IDLE) {
 			p[playerNum].rigidbody.addForce(-0.1f * p[playerNum].transform.getLeft());
-		}
 
 		break;
 
 
 	case 32: // jump charge
-		if (p[playerNum].jumpPower < 40) {
-			p[playerNum].jumpPower++;
-		}
 		break;
 	case 33: // jump release
-		p[playerNum].state = PlayerState::JUMP;
-		p[playerNum].rigidbody.inAir = true;
+		if (p[playerNum].rigidbody.inAir == false) {
+			p[playerNum].rigidbody.addForce(1.0f, glm::vec3(0, 1, 0));
+			p[playerNum].state = PlayerState::JUMP;
+			p[playerNum].rigidbody.inAir = true;
+		}
 		break;
 	default:
 		break;
@@ -407,7 +407,7 @@ void ServerGame::handleIncomingTransformation(const std::vector<std::string>& da
 	//restart calls
 	p[playerNum].startData = data;
 	p[playerNum].state = PlayerState::IDLE;
-	p[playerNum].jumpPower = 30;
+	p[playerNum].jumpPower = 40;
 	p[playerNum].rigidbody.lAccel = glm::vec3(0.0f, 0.0f, 0.0f);
 	p[playerNum].rigidbody.inAir = false;
 
@@ -495,10 +495,17 @@ void ServerGame::continueAttack()
 	if (p[0].lightAttackFrames > 0) {
 		p[0].rigidbody.addForce(1.5f, glm::vec3(p[0].goingDirection.x, 0.0f, p[0].goingDirection.z));
 		handleAttackBox(0, 1);
+		if (p[0].state != PlayerState::JUMP) {
+			p[0].state = PlayerState::ATTACKING;
+		}
 	}
 	if (p[1].lightAttackFrames > 0) {
 		p[1].rigidbody.addForce(1.5f, glm::vec3(p[1].goingDirection.x, 0.0f, p[1].goingDirection.z));
 		handleAttackBox(1, 1);
+
+		if (p[1].state != PlayerState::JUMP) {
+			p[1].state = PlayerState::ATTACKING;
+		}
 	}
 
 }
@@ -508,7 +515,7 @@ void ServerGame::handleJump( int player)
 	//check if jumping
 	if (p[player].state == PlayerState::JUMP && p[player].jumpPower >= 0) {
 		p[player].rigidbody.addForce(-0.2f, p[player].transform.getBackward());
-		p[player].rigidbody.addForce(0.6f, glm::vec3(0, 1, 0));
+		p[player].rigidbody.addForce(0.5f, glm::vec3(0, 1, 0));
 		p[player].jumpPower -= 8;
 	}
 }
@@ -528,11 +535,13 @@ void ServerGame::handleAttackBox(int player, int attack)
 				if (p[1].state == PlayerState::PARRY) {
 					p[0].rigidbody.addForce(6.0f, p[0].goingDirection);
 					p[0].lightAttackFrames = 0;
+					p[0].state == PlayerState::IDLE;
 				}
 				else {
 					p[1].rigidbody.addForce(6.0f, p[0].goingDirection);
 					p[1].health -= 0.25f;
 					p[0].lightAttackFrames = 0;
+					p[0].state == PlayerState::IDLE;
 					sendUI(1);
 				}
 
@@ -549,11 +558,14 @@ void ServerGame::handleAttackBox(int player, int attack)
 				if (p[0].state == PlayerState::PARRY) {
 					p[1].rigidbody.addForce(6.0f, p[1].goingDirection);
 					p[1].lightAttackFrames = 0;
+					p[1].state == PlayerState::IDLE;
+
 				}
 				else {
 					p[0].rigidbody.addForce(6.0f, p[1].goingDirection);
 					p[0].health -= 0.25f;
 					p[1].lightAttackFrames = 0;
+					p[1].state == PlayerState::IDLE;
 					sendUI(0);
 
 				}
