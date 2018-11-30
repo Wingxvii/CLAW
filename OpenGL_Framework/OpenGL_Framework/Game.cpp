@@ -889,7 +889,13 @@ void Game::updatePlayers(const std::vector<std::string>& data, PacketTypes _pack
 
 void Game::updateUI(const std::vector<std::string>& data, PacketTypes _packet)
 {
-	//playerHealth = std::stof(data[0]);
+	playerHealth = std::stof(data[0]);
+	coolDownShow = std::stoi(data[1]);
+}
+
+void Game::updateUI(const std::vector<std::string>& data, PacketTypes _packet)
+{
+	playerHealth = std::stof(data[0]);
 	coolDownShow = std::stoi(data[1]);
 }
 
